@@ -9,13 +9,23 @@ import {
 import { useUserStore } from "@/store/user";
 import { useWallet } from "@solana/wallet-adapter-react";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import { Award, GlassWater, MessageSquare, Settings, User, Users } from "lucide-react";
+import {
+  Award,
+  GlassWater,
+  MessageSquare,
+  Settings,
+  User,
+  Users,
+} from "lucide-react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import logo from "@/assets/logoNoPadding.png";
+import Image from "next/image";
 
 const WalletMultiButtonDynamic = dynamic(
-  async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  async () =>
+    (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
 
@@ -52,9 +62,10 @@ export const Navbar = () => {
         {/* Logo - hidden on mobile */}
         <div
           className="hidden md:flex items-center space-x-2 text-violet-500 cursor-pointer"
-          onClick={() => router.push("/")}>
-          <GlassWater className="h-6 w-6" />
-          <span className="text-xl font-bold">Cheers</span>
+          onClick={() => router.push("/")}
+        >
+          <Image src={logo} alt="logo" width={20} height={20} />
+          <span className="text-xl font-bold pt-1">Cheers</span>
         </div>
 
         {/* Navigation Menu */}
@@ -65,12 +76,17 @@ export const Navbar = () => {
                 <NavigationMenuItem onClick={() => router.push("/profile")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/profile" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/profile"
+                        ? "text-violet-500"
+                        : "text-violet-100"
                     }`}
-                    asChild>
+                    asChild
+                  >
                     <div className="flex flex-col md:flex-row items-center">
                       <User className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Profile</span>
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">
+                        Profile
+                      </span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -78,12 +94,17 @@ export const Navbar = () => {
                 <NavigationMenuItem onClick={() => router.push("/missions")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/missions" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/missions"
+                        ? "text-violet-500"
+                        : "text-violet-100"
                     }`}
-                    asChild>
+                    asChild
+                  >
                     <div className="flex flex-col md:flex-row items-center">
                       <Award className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Missions</span>
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">
+                        Missions
+                      </span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -91,12 +112,17 @@ export const Navbar = () => {
                 <NavigationMenuItem onClick={() => router.push("/matches")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/matches" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/matches"
+                        ? "text-violet-500"
+                        : "text-violet-100"
                     }`}
-                    asChild>
+                    asChild
+                  >
                     <div className="flex flex-col md:flex-row items-center">
                       <Users className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Matches</span>
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">
+                        Matches
+                      </span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -104,12 +130,17 @@ export const Navbar = () => {
                 <NavigationMenuItem onClick={() => router.push("/messages")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/messages" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/messages"
+                        ? "text-violet-500"
+                        : "text-violet-100"
                     }`}
-                    asChild>
+                    asChild
+                  >
                     <div className="flex flex-col md:flex-row items-center">
                       <MessageSquare className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Messages</span>
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">
+                        Messages
+                      </span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -117,12 +148,17 @@ export const Navbar = () => {
                 <NavigationMenuItem>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/settings" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/settings"
+                        ? "text-violet-500"
+                        : "text-violet-100"
                     }`}
-                    asChild>
+                    asChild
+                  >
                     <div className="flex flex-col md:flex-row items-center">
                       <Settings className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Settings</span>
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">
+                        Settings
+                      </span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>

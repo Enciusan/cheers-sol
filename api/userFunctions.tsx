@@ -83,6 +83,7 @@ export const createOrUpdateProfile = async (profileData: {
   bio: string;
   age: number;
   drinks: string[];
+  communities: string[];
 }) => {
   const supabase = await createClient();
 
@@ -121,6 +122,7 @@ export const createOrUpdateProfile = async (profileData: {
           bio: profileData.bio,
           age: profileData.age,
           drinks: profileData.drinks,
+          communities: profileData.communities,
           updated_at: new Date().toISOString(),
         })
         .eq("id", existingProfile.id);

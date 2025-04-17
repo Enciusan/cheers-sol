@@ -5,6 +5,7 @@ export type Profile = {
   bio: string;
   age: number;
   drinks: string[];
+  communities: string[];
 };
 
 export interface ProfileFormProps {

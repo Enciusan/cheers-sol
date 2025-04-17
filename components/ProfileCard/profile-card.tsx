@@ -64,7 +64,18 @@ export const ProfileCard = () => {
           )}
 
           <div className="flex w-full justify-center">
-            {userData?.id && <UUIDAvatar uuid={userData.id} size={"md"} />}
+            {userData?.id && (
+              <UUIDAvatar
+                uuid={userData.id}
+                size={"xl"}
+                editable={true}
+                onEditClick={() => {
+                  console.log("Edit avatar clicked");
+                }}
+                editButtonClassName="bg-[#2b2b2b] text-[#7C3AED] hover:bg-[#202020] hover:text-[#7C3AED] gap-0"
+                alwaysShowEditButton={true}
+              />
+            )}
           </div>
           {isInEditMode ? (
             <ProfileForm data={userData} onSubmit={handleSubmit} onCancel={handleCancel} />

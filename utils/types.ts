@@ -6,6 +6,7 @@ export type Profile = {
   age: number;
   drinks: string[];
   communities: string[];
+  profileImage: string;
 };
 
 export interface ProfileFormProps {

@@ -22,7 +22,7 @@ export const getUser = async (walletAddress: PublicKey | string) => {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, username, wallet_address, bio, age, drinks")
+      .select("id, username, wallet_address, bio, age, drinks, communities, profileImage")
       .eq("wallet_address", bufferKey)
       .single();
 
@@ -166,5 +166,73 @@ export const createOrUpdateProfile = async (profileData: {
       success: false,
       error: error.message || "An error occurred while saving the profile",
     };
+  }
+};
+
+export const addOrChangeProfileImage = async (imageUrl: string, walletAddress: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    // Authentication check remains the same
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    // --- Keep the conversion to hex buffer ---
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    // --- Use the hex bufferKey for the query ---
+
+    console.log("Checking profile existence for hex key:", bufferKey);
+
+    // Check if profile exists using the hex bufferKey
+    const { data: existingProfile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("wallet_address", bufferKey) // Query with hex key
+      .single();
+
+    if (fetchError && fetchError.code !== "PGRST116") {
+      // PGRST116 is "no rows returned" error
+      console.error("Error checking profile existence:", fetchError);
+      return { success: false, error: "Failed to check if profile exists" };
+    }
+    console.log(existingProfile);
+
+    if (existingProfile) {
+      // Update existing profile
+      const { data, error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          profileImage: imageUrl,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", existingProfile.id);
+      console.log(data);
+
+      if (updateError) {
+        console.error("Error updating profile Image:", updateError);
+        return { success: false, error: "Failed to update profile image" };
+      }
+    } else {
+      // Create new profile
+      const { data: newProfile, error: insertError } = await supabase.from("profiles").insert([
+        {
+          wallet_address: bufferKey,
+          profileImage: imageUrl,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        },
+      ]);
+      console.log(newProfile);
+
+      if (insertError) {
+        console.error("Error add profile image:", insertError);
+        return { success: false, error: "Failed to add profile image" };
+      }
+    }
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: "Failed to update profile" };
   }
 };

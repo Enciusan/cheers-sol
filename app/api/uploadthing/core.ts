@@ -1,4 +1,5 @@
 import { verifyAuth } from "@/api/serverAuth";
+import { addOrChangeProfileImage } from "@/api/userFunctions";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
@@ -29,6 +30,8 @@ export const ourFileRouter = {
       console.log("Upload complete for userId:", metadata.userId);
 
       console.log("file url", file.ufsUrl);
+
+      await addOrChangeProfileImage(file.ufsUrl, metadata.userId);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };

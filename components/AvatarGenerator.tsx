@@ -1,4 +1,6 @@
 "use client";
+import { addOrChangeProfileImage } from "@/api/userFunctions";
+import { useUserStore } from "@/store/user";
 import { UploadButton } from "@/utils/uploadthing";
 import { Edit } from "lucide-react";
 import React, { useMemo, useState } from "react";
@@ -52,7 +54,7 @@ interface AvatarProps {
   size?: "sm" | "md" | "lg" | "xl";
   fallback?: React.ReactNode;
   editable?: boolean;
-  onEditClick?: () => void;
+  profileImage?: string | null;
   editButtonClassName?: string; // Keep the prop definition
   alwaysShowEditButton?: boolean;
 }
@@ -62,11 +64,12 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
   size = "md",
   fallback = null,
   editable = false,
-  onEditClick,
-  editButtonClassName = "", // Remove default background and text color
+  profileImage = null,
+  editButtonClassName = "",
   alwaysShowEditButton = false,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const { fetchUserProfile } = useUserStore();
 
   const isValidUUID = useMemo(() => UUID_REGEX.test(uuid), [uuid]);
 
@@ -99,6 +102,7 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
   if (!isValidUUID && fallback) {
     return <>{fallback}</>;
   }
+  console.log(profileImage);
 
   return (
     <div
@@ -107,12 +111,28 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
       onMouseLeave={() => editable && setIsHovered(false)}>
       <div className="border-8 border-[#2b2b2b] rounded-full">
         <div className={`${sizeClasses[size]} rounded-full overflow-hidden`}>
-          <svg viewBox="-0.5 0 6 6" className="w-full h-full" style={{ background: "#f1f1f1" }}>
-            {pattern.map(
-              ({ x, y, fill }, index) =>
-                fill && <rect key={`${x}-${y}-${index}`} x={x} y={y} width="1" height="1" fill={color} />
-            )}
-          </svg>
+          {(() => {
+            // Add this log
+            console.log("Rendering check, profileImage:", profileImage);
+            if (profileImage === null) {
+              return (
+                <svg viewBox="-0.5 0 6 6" className="w-full h-full" style={{ background: "#f1f1f1" }}>
+                  {pattern.map(
+                    ({ x, y, fill }, index) =>
+                      fill && <rect key={`${x}-${y}-${index}`} x={x} y={y} width="1" height="1" fill={color} />
+                  )}
+                </svg>
+              );
+            } else {
+              return (
+                <img
+                  src="https://ce7y5ltqq4.ufs.sh/f/0xM5LN2LXfoyrwenV9j9ONlI0GvSLJjXn3h12WwrBpomF7qP"
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              );
+            }
+          })()}
         </div>
       </div>
 
@@ -120,8 +140,8 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
         <UploadButton
           endpoint="imageUploader"
           className={`absolute top-0 left-[4.8rem] p-0 rounded-full flex items-center justify-center ${editButtonSizeClasses[size]} ${editButtonClassName}`}
-          onClientUploadComplete={(res) => {
-            console.log("Upload successful:", res);
+          onClientUploadComplete={async (res) => {
+            console.log("Upload successful:", res[0], res[0].serverData.uploadedBy);
           }}
           onUploadError={(error: Error) => {
             // Handle upload error
@@ -137,9 +157,7 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
             button: <Edit />,
             allowedContent: () => null,
           }}
-          aria-label="Edit avatar">
-          {/* Children removed */}
-        </UploadButton>
+          aria-label="Edit avatar"></UploadButton>
       )}
     </div>
   );

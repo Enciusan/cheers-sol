@@ -24,6 +24,7 @@ export const useUserStore = create<UserStore>((set) => ({
   fetchUserProfile: async (walletAddress: string) => {
     try {
       const data = await getUser(walletAddress);
+      console.log(data);
 
       if (data) {
         set({
@@ -34,6 +35,8 @@ export const useUserStore = create<UserStore>((set) => ({
             bio: data.bio,
             age: data.age,
             drinks: data.drinks || [],
+            communities: data.communities || [],
+            profileImage: data.profileImage,
           },
         });
       }

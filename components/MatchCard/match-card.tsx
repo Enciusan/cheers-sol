@@ -80,7 +80,13 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
         className="touch-none">
         <div className="bg-[#18181B] bg-opacity-90 rounded-xl overflow-hidden shadow-lg max-w-sm w-full backdrop-blur-xl">
           <div className="relative h-80">
-            <Image src={"/placeholder.svg"} alt={matchingProfiles.username} layout="fill" objectFit="cover" />
+            <Image
+              src={
+                matchingProfiles.profileImage !== null ? matchingProfiles.profileImage : "/assets/images/profile.png"
+              }
+              alt={matchingProfiles.username}
+              layout="fill"
+            />
             {/* Swipe indicators */}
             <motion.div
               style={{ opacity: useTransform(x, [-100, 0], [1, 0]) }}

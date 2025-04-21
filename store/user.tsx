@@ -53,7 +53,7 @@ export const useUsersStore = create<UsersStore>((set) => ({
   fetchProfiles: async (walletAddress: string) => {
     try {
       const data = await getAppUserForMatch(walletAddress);
-      console.log(data);
+      // console.log(data);
 
       if (data) {
         set({ profiles: data as Profile[] });

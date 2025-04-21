@@ -3,6 +3,7 @@ import { addOrChangeProfileImage } from "@/api/userFunctions";
 import { useUserStore } from "@/store/user";
 import { UploadButton } from "@/utils/uploadthing";
 import { Edit } from "lucide-react";
+import Image from "next/image";
 import React, { useMemo, useState } from "react";
 
 // UUID validation regex
@@ -124,13 +125,7 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
                 </svg>
               );
             } else {
-              return (
-                <img
-                  src="https://ce7y5ltqq4.ufs.sh/f/0xM5LN2LXfoyrwenV9j9ONlI0GvSLJjXn3h12WwrBpomF7qP"
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                />
-              );
+              return <Image src={profileImage} alt="Profile" width={300} height={300} className="w-full h-full" />;
             }
           })()}
         </div>
@@ -142,6 +137,8 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
           className={`absolute top-0 left-[4.8rem] p-0 rounded-full flex items-center justify-center ${editButtonSizeClasses[size]} ${editButtonClassName}`}
           onClientUploadComplete={async (res) => {
             console.log("Upload successful:", res[0], res[0].serverData.uploadedBy);
+            await addOrChangeProfileImage(res[0].ufsUrl, res[0].serverData.uploadedBy);
+            await fetchUserProfile(res[0].serverData.uploadedBy);
           }}
           onUploadError={(error: Error) => {
             // Handle upload error

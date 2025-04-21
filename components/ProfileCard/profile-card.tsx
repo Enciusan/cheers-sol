@@ -14,6 +14,7 @@ export const ProfileCard = () => {
   const [isInEditMode, setIsInEditMode] = useState<boolean>(false);
 
   const { userData, updateUserData } = useUserStore();
+  console.log(userData);
 
   const handleSubmit = (updatedProfile: Profile) => {
     updateUserData(updatedProfile);

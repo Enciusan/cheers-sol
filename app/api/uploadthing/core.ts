@@ -1,5 +1,5 @@
 import { verifyAuth } from "@/api/serverAuth";
-import { addOrChangeProfileImage } from "@/api/userFunctions";
+import { addOrChangeProfileImage } from "@/api/userFunctions"; // Ensure this import is correct
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
@@ -26,12 +26,10 @@ export const ourFileRouter = {
       return { userId: user.wallet_address };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
+      // // This code RUNS ON YOUR SERVER after upload
 
-      console.log("file url", file.ufsUrl);
-
-      await addOrChangeProfileImage(file.ufsUrl, metadata.userId);
+      const imageUrlToSave = file.ufsUrl;
+      console.log("onUploadComplete: File URL to save:", imageUrlToSave);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
       return { uploadedBy: metadata.userId };

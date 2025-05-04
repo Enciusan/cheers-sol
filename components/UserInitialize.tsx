@@ -1,6 +1,8 @@
 "use client";
+import { addOrUpdateUserCommunities } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
+import { connection, getAssetsByOwner } from "@/utils/function";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 
@@ -14,6 +16,8 @@ export const UserInitializer = () => {
 
   // Handle authentication
   useEffect(() => {
+    console.log("UserInitializer useEffect disconecting value:", disconnecting);
+
     const checkAuth = async () => {
       if (!publicKey) {
         setIsAuthenticated(false);
@@ -58,6 +62,18 @@ export const UserInitializer = () => {
       checkAuth();
     }
   }, [publicKey, disconnecting]);
+
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      if (publicKey && connection) {
+        // const communities = await getUserCommunities(data.walletAddress, connection as Connection);
+        const com2 = await getAssetsByOwner(publicKey.toBase58());
+
+        await addOrUpdateUserCommunities(com2, publicKey?.toBase58());
+      }
+    };
+    fetchCommunities();
+  }, [publicKey, connection]);
 
   // Fetch user profile when authenticated
   useEffect(() => {

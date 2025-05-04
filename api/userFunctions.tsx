@@ -251,3 +251,67 @@ export const addOrChangeProfileImage = async (imageUrl: string, walletAddress: s
     return { success: false, error: "Failed to update profile" };
   }
 };
+
+export const addOrUpdateUserCommunities = async (communities: string[], walletAddress: string) => {
+  const supabase = await createClient();
+
+  try {
+    // Verify authentication
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+
+    const { data: profile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("id, communities")
+      .eq("wallet_address", bufferKey)
+      .single();
+
+    if (fetchError && fetchError.code !== "PGRST116") {
+      console.error("Error fetching profile:", fetchError);
+      return { success: false, error: "Failed to fetch profile" };
+    }
+
+    let updatedCommunities: string[] = [];
+
+    if (!profile) {
+      return { success: false, error: "Profile not found" };
+    }
+
+    if (!profile.communities || profile.communities.length === 0) {
+      updatedCommunities = communities;
+    } else {
+      const currentCommunities = Array.isArray(profile.communities) ? profile.communities : [];
+      updatedCommunities = Array.from(new Set([...currentCommunities, ...communities]));
+    }
+
+    // Only update if there are changes
+    if (
+      !profile.communities ||
+      profile.communities.length !== updatedCommunities.length ||
+      !profile.communities.every((c: string) => updatedCommunities.includes(c))
+    ) {
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update({
+          communities: updatedCommunities,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", profile.id);
+
+      if (updateError) {
+        console.error("Error updating communities:", updateError);
+        return { success: false, error: "Failed to update communities" };
+      }
+    }
+
+    return { success: true, communities: updatedCommunities };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: "Failed to update profile" };
+  }
+};

@@ -103,7 +103,6 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
   if (!isValidUUID && fallback) {
     return <>{fallback}</>;
   }
-  console.log(profileImage);
 
   return (
     <div
@@ -114,10 +113,9 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
         <div className={`${sizeClasses[size]} rounded-full overflow-hidden`}>
           {(() => {
             // Add this log
-            console.log("Rendering check, profileImage:", profileImage);
             if (profileImage === null) {
               return (
-                <svg viewBox="-0.5 0 6 6" className="w-full h-full" style={{ background: "#f1f1f1" }}>
+                <svg viewBox="0 0 5 5" className="w-full h-full" style={{ background: "#f1f1f1" }}>
                   {pattern.map(
                     ({ x, y, fill }, index) =>
                       fill && <rect key={`${x}-${y}-${index}`} x={x} y={y} width="1" height="1" fill={color} />
@@ -125,7 +123,7 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
                 </svg>
               );
             } else {
-              return <Image src={profileImage} alt="Profile" width={300} height={300} className="w-full h-full" />;
+              return <img src={profileImage} alt="Profile" className="w-full h-full" />;
             }
           })()}
         </div>

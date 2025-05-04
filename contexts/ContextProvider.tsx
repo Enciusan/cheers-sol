@@ -4,7 +4,6 @@ import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react
 import { clusterApiUrl } from "@solana/web3.js";
 import { FC, ReactNode, useMemo } from "react";
 import { AutoConnectProvider } from "./AutoConnectProvider";
-// import { notify } from "@/utils/notifications";
 import { NetworkConfigurationProvider, useNetworkConfiguration } from "./NetworkConfigurationProvider";
 import dynamic from "next/dynamic";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";

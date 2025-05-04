@@ -11,6 +11,7 @@ export default withUt({
   theme: {
     extend: {
       colors: {
+        "community-smb": "#184622",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

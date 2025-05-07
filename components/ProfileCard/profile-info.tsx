@@ -93,7 +93,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               return (
                 <div
                   key={index}
-                  style={{ backgroundColor: meta?.badgeColor }}
+                  style={{ backgroundColor: meta?.badgeColor, color: meta?.textColor }}
                   className={`${meta?.badgeColor} px-3 py-1.5 rounded-full text-sm flex font-medium font-mono items-center gap-2 text-white`}>
                   {meta?.name}
                 </div>

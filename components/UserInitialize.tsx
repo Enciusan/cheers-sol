@@ -10,7 +10,7 @@ export const UserInitializer = () => {
   const { publicKey, disconnecting } = useWallet();
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
-  const { profiles, fetchProfiles } = useUsersStore();
+  const { profiles, fetchProfiles, fetchUsersLocation } = useUsersStore();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
 
@@ -82,8 +82,7 @@ export const UserInitializer = () => {
         // console.log("Fetching user profile for:", publicKey.toBase58());
         await fetchUserProfile(publicKey.toBase58());
         await fetchProfiles(publicKey.toBase58());
-        // console.log("Profile fetch completed, userData:", userData ? "exists" : "null");
-        // console.log("Profile fetch completed, userData:", profiles ? "exists" : "null");
+        await fetchUsersLocation(publicKey.toBase58());
         console.log(isAuthenticated);
       }
     };

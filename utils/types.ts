@@ -19,3 +19,24 @@ export interface MatchProfile extends Profile {
   matchId: string;
   otherUserId: string;
 }
+
+export type UserLocation = {
+  walletAddress: string;
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  radius: number;
+  updatedAt: string;
+};
+
+export type LocationType = {
+  latitude: number;
+  longitude: number;
+  accuracy: number;
+  radius: number;
+};
+
+export type GeolocationPoint = {
+  latitude: number;
+  longitude: number;
+};

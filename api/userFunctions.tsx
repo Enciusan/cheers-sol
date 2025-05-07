@@ -4,6 +4,7 @@ import { createClient } from "@/lib/initSupabaseServerClient";
 import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";
+import { LocationType } from "@/utils/types";
 
 export const getUser = async (walletAddress: PublicKey | string) => {
   const supabase = await createClient();
@@ -71,10 +72,38 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
       console.error("Error fetching profile:", error);
       return;
     }
+    console.log(data);
+
     return data;
   } catch (error) {
     console.error("Error fetching profile:", error);
   }
+};
+
+export const getUsersLocation = async (walletAddress: PublicKey | string) => {
+  const supabase = await createClient();
+
+  let result;
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const { data, error } = await supabase.from("user_location").select("*");
+    if (error) {
+      console.error("Error fetching users location:", error);
+      return { success: false, error: "Failed to fetch users location" };
+    }
+    result = { success: true, usersLocation: data };
+  } catch (error: any) {
+    console.error("Error in getUsersLocation:", error);
+    return {
+      success: false,
+      error: error.message || "An error occurred while fetching users location",
+    };
+  }
+  return result;
 };
 
 export const createOrUpdateProfile = async (profileData: {
@@ -310,6 +339,79 @@ export const addOrUpdateUserCommunities = async (communities: string[], walletAd
     }
 
     return { success: true, communities: updatedCommunities };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: "Failed to update profile" };
+  }
+};
+
+export const addOrUpdateUserLocationServer = async (location: LocationType, walletAddress: string) => {
+  const supabase = await createClient();
+
+  try {
+    // Verify authentication
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+
+    const { data: profile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("id, communities")
+      .eq("wallet_address", bufferKey)
+      .single();
+
+    const { data: userLocation, error: fetchErrorUserLocation } = await supabase
+      .from("user_location")
+      .select("id, latitude, longitude, accuracy, radius")
+      .eq("wallet_address", bufferKey)
+      .single();
+
+    if (fetchError && fetchError.code !== "PGRST116") {
+      console.error("Error fetching profile:", fetchError);
+      return { success: false, error: "Failed to fetch profile" };
+    }
+    if (fetchErrorUserLocation && fetchErrorUserLocation.code !== "PGRST116") {
+      console.error("Error fetching location:", fetchError);
+      return { success: false, error: "Failed to fetch location" };
+    }
+
+    if (!profile) {
+      return { success: false, error: "Profile not found" };
+    }
+
+    const updatedLocation: LocationType = {
+      latitude: location.latitude,
+      longitude: location.longitude,
+      accuracy: location.accuracy,
+      radius: location.radius,
+    };
+    if (profile && userLocation?.latitude) {
+      const { error: updateError } = await supabase
+        .from("user_location")
+        .update({
+          latitude: updatedLocation.latitude.toString(),
+          longitude: updatedLocation.longitude.toString(),
+          radius: updatedLocation.radius.toString(),
+          accuracy: updatedLocation.accuracy.toString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq("wallet_address", bufferKey);
+    } else if (profile && !userLocation?.latitude) {
+      const { data: insertLocationData, error: insertError } = await supabase.from("user_location").insert({
+        wallet_address: bufferKey,
+        latitude: updatedLocation.latitude.toString(),
+        longitude: updatedLocation.longitude.toString(),
+        radius: updatedLocation.radius.toString(),
+        accuracy: updatedLocation.accuracy.toString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    return { success: true, location: updatedLocation };
   } catch (error) {
     console.error("Error updating profile:", error);
     return { success: false, error: "Failed to update profile" };

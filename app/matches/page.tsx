@@ -2,23 +2,87 @@
 
 import MatchStack from "@/components/MatchCard/match-stack";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/initSupabaseClient";
 import { useUsersStore, useUserStore } from "@/store/user";
+import { calculateDistance } from "@/utils/function";
+import { Profile } from "@/utils/types";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { PublicKey } from "@solana/web3.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function MatchesPage() {
   // const { publicKey } = useWallet();
   const { userData } = useUserStore();
-  const { profiles } = useUsersStore();
+  const { profiles, usersLocations } = useUsersStore();
+  const [filteredByDistanceProfiles, setFilteredByDistanceProfiles] = useState<Profile[]>([]);
   const router = useRouter();
+  // console.log(usersLocations);
+
+  const filteredProfilesBasedOnDistance = () => {
+    // console.log(userData, profiles, usersLocations);
+
+    if (!userData || !profiles || !usersLocations) {
+      setFilteredByDistanceProfiles([]);
+      return;
+    }
+    // console.log(usersLocations.map((location) => location.walletAddress));
+
+    // Find the current user's location object
+    const myLocation = usersLocations.find((location) => location.walletAddress === userData.walletAddress);
+
+    if (!myLocation) {
+      setFilteredByDistanceProfiles([]);
+      return;
+    }
+    // console.log(
+    //   profiles.map((profile) => profile.walletAddress),
+    //   userData
+    // );
+
+    // Filter other profiles based on distance from your location and your radius
+    const filteredProfiles = profiles.filter((profile) => {
+      // Skip yourself
+      if (profile.walletAddress === userData.walletAddress) {
+        return false;
+      }
+
+      // Find this profile's location
+      const profileLocation = usersLocations.find((location) => location.walletAddress === profile.walletAddress);
+
+      if (!profileLocation) return false;
+
+      // Calculate distance between you and this profile
+      const distance = calculateDistance(
+        { latitude: Number(myLocation.latitude), longitude: Number(myLocation.longitude) },
+        { latitude: Number(profileLocation.latitude), longitude: Number(profileLocation.longitude) }
+      );
+      // console.log(distance);
+
+      // Only include if within your radius
+      if (distance === undefined) {
+        return;
+      }
+      return distance <= myLocation.radius;
+    });
+
+    setFilteredByDistanceProfiles(filteredProfiles);
+  };
+
+  useEffect(() => {
+    // if (userData && profiles && usersLocations) {
+    filteredProfilesBasedOnDistance();
+    // }
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
       <h1 className="text-3xl font-bold mb-8 text-[#7C3AED]">Find Your Match</h1>
       <div className="w-full max-w-sm">
         {userData !== null ? (
-          <MatchStack profiles={profiles || []} currentUserId={userData.id} />
+          <MatchStack profiles={filteredByDistanceProfiles || []} currentUserId={userData.id} />
         ) : (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             <div className="relative h-[550px] w-full max-w-sm mx-auto mb-4">

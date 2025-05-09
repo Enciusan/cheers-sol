@@ -1,4 +1,5 @@
 "use client";
+import logo from "@/assets/logoNoPadding.png";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -9,8 +10,9 @@ import {
 import { useUserStore } from "@/store/user";
 import { useWallet } from "@solana/wallet-adapter-react";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import { Award, GlassWater, MessageSquare, Settings, User, Users } from "lucide-react";
+import { Award, MessageSquare, Settings, User, Users } from "lucide-react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -53,8 +55,8 @@ export const Navbar = () => {
         <div
           className="hidden md:flex items-center space-x-2 text-violet-500 cursor-pointer"
           onClick={() => router.push("/")}>
-          <GlassWater className="h-6 w-6" />
-          <span className="text-xl font-bold">Cheers</span>
+          <Image src={logo} alt="logo" width={20} height={20} />
+          <span className="text-xl font-bold pt-1">CheersUp</span>
         </div>
 
         {/* Navigation Menu */}
@@ -114,7 +116,7 @@ export const Navbar = () => {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
+                <NavigationMenuItem onClick={() => router.push("/settings")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
                       pathname === "/settings" ? "text-violet-500" : "text-violet-100"

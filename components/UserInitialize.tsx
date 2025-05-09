@@ -1,6 +1,9 @@
 "use client";
+import { addOrUpdateUserCommunities } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
+import { connection } from "@/utils/clientFunctions";
+import { getAssetsByOwner } from "@/utils/serverFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 
@@ -8,12 +11,14 @@ export const UserInitializer = () => {
   const { publicKey, disconnecting } = useWallet();
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
-  const { profiles, fetchProfiles } = useUsersStore();
+  const { profiles, fetchProfiles, fetchUsersLocation } = useUsersStore();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
 
   // Handle authentication
   useEffect(() => {
+    console.log("UserInitializer useEffect disconecting value:", disconnecting);
+
     const checkAuth = async () => {
       if (!publicKey) {
         setIsAuthenticated(false);
@@ -59,6 +64,18 @@ export const UserInitializer = () => {
     }
   }, [publicKey, disconnecting]);
 
+  useEffect(() => {
+    const fetchCommunities = async () => {
+      if (publicKey && connection) {
+        // const communities = await getUserCommunities(data.walletAddress, connection as Connection);
+        const com2 = await getAssetsByOwner(publicKey.toBase58());
+
+        await addOrUpdateUserCommunities(com2, publicKey?.toBase58());
+      }
+    };
+    fetchCommunities();
+  }, [publicKey, connection]);
+
   // Fetch user profile when authenticated
   useEffect(() => {
     const loadUserProfile = async () => {
@@ -66,8 +83,7 @@ export const UserInitializer = () => {
         // console.log("Fetching user profile for:", publicKey.toBase58());
         await fetchUserProfile(publicKey.toBase58());
         await fetchProfiles(publicKey.toBase58());
-        // console.log("Profile fetch completed, userData:", userData ? "exists" : "null");
-        // console.log("Profile fetch completed, userData:", profiles ? "exists" : "null");
+        await fetchUsersLocation(publicKey.toBase58());
         console.log(isAuthenticated);
       }
     };

@@ -12,7 +12,7 @@ interface MatchStackProps {
 
 export default function MatchStack({ profiles, currentUserId }: MatchStackProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  console.log("profiles", profiles);
+  // console.log("profiles", profiles);
 
   const handleSwipe = async (profileId: string, direction: "left" | "right") => {
     const action = direction === "right" ? "like" : "dislike";

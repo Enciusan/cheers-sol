@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Beer, Wine, Martini, Coffee } from "lucide-react";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { Profile } from "@/utils/types";
+import { COMMUNITIES } from "@/utils/communities";
 
 interface MatchCardProps {
   matchingProfiles: Profile;
@@ -80,8 +81,18 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
         className="touch-none">
         <div className="bg-[#18181B] bg-opacity-90 rounded-xl overflow-hidden shadow-lg max-w-sm w-full backdrop-blur-xl">
           <div className="relative h-80">
-            <Image src={"/placeholder.svg"} alt={matchingProfiles.username} layout="fill" objectFit="cover" />
-            {/* Swipe indicators */}
+            <Image
+              src={
+                matchingProfiles.profileImage !== null ? matchingProfiles.profileImage : "/assets/images/profile.png"
+              }
+              alt={matchingProfiles.username}
+              layout="fill"
+              className="object-cover"
+            />
+
+            <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none z-10" />
+
+            {/* swipe  animation */}
             <motion.div
               style={{ opacity: useTransform(x, [-100, 0], [1, 0]) }}
               className="absolute left-4 top-4 bg-red-500 text-white px-6 py-2 rounded-lg transform -rotate-12">
@@ -98,8 +109,8 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
               {matchingProfiles.username}, {matchingProfiles.age}
             </h2>
             <p className="text-gray-400 mb-4">{matchingProfiles.bio}</p>
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col justify-between items-start h-[7rem] pb-4">
+              <div className="flex flex-wrap gap-2 line-clamp-1">
                 {matchingProfiles.drinks.map((drink, index) => (
                   <span
                     key={index}
@@ -109,7 +120,27 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
                   </span>
                 ))}
               </div>
-              {/* <span className="text-gray-400 text-sm">{distance} km away</span> */}
+              {/* Communities Card Overlay */}
+              {matchingProfiles.communities && matchingProfiles.communities.length > 0 && (
+                <div className="absolute bottom-4 left-0 w-full px-4 z-20 flex justify-start ">
+                  <div
+                    className="bg-[#18181B] rounded-lg p-2 max-w-full overflow-x-auto flex gap-2 scrollbar-thin scrollbar-thumb-violet-700 scrollbar-track-transparent"
+                    style={{ WebkitOverflowScrolling: "touch" }}>
+                    {matchingProfiles.communities.map((community, index) => {
+                      const meta = COMMUNITIES.find((c) => c.mint === community);
+                      return (
+                        <div
+                          key={index}
+                          style={{ backgroundColor: meta?.badgeColor, color: meta?.textColor }}
+                          className="px-3 py-1.5 rounded-full text-sm flex font-medium font-mono items-center gap-2 text-white whitespace-nowrap">
+                          {meta?.name || community}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+              {/* End Communities Card Overlay */}
             </div>
           </div>
         </div>

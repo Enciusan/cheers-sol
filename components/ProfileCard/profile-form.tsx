@@ -22,6 +22,7 @@ const validationSchema = z.object({
   bio: z.string().min(10, "Bio must be at least 10 characters"),
   age: z.number().min(18, "Must be at least 18 years old").max(100, "Must be under 100 years old"),
   drinks: z.array(z.string()).min(1, "Select at least one drink preference"),
+  communities: z.array(z.string()).optional(),
 });
 
 export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
@@ -48,6 +49,7 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
       bio: data?.bio || "",
       age: data?.age || 0,
       drinks: data?.drinks || [],
+      communities: data?.communities || [],
     },
     resolver: zodResolver(validationSchema),
   });
@@ -74,6 +76,7 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
         bio: formData.bio,
         age: formData.age,
         drinks: formData.drinks,
+        communities: formData.communities,
       });
 
       if (!result.success) {
@@ -148,13 +151,26 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
         </Label>
         <MultiSelect
           options={drinkOptions}
-          placeholder="Select your preferred drinks"
+          placeholder={"Select your preferred drinks"}
           onValueChange={(values) => setValue("drinks", values)}
           defaultValue={data?.drinks ?? []}
           className="mt-1"
         />
         {errors.drinks && <p className="text-sm text-red-500 mt-1">{errors.drinks.message}</p>}
       </div>
+      {/* <div className="w-full">
+        <Label htmlFor="drinks" className="pl-1.5">
+          Communities
+        </Label>
+        <MultiSelect
+          options={drinkOptions}
+          placeholder={"Select your preferred drinks"}
+          onValueChange={(values) => setValue("drinks", values)}
+          defaultValue={data?.drinks ?? []}
+          className="mt-1"
+        />
+        {errors.drinks && <p className="text-sm text-red-500 mt-1">{errors.drinks.message}</p>}
+      </div> */}
 
       <Button className="w-full mt-2" type="submit">
         {isLoading ? "Creating Profile..." : "Complete Profile"}

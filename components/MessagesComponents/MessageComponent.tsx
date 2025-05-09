@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ChatArea } from "./ChatArea";
 import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
 
 export default function MessageComponent() {
   const { publicKey, disconnecting } = useWallet();
@@ -110,6 +111,7 @@ export default function MessageComponent() {
 
     return words.length > 4 ? `${preview}...` : preview;
   };
+  console.log(matches);
 
   return (
     <div className="flex h-[75dvh] w-[95dvw] md:w-3/4 bg-[#18181B] rounded-lg">
@@ -128,12 +130,14 @@ export default function MessageComponent() {
               }`}
               onClick={() => setSelectedMatch(match)}>
               <div className="relative w-12 h-12">
-                {/* <Image
-                  src={match.avatar_url || "/default-avatar.png"}
-                  alt={match.username || "User"}
-                  fill
-                  className="rounded-full object-cover"
-                /> */}
+                {match.profileImage && (
+                  <Image
+                    src={match.profileImage || "/default-avatar.png"}
+                    alt={match.username || "User"}
+                    fill
+                    className="rounded-full object-cover"
+                  />
+                )}
                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#18181B]" />
               </div>
               <div className="ml-4 flex-1">

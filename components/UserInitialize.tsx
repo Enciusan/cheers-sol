@@ -2,7 +2,8 @@
 import { addOrUpdateUserCommunities } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
-import { connection, getAssetsByOwner } from "@/utils/function";
+import { connection } from "@/utils/clientFunctions";
+import { getAssetsByOwner } from "@/utils/serverFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 

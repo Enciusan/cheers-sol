@@ -2,12 +2,9 @@
 
 import MatchStack from "@/components/MatchCard/match-stack";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/lib/initSupabaseClient";
 import { useUsersStore, useUserStore } from "@/store/user";
-import { calculateDistance } from "@/utils/function";
+import { calculateDistance } from "@/utils/clientFunctions";
 import { Profile } from "@/utils/types";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey } from "@solana/web3.js";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -30,7 +27,6 @@ export default function MatchesPage() {
     }
     // console.log(usersLocations.map((location) => location.walletAddress));
 
-    // Find the current user's location object
     const myLocation = usersLocations.find((location) => location.walletAddress === userData.walletAddress);
 
     if (!myLocation) {
@@ -42,40 +38,35 @@ export default function MatchesPage() {
     //   userData
     // );
 
-    // Filter other profiles based on distance from your location and your radius
     const filteredProfiles = profiles.filter((profile) => {
-      // Skip yourself
       if (profile.walletAddress === userData.walletAddress) {
         return false;
       }
 
-      // Find this profile's location
       const profileLocation = usersLocations.find((location) => location.walletAddress === profile.walletAddress);
 
       if (!profileLocation) return false;
 
-      // Calculate distance between you and this profile
       const distance = calculateDistance(
         { latitude: Number(myLocation.latitude), longitude: Number(myLocation.longitude) },
         { latitude: Number(profileLocation.latitude), longitude: Number(profileLocation.longitude) }
       );
-      // console.log(distance);
+      console.log(distance);
 
-      // Only include if within your radius
       if (distance === undefined) {
         return;
       }
-      return distance <= myLocation.radius;
+      return myLocation.radius === 0 ? true : distance <= myLocation.radius;
     });
 
     setFilteredByDistanceProfiles(filteredProfiles);
   };
 
   useEffect(() => {
-    // if (userData && profiles && usersLocations) {
     filteredProfilesBasedOnDistance();
-    // }
-  }, []);
+  }, [userData, profiles, usersLocations]);
+
+  console.log(filteredByDistanceProfiles);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">

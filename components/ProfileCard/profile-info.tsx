@@ -1,5 +1,6 @@
+import { connection } from "@/utils/clientFunctions";
 import { COMMUNITIES } from "@/utils/communities";
-import { connection, getAssetsByOwner } from "@/utils/function";
+import { getAssetsByOwner } from "@/utils/serverFunctions";
 import { Profile } from "@/utils/types";
 import { Beer, Coffee, Martini, Coffee as Tea, Wine } from "lucide-react";
 import { useEffect, useState } from "react";

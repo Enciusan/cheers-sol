@@ -417,3 +417,28 @@ export const addOrUpdateUserLocationServer = async (location: LocationType, wall
     return { success: false, error: "Failed to update profile" };
   }
 };
+
+export const updateUserDistances = async (walletAddress: string, radius: number) => {
+  const supabase = await createClient();
+  try {
+    // Verify authentication
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    const { error: errorUpdatingUserDinstance } = await supabase
+      .from("user_location")
+      .update({
+        radius: radius,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("wallet_address", bufferKey);
+    if (errorUpdatingUserDinstance) {
+      console.error("Error updating user distance:", errorUpdatingUserDinstance);
+    }
+  } catch (error) {
+    console.error("Error updating profile:", error);
+  }
+};

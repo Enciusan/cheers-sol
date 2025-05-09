@@ -116,7 +116,7 @@ export const Navbar = () => {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem>
+                <NavigationMenuItem onClick={() => router.push("/settings")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
                       pathname === "/settings" ? "text-violet-500" : "text-violet-100"

@@ -34,7 +34,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
       if (data?.walletAddress && connection) {
         // const communities = await getUserCommunities(data.walletAddress, connection as Connection);
         const com2 = await getAssetsByOwner(data.walletAddress);
-        console.log(com2);
+        // console.log(com2);
 
         setUserCommunities(com2);
       }

@@ -64,6 +64,7 @@ export const useAuth = () => {
 
   const logout = useCallback(async () => {
     try {
+      console.log("Signing out...");
       return await signOut();
     } catch (error) {
       console.error("Sign out error:", error);

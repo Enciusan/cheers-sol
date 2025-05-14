@@ -1,4 +1,6 @@
-<center> <img src="assets/favicon-noPadding-200HW.png" alt="logo"/></center>
+<p align="center">
+<img src="assets/favicon-noPadding-200HW.png" alt="logo"/>
+</p>
 <br/>
 <br/>
 **Match. Drink. Belong.** - Redefining human interaction based on on-chain activity

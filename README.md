@@ -1,4 +1,4 @@
-![CheersUp Logo](https://github.com/Enciusan/cheers-sol/blob/main/assets/favicon.png)
+![CheersUp Logo](https://github.com/Enciusan/cheers-sol/blob/main/assets/favicon-noPadding.png)
 **Match. Drink. Belong.** - Redefining human interaction based on on-chain activity
 
 ## 🚀 About CheersUp

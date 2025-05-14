@@ -3,7 +3,8 @@
 </p>
 <br/>
 <br/>
-**Match. Drink. Belong.** - Redefining human interaction based on on-chain activity
+
+**Match. Drink. Belong**. - Redefining human interaction based on on-chain activity
 
 ## 🚀 About CheersUp
 

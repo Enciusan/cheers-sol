@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![CheersUp Logo](https://github.com/Enciusan/cheers-sol/blob/main/assets/favicon.png)
+> **Match. Drink. Belong.** - Redefining human interaction based on on-chain activity
 
-## Getting Started
 
-First, run the development server:
+## 🚀 About CheersUp
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+CheersUp is the first social matching platform that leverages on-chain identity to create authentic connections. We combine blockchain technology with social discovery to help Web3 users connect over shared communities and favorite drinks.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Traditional matching apps struggle to build real trust or meaningful connections due to:
+- **No social proof** - profiles are self-declared, unverifiable, and often fake
+- **Lack of shared context** - no way to know someone's interests or communities
+- **Zero on-chain identity** - they ignore what defines Web3 users: tokens, DAOs, and culture
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+CheersUp solves these problems by creating a platform where your on-chain identity becomes your social proof.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Features
 
-## Learn More
+- **On-Chain Identity Tags**: Automatically earn exclusive tags from your Solana wallet based on your NFTs, tokens, and DAO memberships. Let your blockchain profile speak for you.
+- **Drink-Based Preferences**: Select your favorite beverages (coffee, tea, whiskey, matcha, etc.) to find people who share your taste — literally.
+- **Community-Centric Matching**: We go beyond surface-level filters. CheersUp matches people through shared interests, on-chain affiliations, and beverage vibes.
+- **Built-In Chat**: Once matched, users can chat and connect instantly — it’s always Cheers Time.
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠️ How It Works
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Connect Wallet**: Link your Solana wallet securely
+2. **Get Tags**: Automatically earn tags based on the NFTs and tokens in your wallet
+3. **Pick Drinks**: Select your favorite beverages
+4. **Match & Connect**: It's Cheers Time!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 💻 Tech Stack
 
-## Deploy on Vercel
+- **Solana Blockchain**: Fast, cheap transactions power our platform
+- **Wallet Integration**: Secure Solana wallet connection
+- **Tags System**: Using metadata and soulbound tokens
+- **Matching Algorithm**: Combines on-chain data with personal preferences
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎯 Why CheersUp?
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Authenticity First**: Real, verifiable on-chain identities. No fake profiles.
+- **Niche Matching••: Curated matches based on drinks and DAOs — not just looks.
+- **Web3 Culture**: Perfect for degen traders, PFP collectors, DAO contributors, and curious crypto folks alike.
+
+## 📞 Contact
+
+- Website: TBA
+- Twitter: [@CheersUp](https://x.com/cheersupSOL)
+
+---
+
+CheersUp: Empowering Human Connection. Our mission is to use technology to foster genuine relationships, not replace them. CheersUp is more than an app - it's a movement dedicated to bringing people together.

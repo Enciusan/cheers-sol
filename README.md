@@ -1,12 +1,12 @@
 ![CheersUp Logo](https://github.com/Enciusan/cheers-sol/blob/main/assets/favicon.png)
-> **Match. Drink. Belong.** - Redefining human interaction based on on-chain activity
-
+**Match. Drink. Belong.** - Redefining human interaction based on on-chain activity
 
 ## 🚀 About CheersUp
 
 CheersUp is the first social matching platform that leverages on-chain identity to create authentic connections. We combine blockchain technology with social discovery to help Web3 users connect over shared communities and favorite drinks.
 
 Traditional matching apps struggle to build real trust or meaningful connections due to:
+
 - **No social proof** - profiles are self-declared, unverifiable, and often fake
 - **Lack of shared context** - no way to know someone's interests or communities
 - **Zero on-chain identity** - they ignore what defines Web3 users: tokens, DAOs, and culture
@@ -37,7 +37,7 @@ CheersUp solves these problems by creating a platform where your on-chain identi
 ## 🎯 Why CheersUp?
 
 - **Authenticity First**: Real, verifiable on-chain identities. No fake profiles.
-- **Niche Matching••: Curated matches based on drinks and DAOs — not just looks.
+- \*\*Niche Matching••: Curated matches based on drinks and DAOs — not just looks.
 - **Web3 Culture**: Perfect for degen traders, PFP collectors, DAO contributors, and curious crypto folks alike.
 
 ## 📞 Contact

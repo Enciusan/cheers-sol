@@ -121,7 +121,7 @@ export default function MessageComponent() {
           <h1 className="text-xl font-semibold text-indigo-500">Matches</h1>
         </div>
 
-        <div className="overflow-y-auto h-[80dvh]">
+        <div className="overflow-y-auto h-[65dvh]">
           {matches.map((match) => (
             <div
               key={match.id}

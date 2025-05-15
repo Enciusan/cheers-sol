@@ -8,7 +8,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useState } from "react";
 
 export const UserInitializer = () => {
-  const { publicKey, disconnecting } = useWallet();
+  const { publicKey, disconnecting, disconnect } = useWallet();
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
   const { profiles, fetchProfiles, fetchUsersLocation } = useUsersStore();
@@ -28,6 +28,7 @@ export const UserInitializer = () => {
 
       try {
         const authResult = await verifyAuthentication();
+        console.log("Auth result:", authResult);
 
         if (authResult && authResult.wallet_address === publicKey.toString()) {
           console.log("User is authenticated");
@@ -55,6 +56,7 @@ export const UserInitializer = () => {
     };
 
     if (disconnecting) {
+      disconnect();
       logout();
       setIsAuthenticated(false);
       setAuthAttempted(false);
@@ -84,7 +86,7 @@ export const UserInitializer = () => {
         await fetchUserProfile(publicKey.toBase58());
         await fetchProfiles(publicKey.toBase58());
         await fetchUsersLocation(publicKey.toBase58());
-        console.log(isAuthenticated);
+        // console.log(isAuthenticated);
       }
     };
 

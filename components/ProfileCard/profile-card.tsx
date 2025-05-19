@@ -6,31 +6,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useUserStore } from "@/store/user";
 import { Profile } from "@/utils/types";
 import { ChevronLeft, Pencil, UserCheck } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { ProfileInfo } from "./profile-info";
-import { addOrUpdateUserLocationServer } from "@/api/userFunctions";
-import { useWallet } from "@solana/wallet-adapter-react";
 
 export const ProfileCard = () => {
   const [isInEditMode, setIsInEditMode] = useState<boolean>(false);
 
   const { userData, updateUserData } = useUserStore();
-  const { publicKey } = useWallet();
-
-  useEffect(() => {
-    if (!userData) return;
-    const addOrUpdateUserLocation = () => {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude, accuracy } = position.coords;
-        const radius = 5000;
-        if (publicKey) {
-          await addOrUpdateUserLocationServer({ latitude, longitude, accuracy, radius }, publicKey?.toBase58());
-        }
-      });
-    };
-    addOrUpdateUserLocation();
-  }, []);
 
   const handleSubmit = (updatedProfile: Profile) => {
     updateUserData(updatedProfile);

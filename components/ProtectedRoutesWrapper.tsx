@@ -1,17 +1,23 @@
 "use client";
-import { addOrUpdateUserCommunities } from "@/api/userFunctions";
+import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
 import { connection } from "@/utils/clientFunctions";
 import { getAssetsByOwner } from "@/utils/serverFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { ReactNode, useEffect, useState } from "react";
 
-export const UserInitializer = () => {
-  const { publicKey, disconnecting, disconnect } = useWallet();
+const PUBLIC_ROUTES = ["/"];
+
+export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
+  const { publicKey, disconnecting, disconnect, connected } = useWallet();
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
   const { profiles, fetchProfiles, fetchUsersLocation } = useUsersStore();
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
 
@@ -69,7 +75,6 @@ export const UserInitializer = () => {
   useEffect(() => {
     const fetchCommunities = async () => {
       if (publicKey && connection) {
-        // const communities = await getUserCommunities(data.walletAddress, connection as Connection);
         const com2 = await getAssetsByOwner(publicKey.toBase58());
 
         await addOrUpdateUserCommunities(com2, publicKey?.toBase58());
@@ -82,11 +87,9 @@ export const UserInitializer = () => {
   useEffect(() => {
     const loadUserProfile = async () => {
       if (isAuthenticated && publicKey) {
-        // console.log("Fetching user profile for:", publicKey.toBase58());
         await fetchUserProfile(publicKey.toBase58());
         await fetchProfiles(publicKey.toBase58());
         await fetchUsersLocation(publicKey.toBase58());
-        // console.log(isAuthenticated);
       }
     };
 
@@ -95,5 +98,46 @@ export const UserInitializer = () => {
     }
   }, [isAuthenticated, publicKey, authAttempted]);
 
-  return null;
+  useEffect(() => {
+    if (authAttempted) {
+      if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+        router.replace("/");
+      }
+    }
+  }, [isAuthenticated, authAttempted, pathname]);
+
+  useEffect(() => {
+    if (connected && userData === null && pathname !== "/profile") {
+      router.push("/profile");
+      return;
+    }
+
+    if (connected && userData !== null && pathname === "/") {
+      router.push("/matches");
+      return;
+    }
+  }, [isAuthenticated, userData, pathname]);
+
+  useEffect(() => {
+    const addOrUpdateUserLocation = () => {
+      if (publicKey && userData) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude, accuracy } = position.coords;
+            const radius = 5000;
+            await addOrUpdateUserLocationServer({ latitude, longitude, accuracy, radius }, publicKey.toBase58());
+          },
+          (error) => {
+            console.error("Error getting user location:", error);
+          }
+        );
+      }
+    };
+
+    if (isAuthenticated && userData) {
+      addOrUpdateUserLocation();
+    }
+  }, [isAuthenticated, userData, publicKey]);
+
+  return <>{children}</>;
 };

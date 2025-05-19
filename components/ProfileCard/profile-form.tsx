@@ -50,6 +50,7 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
       age: data?.age || 0,
       drinks: data?.drinks || [],
       communities: data?.communities || [],
+      profileImage: data?.profileImage,
     },
     resolver: zodResolver(validationSchema),
   });
@@ -89,6 +90,7 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
       updateUserData({
         ...formData,
         id: result.id || formData.id || "",
+        profileImage: data?.profileImage ?? "",
       });
 
       // Refresh the profile data from the server
@@ -96,7 +98,7 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
 
       // Call onSubmit callback if provided
       if (onSubmit) {
-        onSubmit(formData);
+        onSubmit({ ...formData, profileImage: data?.profileImage ?? "" });
       }
     } catch (error) {
       console.error("Error creating profile:", error);
@@ -158,19 +160,6 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
         />
         {errors.drinks && <p className="text-sm text-red-500 mt-1">{errors.drinks.message}</p>}
       </div>
-      {/* <div className="w-full">
-        <Label htmlFor="drinks" className="pl-1.5">
-          Communities
-        </Label>
-        <MultiSelect
-          options={drinkOptions}
-          placeholder={"Select your preferred drinks"}
-          onValueChange={(values) => setValue("drinks", values)}
-          defaultValue={data?.drinks ?? []}
-          className="mt-1"
-        />
-        {errors.drinks && <p className="text-sm text-red-500 mt-1">{errors.drinks.message}</p>}
-      </div> */}
 
       <Button className="w-full mt-2" type="submit">
         {isLoading ? "Creating Profile..." : "Complete Profile"}

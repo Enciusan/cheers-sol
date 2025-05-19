@@ -33,19 +33,6 @@ export const Navbar = () => {
       router.push("/");
       return;
     }
-
-    const timer = setTimeout(() => {
-      if (connected && userData === null && pathname !== "/profile") {
-        router.push("/profile");
-        return;
-      }
-
-      if (connected && userData !== null && pathname === "/") {
-        router.push("/matches");
-        return;
-      }
-    }, 1000);
-    return () => clearTimeout(timer);
   }, [connected, userData, publicKey]);
 
   return (

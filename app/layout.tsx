@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { ContextProvider } from "@/contexts/ContextProvider";
-import { UserInitializer } from "@/components/UserInitialize";
+import { ProtectedRoutesWrapper } from "@/components/ProtectedRoutesWrapper";
 
 export const metadata: Metadata = {
   title: "CheersUp",
@@ -18,9 +18,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={`antialiased`}>
         <ContextProvider>
-          <UserInitializer />
-          <Navbar />
-          {children}
+          <ProtectedRoutesWrapper>
+            <Navbar />
+            {children}
+          </ProtectedRoutesWrapper>
         </ContextProvider>
       </body>
     </html>

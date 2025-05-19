@@ -4,6 +4,7 @@ import { getAssetsByOwner } from "@/utils/serverFunctions";
 import { Profile } from "@/utils/types";
 import { Beer, Coffee, Martini, Coffee as Tea, Wine } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
 
 interface ProfileInfoProps {
   data: Profile | null;
@@ -54,6 +55,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               data?.walletAddress.substring(data?.walletAddress.length - 10, data?.walletAddress.length)}
         </p>
       </div>
+      <Button className="w-full bg-[#18181B] text-white">Set location</Button>
       <div className="bg-[#18181B] rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-200">Profile Details</h4>

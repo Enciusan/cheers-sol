@@ -51,7 +51,7 @@ export default function MatchesPage() {
         { latitude: Number(myLocation.latitude), longitude: Number(myLocation.longitude) },
         { latitude: Number(profileLocation.latitude), longitude: Number(profileLocation.longitude) }
       );
-      console.log(distance);
+      // console.log(distance);
 
       if (distance === undefined) {
         return;
@@ -66,7 +66,7 @@ export default function MatchesPage() {
     filteredProfilesBasedOnDistance();
   }, [userData, profiles, usersLocations]);
 
-  console.log(filteredByDistanceProfiles);
+  // console.log(filteredByDistanceProfiles);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">

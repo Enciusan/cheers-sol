@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { MatchProfile, Profile } from "@/utils/types";
 import { supabase } from "@/lib/initSupabaseClient";
 import { fetchMessages, sendMessage } from "@/api/messageFunctions";
-// import { supabase } from "@/lib/initSupabaseClient";
 
 interface ChatAreaProps {
   match: MatchProfile;

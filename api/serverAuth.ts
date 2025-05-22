@@ -55,7 +55,8 @@ export async function authenticate(message: string, signature: string, publicKey
 
     if (!cachedNonce || cachedNonce.expiry < Date.now()) {
       nonceCache.delete(`AUTH.nonce.${publicKey}`);
-      throw new Error("Authentication expired or invalid");
+      // More descriptive error message
+      throw new Error("Authentication session expired. Please try connecting your wallet again.");
     }
 
     const nonce = cachedNonce.value;

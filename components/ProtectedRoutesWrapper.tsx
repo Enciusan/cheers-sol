@@ -11,10 +11,10 @@ import { ReactNode, useEffect, useState } from "react";
 const PUBLIC_ROUTES = ["/"];
 
 export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
-  const { publicKey, disconnecting, disconnect, connected } = useWallet();
+  const { publicKey, disconnecting, disconnect } = useWallet();
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
-  const { profiles, fetchProfiles, fetchUsersLocation } = useUsersStore();
+  const { fetchProfiles, fetchUsersLocation } = useUsersStore();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -83,7 +83,6 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     fetchCommunities();
   }, [publicKey, connection]);
 
-  // Fetch user profile when authenticated
   useEffect(() => {
     const loadUserProfile = async () => {
       if (isAuthenticated && publicKey) {
@@ -100,23 +99,25 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
 
   useEffect(() => {
     if (authAttempted) {
+      // If not authenticated and not on a public route, redirect to landing page
       if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
         router.replace("/");
+        return;
+      }
+
+      // If authenticated but no user data and not on the profile page, redirect to profile
+      if (isAuthenticated && userData === null && pathname !== "/profile") {
+        router.replace("/profile");
+        return;
+      }
+
+      // If authenticated, has user data, and is on the landing page, redirect to matches
+      if (isAuthenticated && userData !== null && pathname === "/") {
+        router.replace("/matches");
+        return;
       }
     }
-  }, [isAuthenticated, authAttempted, pathname]);
-
-  useEffect(() => {
-    if (connected && userData === null && pathname !== "/profile") {
-      router.push("/profile");
-      return;
-    }
-
-    if (connected && userData !== null && pathname === "/") {
-      router.push("/matches");
-      return;
-    }
-  }, [isAuthenticated, userData, pathname]);
+  }, [isAuthenticated, authAttempted, userData, pathname, router]);
 
   useEffect(() => {
     const addOrUpdateUserLocation = () => {

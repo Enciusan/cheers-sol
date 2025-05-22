@@ -34,6 +34,9 @@ export const Navbar = () => {
       return;
     }
   }, [connected, userData, publicKey]);
+  if (pathname === "/") {
+    return null;
+  }
 
   return (
     <nav className="fixed md:top-0 bottom-0 md:bottom-auto w-full border-t md:border-t-0 md:border-b border-violet-900/20 bg-[#09090B]/95 backdrop-blur supports-[backdrop-filter]:bg-[#09090B]/60 z-50 md:pb-0 safe-area-pb">

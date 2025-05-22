@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Beer, GlassWater, Martini, MessageSquare, Users, Wine } from "lucide-react";
 import dynamic from "next/dynamic";
+import xLogo from "@/assets/twitter.svg";
 
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -32,10 +33,11 @@ export default function LandingPage() {
               Connect wallet
             </WalletMultiButtonDynamic>
             <Button
-              size="sm"
-              variant="outline"
-              className="border-violet-500/50 text-violet-400 hover:bg-violet-500/10 min-w-[200px]">
-              Learn More
+              className="font-semibold w-[11rem]"
+              size={"sm"}
+              onClick={() => window.open("https://x.com/cheersupSOL", "_blank")}>
+              Follow us
+              <img src={xLogo.src} alt="Twitter Logo" className="h-5 w-5 " />
             </Button>
           </div>
         </div>
@@ -60,7 +62,9 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-4 text-white">Smart Drink Matching</h3>
                 <p className="text-gray-400">
-                  Find your perfect match based on drink preferences, from craft beer enthusiasts to wine connoisseurs.
+                  Connect with your community through personalized drink recommendations based on your NFT collections,
+                  token holdings, and beverage preferences. Find like-minded drinkers who share your digital assets and
+                  taste profile.
                 </p>
               </div>
             </Card>
@@ -72,7 +76,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-4 text-white">Instant Connections</h3>
                 <p className="text-gray-400">
-                  Chat instantly with your matches and plan your next social gathering at your favorite spots.
+                  Seamlessly chat with your matches and coordinate meetups at your preferred venues. Skip the small talk
+                  and dive straight into planning your next social experience.
                 </p>
               </div>
             </Card>
@@ -84,7 +89,8 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-semibold mb-4 text-white">Local Discovery</h3>
                 <p className="text-gray-400">
-                  Discover drinking buddies nearby and explore the best local bars and pubs together.
+                  Find nearby drinking companions and explore the best local bars and pubs in your area. Discover new
+                  venues and connect with people who are just around the corner, ready to share a drink.
                 </p>
               </div>
             </Card>

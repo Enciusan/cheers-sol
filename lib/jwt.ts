@@ -5,15 +5,12 @@ import * as jose from "jose";
 
 // JWT secret should be stored in environment variables
 const sessionKey = new TextEncoder().encode(process.env.JWT_SECRET) || "";
-const JWT_EXPIRY = "7d"; // Token expires in 7 days
 
 export type JWTPayload = {
-  wallet: string; // wallet address
+  wallet: string;
 };
 
-/**
- * Verify a Solana message signature
- */
+/*** Verify a Solana message signature*/
 export function verifySignature(message: string, signature: Uint8Array, publicKey: PublicKey): boolean {
   try {
     const messageBytes = new TextEncoder().encode(message);
@@ -28,12 +25,10 @@ export function verifySignature(message: string, signature: Uint8Array, publicKe
  * Generate a JWT token for an authenticated user
  */
 export async function generateToken(payload: JWTPayload, expires: string | number | Date = "7d"): Promise<string> {
-  // Cast the payload to jose.JWTPayload to satisfy the type requirement
-  // jose.JWTPayload requires an index signature for string keys
   return new jose.SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime(JWT_EXPIRY)
+    .setExpirationTime(expires)
     .sign(sessionKey);
 }
 

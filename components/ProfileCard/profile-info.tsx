@@ -5,6 +5,9 @@ import { Profile } from "@/utils/types";
 import { Beer, Coffee, Martini, Coffee as Tea, Wine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { addOrUpdateUserLocationServer } from "@/api/userFunctions";
+import { toast } from "sonner";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 interface ProfileInfoProps {
   data: Profile | null;
@@ -28,6 +31,7 @@ const DrinkIcon = ({ drink }: { drink: string }) => {
 };
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
+  const { publicKey } = useWallet();
   const [userCommunities, setUserCommunities] = useState<string[]>([]);
 
   useEffect(() => {
@@ -55,7 +59,26 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               data?.walletAddress.substring(data?.walletAddress.length - 10, data?.walletAddress.length)}
         </p>
       </div>
-      <Button className="w-full bg-[#18181B] text-white">Set location</Button>
+      <Button
+        className="w-full bg-[#18181B] text-white"
+        onClick={() => {
+          if (publicKey) {
+            navigator.geolocation.getCurrentPosition(
+              async (position) => {
+                const { latitude, longitude, accuracy } = position.coords;
+                const radius = 5000;
+                await addOrUpdateUserLocationServer({ latitude, longitude, accuracy, radius }, publicKey.toBase58());
+                toast("Location updated");
+              },
+              (error) => {
+                console.error("Error getting user location:", error);
+                toast("Location update error");
+              }
+            );
+          }
+        }}>
+        Set location
+      </Button>
       <div className="bg-[#18181B] rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-200">Profile Details</h4>

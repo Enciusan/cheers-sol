@@ -3,6 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { ContextProvider } from "@/contexts/ContextProvider";
 import { ProtectedRoutesWrapper } from "@/components/ProtectedRoutesWrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "CheersUp",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <ContextProvider>
           <ProtectedRoutesWrapper>
+            <Toaster />
             <Navbar />
             {children}
           </ProtectedRoutesWrapper>

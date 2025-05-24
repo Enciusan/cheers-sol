@@ -73,7 +73,7 @@ export default function MatchesPage() {
       <h1 className="text-3xl font-bold mb-8 text-[#7C3AED]">Find Your Match</h1>
       <div className="w-full max-w-sm">
         {userData !== null ? (
-          <MatchStack profiles={profiles || []} currentUserId={userData.id} />
+          <MatchStack profiles={filteredByDistanceProfiles || []} currentUserId={userData.id} />
         ) : (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             <div className="relative h-[550px] w-full max-w-sm mx-auto mb-4">

@@ -7,22 +7,44 @@ import { randomUUID } from "crypto";
 import { cookies } from "next/headers";
 import nacl from "tweetnacl";
 import "server-only";
+import { Redis } from "@upstash/redis";
 
 // Simple in-memory cache for nonces
 const nonceCache = new Map<string, { value: string; expiry: number }>();
 
+const redis = Redis.fromEnv();
+
+const NONCE_EXPIRY_MS = 120000; // 2 minutes
+const NONCE_PREFIX = "AUTH.nonce.";
+
 // Helper function to clean expired nonces
-function cleanExpiredNonces() {
-  const now = Date.now();
-  for (const [key, data] of nonceCache.entries()) {
-    if (data.expiry < now) {
-      nonceCache.delete(key);
+async function cleanExpiredNonces() {
+  try {
+    const pattern = `${NONCE_PREFIX}*`;
+    const keys = await redis.keys(pattern);
+
+    if (keys.length === 0) return;
+
+    const now = Date.now();
+    const pipeline = redis.pipeline();
+
+    for (const key of keys) {
+      const data = await redis.get(key);
+      if (data && typeof data === "object" && "expiry" in data) {
+        if ((data as any).expiry < now) {
+          pipeline.del(key);
+        }
+      }
     }
+
+    await pipeline.exec();
+  } catch (error) {
+    console.error("Error cleaning expired nonces:", error);
   }
 }
 
 export async function isAuthorized(publicKey: string): Promise<boolean> {
-  const encryptedSession = cookies().get("session");
+  const encryptedSession = cookies().get("session_token");
   if (typeof encryptedSession !== "undefined") {
     const session = await verifyToken(encryptedSession.value);
     if (typeof session !== "undefined" && session?.wallet === publicKey) {
@@ -33,15 +55,29 @@ export async function isAuthorized(publicKey: string): Promise<boolean> {
 }
 
 export async function createAuthMessage(publicKey: string): Promise<string> {
-  const nonce = randomUUID();
-  // Store nonce in memory cache for 2 minutes (120000 ms)
-  const expiry = Date.now() + 120000;
-  nonceCache.set(`AUTH.nonce.${publicKey}`, { value: nonce, expiry });
+  try {
+    const nonce = randomUUID();
+    const expiry = Date.now() + NONCE_EXPIRY_MS;
+    const key = `${NONCE_PREFIX}${publicKey}`;
 
-  // Clean expired nonces
-  cleanExpiredNonces();
+    // Store nonce in Redis with TTL (Time To Live)
+    await redis.setex(
+      key,
+      Math.ceil(NONCE_EXPIRY_MS / 1000),
+      JSON.stringify({
+        value: nonce,
+        expiry,
+      })
+    );
 
-  return `Please sign to confirm wallet ownership.\n${nonce}`;
+    // Clean expired nonces periodically
+    cleanExpiredNonces();
+
+    return `Please sign to confirm wallet ownership.\n${nonce}`;
+  } catch (error) {
+    console.error("Error creating auth message:", error);
+    throw new Error("Failed to create authentication message");
+  }
 }
 
 export async function authenticate(message: string, signature: string, publicKey: string) {
@@ -51,11 +87,27 @@ export async function authenticate(message: string, signature: string, publicKey
     }
 
     const walletPublicKey = new PublicKey(publicKey);
-    const cachedNonce = nonceCache.get(`AUTH.nonce.${publicKey}`);
+    const key = `${NONCE_PREFIX}${publicKey}`;
 
-    if (!cachedNonce || cachedNonce.expiry < Date.now()) {
-      nonceCache.delete(`AUTH.nonce.${publicKey}`);
-      // More descriptive error message
+    // Get nonce from Redis
+    const cachedData = await redis.get(key);
+
+    if (!cachedData) {
+      throw new Error("Authentication session expired. Please try connecting your wallet again.");
+    }
+
+    let cachedNonce;
+    try {
+      cachedNonce = typeof cachedData === "string" ? JSON.parse(cachedData) : cachedData;
+    } catch (parseError) {
+      console.error("Error parsing cached nonce:", parseError);
+      throw new Error("Invalid authentication session. Please try connecting your wallet again.");
+    }
+
+    // Check if nonce is expired
+    if (!cachedNonce || !cachedNonce.expiry || cachedNonce.expiry < Date.now()) {
+      // Clean up expired nonce
+      await redis.del(key);
       throw new Error("Authentication session expired. Please try connecting your wallet again.");
     }
 
@@ -75,8 +127,8 @@ export async function authenticate(message: string, signature: string, publicKey
     // Create session
     await sessionCreate(publicKey);
 
-    // Clean up the used nonce
-    nonceCache.delete(`AUTH.nonce.${publicKey}`);
+    // Clean up the used nonce from Redis
+    await redis.del(key);
 
     return { success: true };
   } catch (error) {
@@ -109,5 +161,43 @@ export async function verifyAuth() {
   } catch (error) {
     console.error("Error verifying auth:", error);
     return null;
+  }
+}
+
+export async function cleanupExpiredNonces(): Promise<number> {
+  try {
+    const pattern = `${NONCE_PREFIX}*`;
+    const keys = await redis.keys(pattern);
+
+    if (keys.length === 0) return 0;
+
+    const now = Date.now();
+    let cleanedCount = 0;
+
+    for (const key of keys) {
+      const data = await redis.get(key);
+      if (data) {
+        let parsedData;
+        try {
+          parsedData = typeof data === "string" ? JSON.parse(data) : data;
+        } catch {
+          // Invalid data format, delete it
+          await redis.del(key);
+          cleanedCount++;
+          continue;
+        }
+
+        if (!parsedData.expiry || parsedData.expiry < now) {
+          await redis.del(key);
+          cleanedCount++;
+        }
+      }
+    }
+
+    console.log(`Cleaned up ${cleanedCount} expired nonces`);
+    return cleanedCount;
+  } catch (error) {
+    console.error("Error during nonce cleanup:", error);
+    return 0;
   }
 }

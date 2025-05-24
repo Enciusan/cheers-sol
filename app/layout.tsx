@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Layout/Navbar";
 import { ContextProvider } from "@/contexts/ContextProvider";
 import { ProtectedRoutesWrapper } from "@/components/ProtectedRoutesWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "CheersUp",
@@ -23,6 +24,7 @@ export default function RootLayout({
             <Toaster />
             <Navbar />
             {children}
+            <Analytics />
           </ProtectedRoutesWrapper>
         </ContextProvider>
       </body>

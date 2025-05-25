@@ -13,11 +13,17 @@ export const LocationButton = ({ publicKey }: { publicKey: any }) => {
   useEffect(() => {
     const detectWebView = () => {
       const userAgent = navigator.userAgent;
+      console.log(userAgent);
+
       const isPhantom = userAgent.includes("PhantomWallet") || userAgent.includes("phantom");
+      console.log(isPhantom);
+
       const isWebViewUA = /wv|WebView|Android.*Version\/\d+\.\d+/i.test(userAgent);
+      console.log(isWebViewUA);
       const isMobileWebView =
         /Mobile|Android|iPhone|iPad/i.test(userAgent) &&
         (isWebViewUA || (userAgent.includes("Version/") && !userAgent.includes("Chrome")));
+      console.log(isMobileWebView);
 
       return isPhantom || isMobileWebView;
     };
@@ -59,7 +65,7 @@ export const LocationButton = ({ publicKey }: { publicKey: any }) => {
     const externalUrl = `${baseUrl}?open_for_location=true&wallet=${publicKey?.toBase58() || ""}`;
 
     if (/iPhone|iPad/i.test(navigator.userAgent)) {
-      const safariUrl = `x-web-search://?${externalUrl}`;
+      const safariUrl = `x-safari-https://?${externalUrl}`;
       window.open(safariUrl, "_system");
 
       setTimeout(() => {

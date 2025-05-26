@@ -78,6 +78,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         const com2 = await getAssetsByOwner(publicKey.toBase58());
 
         await addOrUpdateUserCommunities(com2, publicKey?.toBase58());
+        await fetchUserProfile(publicKey?.toBase58());
       }
     };
     fetchCommunities();

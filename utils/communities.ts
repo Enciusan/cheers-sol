@@ -48,38 +48,41 @@ export const COMMUNITIES = [
     badgeColor: "#3f3f3f",
     textColor: "black",
   },
+  {
+    name: "Retardio",
+    mint: "DUX8SZXLKigc84BBUcYjA7PuKe2SFwXFtQVgwmBsaXKm",
+    badgeColor: "#3f3f3f",
+    textColor: "black",
+  },
+  {
+    name: "Tensorian",
+    mint: "5PA96eCFHJSFPY9SWFeRJUHrpoNF5XZL6RrE1JADXhxf",
+    badgeColor: "#b9eafe",
+    textColor: "black",
+  },
+  {
+    name: "Solcasino",
+    mint: "7thDNBn8JRetPm6mWxEM3RqeaaXLgFSQ2TUmT13FQ2H1",
+    badgeColor: "#e9ebe9",
+    textColor: "black",
+  },
+  {
+    name: "BoDoggos",
+    mint: "69k55dCTwiUPNgaTZ8FVMADorTvEGJEGuAGEB7m1qB1S",
+    badgeColor: "#3ca9fc",
+    textColor: "black",
+  },
+  {
+    name: "Meerkat",
+    mint: "FBgXtZ1TEQtfWNtVo5bhyDjHmkDmYs7z1aiRtKUMzevB",
+    badgeColor: "black",
+    textColor: "white",
+  },
+  {
+    name: "BVDCAT",
+    mint: "HEAKpy99JuLhfinuLgji757JxHvPizBo7WaXvWBYc3kz",
+    badgeColor: "#f75b63",
+    textColor: "white",
+  },
   // Add more communities as needed
 ];
-
-// import { Connection, PublicKey } from "@solana/web3.js";
-
-// export async function getUserCommunities(walletAddress: string, connection: Connection) {
-//   const ownedCommunities: string[] = [];
-//   const owner = new PublicKey(walletAddress);
-
-//   // Fetch all token accounts for the user
-//   const tokenAccounts = await connection.getParsedTokenAccountsByOwner(owner, {
-//     programId: new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"),
-//   });
-
-//   // Create a set of all mint addresses the user owns (with balance > 0)
-//   const userMints = new Set<string>();
-//   tokenAccounts.value.forEach(({ account }) => {
-//     const parsed = account.data.parsed;
-//     const mint = parsed;
-//     const amount = parsed.info.tokenAmount.uiAmount;
-//     if (amount && amount == 1) {
-//       userMints.add(mint);
-//     }
-//   });
-//   console.log(userMints);
-
-//   // Check each community mint
-//   for (const community of COMMUNITIES) {
-//     if (userMints.has(community.mint)) {
-//       ownedCommunities.push(community.name);
-//     }
-//   }
-
-//   return ownedCommunities;
-// }

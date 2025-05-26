@@ -6,6 +6,7 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { Beer, Coffee, Martini, Coffee as Tea, Wine } from "lucide-react";
 import { useEffect, useState } from "react";
 import { LocationButton } from "../LocationButton";
+import { useUserStore } from "@/store/user";
 
 interface ProfileInfoProps {
   data: Profile | null;
@@ -30,20 +31,7 @@ const DrinkIcon = ({ drink }: { drink: string }) => {
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   const { publicKey } = useWallet();
-  const [userCommunities, setUserCommunities] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchCommunities = async () => {
-      if (data?.walletAddress && connection) {
-        // const communities = await getUserCommunities(data.walletAddress, connection as Connection);
-        const com2 = await getAssetsByOwner(data.walletAddress);
-        // console.log(com2);
-
-        setUserCommunities(com2);
-      }
-    };
-    fetchCommunities();
-  }, [data?.walletAddress, connection]);
+  const { userData } = useUserStore();
 
   return (
     <div className="space-y-6">
@@ -91,7 +79,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
         <div className="bg-[#18181B] rounded-lg p-4 max-h-40 overflow-y-auto">
           <h4 className="text-sm font-semibold mb-3 text-gray-200">Communities</h4>
           <div className="flex gap-2 flex-wrap">
-            {userCommunities.map((community, index) => {
+            {userData?.communities.map((community, index) => {
               // console.log(community, COMMUNITIES);
 
               const meta = COMMUNITIES.find((c) => c.mint === community);

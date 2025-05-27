@@ -55,22 +55,23 @@ export const useUsersStore = create<UsersStore>((set) => ({
   updateProfiles: (profiles) => set({ profiles }),
   fetchProfiles: async (walletAddress: string) => {
     try {
+      console.log("Fetching profiles for", walletAddress);
       const data = await getAppUserForMatch(walletAddress);
-      // console.log(data);
+      console.log("Profiles data received:", data);
 
       if (data) {
-        set({
-          profiles: data?.map((profile: any) => ({
-            id: profile.id,
-            username: profile.username,
-            walletAddress: new PublicKey(Buffer.from(profile.wallet_address, "hex")).toBase58(),
-            bio: profile.bio,
-            age: profile.age,
-            drinks: profile.drinks,
-            communities: profile.communities,
-            profileImage: profile.profileImage,
-          })),
-        });
+        const mappedProfiles = data?.map((profile: any) => ({
+          id: profile.id,
+          username: profile.username,
+          walletAddress: new PublicKey(Buffer.from(profile.wallet_address, "hex")).toBase58(),
+          bio: profile.bio,
+          age: profile.age,
+          drinks: profile.drinks,
+          communities: profile.communities,
+          profileImage: profile.profileImage,
+        }));
+        console.log("Mapped profiles:", mappedProfiles);
+        set({ profiles: mappedProfiles });
       }
     } catch (error) {
       console.error("Error fetching profiles:", error);
@@ -111,13 +112,3 @@ export const useInitializeUser = (walletAddress: PublicKey | null) => {
     }
   }, [walletAddress, fetchUserProfile]);
 };
-
-// export const useInitializeUsers = (walletAddress: PublicKey | null) => {
-//   const fetchProfiles = useUsersStore((state) => state.fetchProfiles);
-
-//   useEffect(() => {
-//     if (walletAddress) {
-//       fetchProfiles(walletAddress.toBase58());
-//     }
-//   }, [walletAddress, fetchProfiles]);
-// };

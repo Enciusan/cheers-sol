@@ -1,33 +1,13 @@
-import { connection } from "@/utils/clientFunctions";
+import { useUserStore } from "@/store/user";
 import { COMMUNITIES } from "@/utils/communities";
-import { getAssetsByOwner } from "@/utils/serverFunctions";
+import { DrinkIcon } from "@/utils/drinks";
 import { Profile } from "@/utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Beer, Coffee, Martini, Coffee as Tea, Wine } from "lucide-react";
-import { useEffect, useState } from "react";
 import { LocationButton } from "../LocationButton";
-import { useUserStore } from "@/store/user";
 
 interface ProfileInfoProps {
   data: Profile | null;
 }
-
-const DrinkIcon = ({ drink }: { drink: string }) => {
-  switch (drink.toLowerCase()) {
-    case "beer":
-      return <Beer className="w-4 h-4" />;
-    case "wine":
-      return <Wine className="w-4 h-4" />;
-    case "cocktails":
-      return <Martini className="w-4 h-4" />;
-    case "tea":
-      return <Tea className="w-4 h-4 rotate-90" />;
-    case "coffee":
-      return <Coffee className="w-4 h-4" />;
-    default:
-      return null;
-  }
-};
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   const { publicKey } = useWallet();

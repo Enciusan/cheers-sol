@@ -2,32 +2,19 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Beer, Wine, Martini, Coffee } from "lucide-react";
+import { Beer, Wine, Martini, Coffee, CupSoda, Coffee as Tea, GlassWater, Milk, Info } from "lucide-react";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import { Profile } from "@/utils/types";
 import { COMMUNITIES } from "@/utils/communities";
+import ginTonic from "@/assets/drinks/ginTonic.png";
+import whisky from "@/assets/drinks/whisky.png";
+import { MatchInfo } from "./match-info";
+import { DrinkIcon } from "@/utils/drinks";
 
 interface MatchCardProps {
   matchingProfiles: Profile;
   onSwipe?: (direction: "left" | "right") => void;
 }
-
-const DrinkIcon = ({ drink }: { drink: string }) => {
-  switch (drink.toLowerCase()) {
-    case "beer":
-      return <Beer className="w-4 h-4" />;
-    case "wine":
-      return <Wine className="w-4 h-4" />;
-    case "cocktails":
-      return <Martini className="w-4 h-4" />;
-    case "coffee":
-      return <Coffee className="w-4 h-4" />;
-    case "tea":
-      return <Coffee className="w-4 h-4 rotate-90" />;
-    default:
-      return null;
-  }
-};
 
 export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps) {
   const [exitDirection, setExitDirection] = useState<"left" | "right" | null>(null);
@@ -95,48 +82,58 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
             {/* swipe  animation */}
             <motion.div
               style={{ opacity: useTransform(x, [-100, 0], [1, 0]) }}
-              className="absolute left-4 top-4 bg-red-500 text-white px-6 py-2 rounded-lg transform -rotate-12">
+              className="absolute left-4 top-4 bg-red-500 text-white px-6 py-2 font-mono font-semibold rounded-lg transform -rotate-12">
               NOPE
             </motion.div>
             <motion.div
               style={{ opacity: useTransform(x, [0, 100], [0, 1]) }}
-              className="absolute right-4 top-4 bg-green-500 text-white px-6 py-2 rounded-lg transform rotate-12">
+              className="absolute right-4 top-4 bg-violet-400 text-white px-6 py-2 font-mono font-semibold rounded-lg transform rotate-12">
               LIKE
             </motion.div>
           </div>
           <div className="p-4">
-            <h2 className="text-2xl font-bold mb-2">
-              {matchingProfiles.username}, {matchingProfiles.age}
-            </h2>
-            <p className="text-gray-400 mb-4">{matchingProfiles.bio}</p>
-            <div className="flex flex-col justify-between items-start h-[7rem] pb-4">
-              <div className="flex flex-wrap gap-2 line-clamp-1">
-                {matchingProfiles.drinks.map((drink, index) => (
-                  <span
-                    key={index}
-                    className="bg-[#7C3AED] text-white px-2 py-1 rounded-full text-xs flex items-center">
-                    <DrinkIcon drink={drink} />
-                    <span className="ml-1">{drink}</span>
-                  </span>
-                ))}
+            <div className="flex justify-between items-center text-2xl font-bold mb-2">
+              <h2>
+                {matchingProfiles.username}, {matchingProfiles.age}
+              </h2>
+              <MatchInfo data={matchingProfiles} />
+            </div>
+            <p className="text-gray-400 mb-4 line-clamp-1">{matchingProfiles.bio}</p>
+            <div className="flex flex-col justify-between items-start h-[5rem] pb-4">
+              <div className="flex flex-wrap gap-2">
+                {matchingProfiles.drinks
+                  .filter((_, index) => index <= 3)
+                  .map((drink, index) => (
+                    <span
+                      key={index}
+                      className="bg-[#7C3AED] text-white px-2 py-1 rounded-full text-xs flex items-center">
+                      <DrinkIcon drink={drink} />
+                      <span className="ml-1">{drink}</span>
+                    </span>
+                  ))}
+                <span className="text-xl font-semibold">...</span>
               </div>
               {/* Communities Card Overlay */}
               {matchingProfiles.communities && matchingProfiles.communities.length > 0 && (
-                <div className="absolute bottom-4 left-0 w-full px-4 z-20 flex justify-start ">
+                <div className="absolute bottom-4 left-0 w-full px-4 z-20 flex justify-start flex-wrap ">
                   <div
-                    className="bg-[#18181B] rounded-lg p-2 max-w-full overflow-x-auto flex gap-2 scrollbar-thin scrollbar-thumb-violet-700 scrollbar-track-transparent"
+                    className="bg-[#18181B] rounded-lg max-w-full overflow-x-auto flex gap-2 scrollbar-thin scrollbar-thumb-violet-700 scrollbar-track-transparent"
                     style={{ WebkitOverflowScrolling: "touch" }}>
-                    {matchingProfiles.communities.map((community, index) => {
-                      const meta = COMMUNITIES.find((c) => c.mint === community);
-                      return (
-                        <div
-                          key={index}
-                          style={{ backgroundColor: meta?.badgeColor, color: meta?.textColor }}
-                          className="px-3 py-1.5 rounded-full text-sm flex font-medium font-mono items-center gap-2 text-white whitespace-nowrap">
-                          {meta?.name || community}
-                        </div>
-                      );
-                    })}
+                    {matchingProfiles.communities
+                      .filter((_, index) => index <= 2)
+                      .map((community, index) => {
+                        const meta = COMMUNITIES.find((c) => c.mint === community);
+                        return (
+                          <div
+                            key={index}
+                            style={{ backgroundColor: meta?.badgeColor, color: meta?.textColor }}
+                            className="px-3 py-1.5 rounded-full text-sm flex font-medium font-mono items-center gap-2 text-white whitespace-nowrap">
+                            {meta?.name || community}
+                          </div>
+                        );
+                      })}
+
+                    <span className="text-xl font-semibold">...</span>
                   </div>
                 </div>
               )}

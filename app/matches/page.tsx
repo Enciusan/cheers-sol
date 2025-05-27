@@ -2,6 +2,7 @@
 
 import MatchStack from "@/components/MatchCard/match-stack";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
 import { calculateDistance } from "@/utils/clientFunctions";
 import { Profile } from "@/utils/types";
@@ -15,8 +16,10 @@ export default function MatchesPage() {
   const { userData } = useUserStore();
   const { profiles, usersLocations } = useUsersStore();
   const [filteredByDistanceProfiles, setFilteredByDistanceProfiles] = useState<Profile[]>([]);
+  // const { isAuthenticated } = useAuth();
   const router = useRouter();
-  // console.log(usersLocations);
+
+  // console.log(isAuthenticated);
 
   const filteredProfilesBasedOnDistance = () => {
     // console.log(userData, profiles, usersLocations);
@@ -63,9 +66,14 @@ export default function MatchesPage() {
   };
 
   useEffect(() => {
-    filteredProfilesBasedOnDistance();
+    console.log("userData", userData, profiles, usersLocations);
+
+    if (userData && profiles && usersLocations) {
+      filteredProfilesBasedOnDistance();
+    }
   }, [userData, profiles, usersLocations]);
 
+  const isLoading = !userData || !profiles || profiles.length === 0 || !usersLocations || usersLocations.length === 0;
   // console.log(filteredByDistanceProfiles);
 
   return (
@@ -73,7 +81,14 @@ export default function MatchesPage() {
       <h1 className="text-3xl font-bold mb-8 text-[#7C3AED]">Find Your Match</h1>
       <div className="w-full max-w-sm">
         {userData !== null ? (
-          <MatchStack profiles={filteredByDistanceProfiles || []} currentUserId={userData.id} />
+          isLoading ? (
+            // Show loading state while data is being fetched
+            <div className="relative h-[550px] w-full max-w-sm mx-auto flex items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C3AED]"></div>
+            </div>
+          ) : (
+            <MatchStack profiles={filteredByDistanceProfiles || []} currentUserId={userData.id} />
+          )
         ) : (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             <div className="relative h-[550px] w-full max-w-sm mx-auto mb-4">

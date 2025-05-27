@@ -1,4 +1,5 @@
 "use client";
+import { isAuthorized } from "@/api/serverAuth";
 import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
@@ -15,6 +16,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
   const { fetchProfiles, fetchUsersLocation } = useUsersStore();
+  const [dataLoaded, setDataLoaded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -33,10 +35,10 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       }
 
       try {
-        const authResult = await verifyAuthentication();
+        const authResult = await isAuthorized(publicKey.toString());
         console.log("Auth result:", authResult);
 
-        if (authResult && authResult.wallet_address === publicKey.toString()) {
+        if (authResult) {
           console.log("User is authenticated");
           setIsAuthenticated(true);
         } else {
@@ -87,9 +89,11 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   useEffect(() => {
     const loadUserProfile = async () => {
       if (isAuthenticated && publicKey) {
-        await fetchUserProfile(publicKey.toBase58());
-        await fetchProfiles(publicKey.toBase58());
-        await fetchUsersLocation(publicKey.toBase58());
+        try {
+          await fetchUserProfile(publicKey.toBase58());
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+        }
       }
     };
 
@@ -97,6 +101,18 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       loadUserProfile();
     }
   }, [isAuthenticated, publicKey, authAttempted]);
+
+  useEffect(() => {
+    const loadUserProfiles = async () => {
+      if (isAuthenticated && userData && publicKey) {
+        await fetchProfiles(publicKey.toBase58());
+        await fetchUsersLocation(publicKey.toBase58());
+      }
+    };
+    if (isAuthenticated && userData) {
+      loadUserProfiles();
+    }
+  }, [isAuthenticated, userData]);
 
   useEffect(() => {
     if (authAttempted) {

@@ -62,6 +62,25 @@ body {
   }
 }
 
+@layer utilities {
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-[#252042]/30 rounded;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-purple-500/40 rounded hover:bg-purple-500/60;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: theme("colors.violet.500 / 0.7") theme("colors.violet.900 / 0.3");
+  }
+}
+
 @layer base {
   * {
     @apply dark border-border;
@@ -79,4 +98,15 @@ body {
 
 .wallet-adapter-button-trigger {
   @apply bg-violet-600 hover:bg-violet-700 h-9 rounded-md px-9 text-sm !important;
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }

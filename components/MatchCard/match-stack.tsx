@@ -62,7 +62,7 @@ export default function MatchStack({ profiles, currentUserId }: MatchStackProps)
       <div className="relative h-[550px] w-full max-w-sm mx-auto mb-4">
         <AnimatePresence>
           {hasMoreProfiles ? (
-            profiles.slice(currentIndex, currentIndex + 3).map((profile, index) => (
+            profiles.slice(currentIndex, currentIndex + 100).map((profile, index) => (
               <div
                 key={profile.id}
                 className="absolute w-full"
@@ -90,12 +90,12 @@ export default function MatchStack({ profiles, currentUserId }: MatchStackProps)
         <div className="md:flex hidden justify-center space-x-4 mt-4">
           <button
             onClick={() => profiles[currentIndex] && handleSwipe(profiles[currentIndex].id, "left")}
-            className="bg-red-500 hover:bg-red-600 text-white p-4 rounded-full transition-colors duration-200 shadow-lg">
+            className="bg-rose-400 hover:bg-rose-500 text-white p-4 rounded-full transition-colors duration-200 shadow-lg">
             <X className="w-8 h-8" />
           </button>
           <button
             onClick={() => profiles[currentIndex] && handleSwipe(profiles[currentIndex].id, "right")}
-            className="bg-green-500 hover:bg-green-600 text-white p-4 rounded-full transition-colors duration-200 shadow-lg">
+            className="bg-violet-400 hover:bg-violet-500 text-white p-4 rounded-full transition-colors duration-200 shadow-lg">
             <Heart className="w-8 h-8" />
           </button>
         </div>

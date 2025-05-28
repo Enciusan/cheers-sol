@@ -1,18 +1,14 @@
-import { Profile } from "@/utils/types";
+import { COMMUNITIES } from "@/utils/communities";
+import { DrinkIcon } from "@/utils/drinks";
+import { Info } from "lucide-react";
 import {
   MorphingDialog,
   MorphingDialogClose,
   MorphingDialogContainer,
   MorphingDialogContent,
   MorphingDialogDescription,
-  MorphingDialogImage,
-  MorphingDialogSubtitle,
-  MorphingDialogTitle,
   MorphingDialogTrigger,
 } from "../ui/morphing-dialog";
-import { Info } from "lucide-react";
-import { DrinkIcon } from "@/utils/drinks";
-import { COMMUNITIES } from "@/utils/communities";
 
 export const MatchInfo = (props: any) => {
   const { data } = props;
@@ -35,7 +31,7 @@ export const MatchInfo = (props: any) => {
           style={{
             borderRadius: "24px",
           }}
-          className="pointer-events-auto relative flex md:max-h-max max-h-[75dvh] w-full flex-col overflow-hidden border border-zinc-50/10 bg-[#27272a] sm:w-[500px]">
+          className="pointer-events-auto relative flex md:max-h-max max-h-[75dvh] flex-col overflow-hidden border border-zinc-50/10 bg-[#27272a] w-[85dvw] sm:w-[500px]">
           <img src={data.profileImage} alt="Profile Image" className="md:h-full h-[40dvh] w-full" />
           <div className="flex flex-col p-6 gap-2 md:h-auto h-[30dvh] overflow-y-scroll">
             <div className="bg-[#18181B] rounded-lg p-4">

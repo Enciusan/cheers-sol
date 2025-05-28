@@ -40,7 +40,7 @@ export const Navbar = () => {
 
   return (
     <nav className="fixed md:top-0 bottom-0 md:bottom-auto w-full border-t md:border-t-0 md:border-b border-violet-900/20 bg-[#09090B]/95 backdrop-blur supports-[backdrop-filter]:bg-[#09090B]/60 z-50 md:pb-0 safe-area-pb">
-      <div className="flex h-16 items-center justify-between px-4 w-full">
+      <div className="flex h-16 items-center md:justify-between justify-center px-4 w-full">
         {/* Logo - hidden on mobile */}
         <div
           className="hidden md:flex items-center space-x-2 text-violet-500 cursor-pointer"
@@ -51,7 +51,7 @@ export const Navbar = () => {
 
         {/* Navigation Menu */}
         <NavigationMenu className="w-full md:w-auto">
-          <NavigationMenuList className="w-full md:w-auto gap-2 md:gap-2 flex justify-around md:justify-start">
+          <NavigationMenuList className="w-full md:w-auto gap-2 flex justify-around md:justify-start">
             {publicKey && (
               <>
                 <NavigationMenuItem onClick={() => router.push("/profile")}>

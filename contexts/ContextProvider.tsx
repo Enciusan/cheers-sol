@@ -1,12 +1,12 @@
 "use client";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
+import { PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets";
 import { clusterApiUrl } from "@solana/web3.js";
+import dynamic from "next/dynamic";
 import { FC, ReactNode, useMemo } from "react";
 import { AutoConnectProvider } from "./AutoConnectProvider";
 import { NetworkConfigurationProvider, useNetworkConfiguration } from "./NetworkConfigurationProvider";
-import dynamic from "next/dynamic";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
 
 const ReactUIWalletModalProviderDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletModalProvider,
@@ -19,7 +19,7 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   const wallets = useMemo(
-    () => [new PhantomWalletAdapter()],
+    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [network]
   );

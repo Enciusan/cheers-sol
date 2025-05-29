@@ -4,6 +4,9 @@ import { DrinkIcon } from "@/utils/drinks";
 import { Profile } from "@/utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LocationButton } from "../LocationButton";
+import { Award, ChevronUp } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Progress } from "../ui/progress";
 
 interface ProfileInfoProps {
   data: Profile | null;
@@ -26,6 +29,35 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
         </p>
       </div>
       <LocationButton publicKey={publicKey} />
+      <div className="bg-[#18181B] rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className={"flex h-12 w-12 items-center justify-center rounded-full bg-gray-800 shadow-lg"}>
+              <Award className="h-6 w-6 text-violet-500" />
+            </div>
+            <div>
+              <h3 className="text-lg font-medium text-white">
+                Level 4 <span className={"ml-1 font-semibold"}>aaa</span>
+              </h3>
+              <p className="text-sm text-gray-400">100 XP</p>
+            </div>
+          </div>
+          <button
+            className="rounded-full bg-gray-800 p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-white"
+            // onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <ChevronUp />
+          </button>
+        </div>
+
+        <div className="space-y-1">
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>Progress to Level 2</span>
+            {/* <span>{Math.round(progressPercentage)}%</span> */}
+          </div>
+          <Progress value={10} className="h-2" />
+        </div>
+      </div>
       <div className="bg-[#18181B] rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-200">Profile Details</h4>

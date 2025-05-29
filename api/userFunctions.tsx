@@ -442,3 +442,18 @@ export const updateUserDistances = async (walletAddress: string, radius: number)
     console.error("Error updating profile:", error);
   }
 };
+
+export const getLevels = async () => {
+  const supabase = await createClient();
+  try {
+    const { data: levels, error: fetchError } = await supabase.from("levels").select("*");
+    if (fetchError) {
+      console.error("Error fetching levels:", fetchError);
+      return { success: false, error: "Failed to fetch levels" };
+    }
+    return { success: true, levels: levels };
+  } catch (error) {
+    console.error("Error fetching levels:", error);
+    return { success: false, error: "Failed to fetch levels" };
+  }
+};

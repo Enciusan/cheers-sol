@@ -10,11 +10,13 @@ import {
 import { useUserStore } from "@/store/user";
 import { useWallet } from "@solana/wallet-adapter-react";
 import "@solana/wallet-adapter-react-ui/styles.css";
-import { Award, MessageSquare, Settings, User, Users } from "lucide-react";
+import { Award, ChevronDown, Link, MessageSquare, Settings, User, Users } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Button } from "../ui/button";
 
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -93,15 +95,15 @@ export const Navbar = () => {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem onClick={() => router.push("/messages")}>
+                <NavigationMenuItem onClick={() => router.push("/chat")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/messages" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/chat" ? "text-violet-500" : "text-violet-100"
                     }`}
                     asChild>
                     <div className="flex flex-col md:flex-row items-center">
                       <MessageSquare className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Messages</span>
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Chat</span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -120,6 +122,28 @@ export const Navbar = () => {
                 </NavigationMenuItem>
               </>
             )}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" className="px-1 py-1.5 h-5 justify-center" size={"lg"}>
+                  <ChevronDown
+                    className={`h-10 w-10 md:h-4 ${pathname === "/referral" ? "text-violet-500" : "text-violet-100"}`}
+                  />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-40 p-1">
+                <NavigationMenuLink
+                  onClick={() => router.push("/referral")}
+                  className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
+                    pathname === "/referral" ? "text-violet-500" : "text-violet-100"
+                  }`}
+                  asChild>
+                  <div className="flex flex-col md:flex-row items-center">
+                    <Link className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
+                    <span className="text-xs mt-1 md:mt-0 md:text-sm">Referral</span>
+                  </div>
+                </NavigationMenuLink>
+              </PopoverContent>
+            </Popover>
           </NavigationMenuList>
         </NavigationMenu>
 

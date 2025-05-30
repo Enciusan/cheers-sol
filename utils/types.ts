@@ -7,6 +7,9 @@ export type Profile = {
   drinks: string[];
   communities: string[];
   profileImage: string;
+  myReferral: string;
+  referralUsed: string;
+  gainedXP: number;
 };
 
 export interface ProfileFormProps {
@@ -39,4 +42,12 @@ export type LocationType = {
 export type GeolocationPoint = {
   latitude: number;
   longitude: number;
+};
+
+export type Levels = {
+  id: number;
+  name: string;
+  startingFrom: number;
+  endingAt: number;
+  necessaryXP: number;
 };

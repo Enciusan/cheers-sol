@@ -39,6 +39,9 @@ export const useUserStore = create<UserStore>((set) => ({
             drinks: data.drinks || [],
             communities: data.communities || [],
             profileImage: data.profileImage,
+            myReferral: data.myReferral,
+            referralUsed: data.referralUsed,
+            gainedXP: data.gainedXP,
           },
         });
       }
@@ -69,6 +72,9 @@ export const useUsersStore = create<UsersStore>((set) => ({
           drinks: profile.drinks,
           communities: profile.communities,
           profileImage: profile.profileImage,
+          myReferral: profile.myReferral,
+          referralUsed: profile.referralUsed,
+          gainedXP: profile.gainedXP,
         }));
         console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });

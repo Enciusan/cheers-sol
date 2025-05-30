@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={`antialiased`}>
         <ContextProvider>
           <ProtectedRoutesWrapper>
-            <Toaster />
+            <Toaster richColors />
             <Navbar />
             {children}
             <Analytics />

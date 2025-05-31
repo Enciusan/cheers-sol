@@ -130,7 +130,7 @@ export const Navbar = () => {
                   />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-40 p-1">
+              <PopoverContent className="w-40 p-1 mt-2">
                 <NavigationMenuLink
                   onClick={() => router.push("/referral")}
                   className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${

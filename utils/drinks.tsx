@@ -1,5 +1,5 @@
 import { Beer, CupSoda, Martini, Wine, Coffee as Tea, Coffee, GlassWater, Milk } from "lucide-react";
-import ginTonic from "@/assets/drinks/ginTonic.png";
+import ginTonic from "@/assets/drinks/ginPurple.png";
 import whisky from "@/assets/drinks/whisky.png";
 import Image from "next/image";
 
@@ -18,7 +18,7 @@ export const DrinkIcon = ({ drink }: { drink: string }) => {
     case "coffee":
       return <Coffee className="w-4 h-4" />;
     case "gin":
-      return <Image src={ginTonic} alt="Gin Tonic" className="w-6 h-6" />;
+      return <Image src={ginTonic} alt="Gin Tonic" className="w-4 h-5" />;
     case "whisky":
       return <Image src={whisky} alt="Gin Tonic" className="w-4 h-4" />;
     case "vodka":

@@ -530,7 +530,9 @@ export const getLevels = async (walletAddress: string) => {
     if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
       return { success: false, error: "Authentication required" };
     }
-    const { data: levels, error: fetchError } = await supabase.from("levels").select("*");
+    const { data: levels, error: fetchError } = await supabase
+      .from("levels")
+      .select("id, name, startingFrom, endingAt, necessaryXP");
     if (fetchError) {
       console.error("Error fetching levels:", fetchError);
       return { success: false, error: "Failed to fetch levels" };

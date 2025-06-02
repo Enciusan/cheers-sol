@@ -17,6 +17,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
+import { FloatingDock } from "../ui/mobile-navigation";
 
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -28,6 +29,29 @@ export const Navbar = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { userData, clearUserData } = useUserStore();
+
+  const links = [
+    {
+      title: "Profile",
+      icon: <User className="h-full w-full text-neutral-300" />,
+      href: "/profile",
+    },
+    {
+      title: "Missions",
+      icon: <Award className="h-full w-full text-neutral-300" />,
+      href: "/missions",
+    },
+    {
+      title: "Match",
+      icon: <Users className="h-full w-full text-neutral-300" />,
+      href: "/matches",
+    },
+    {
+      title: "Chat",
+      icon: <MessageSquare className="h-full w-full text-neutral-300" />,
+      href: "/chat",
+    },
+  ];
 
   useEffect(() => {
     if (!connected) {
@@ -42,7 +66,7 @@ export const Navbar = () => {
 
   return (
     <nav className="fixed md:top-0 bottom-0 md:bottom-auto w-full border-t md:border-t-0 md:border-b border-violet-900/20 bg-[#09090B]/95 backdrop-blur supports-[backdrop-filter]:bg-[#09090B]/60 z-50 md:pb-0 safe-area-pb">
-      <div className="flex h-16 items-center md:justify-between justify-center px-4 w-full">
+      <div className="flex h-0 md:h-16 items-center md:justify-between justify-center px-4 w-full">
         {/* Logo - hidden on mobile */}
         <div
           className="hidden md:flex items-center space-x-2 text-violet-500 cursor-pointer"
@@ -52,7 +76,7 @@ export const Navbar = () => {
         </div>
 
         {/* Navigation Menu */}
-        <NavigationMenu className="w-full md:w-auto">
+        <NavigationMenu className="md:flex hidden w-full md:w-auto">
           <NavigationMenuList className="w-full md:w-auto gap-2 flex justify-around md:justify-start">
             {publicKey && (
               <>
@@ -147,6 +171,7 @@ export const Navbar = () => {
           </NavigationMenuList>
         </NavigationMenu>
 
+        {publicKey && <FloatingDock items={links} />}
         {/* Wallet Button - hidden on mobile */}
         {publicKey && (
           <div className="hidden md:block">

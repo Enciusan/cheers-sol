@@ -13,7 +13,7 @@ interface ProfileInfoProps {
 }
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
-  const { publicKey } = useWallet();
+  const { publicKey, wallet } = useWallet();
   const { userData } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [currentLevel, setCurrentLevel] = useState<any>(null);
@@ -73,7 +73,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               data?.walletAddress.substring(data?.walletAddress.length - 10, data?.walletAddress.length)}
         </p>
       </div>
-      <LocationButton publicKey={publicKey} />
+      {wallet?.adapter.name === "Phantom" && <LocationButton publicKey={publicKey} />}
       <div className="bg-[#18181B] rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">

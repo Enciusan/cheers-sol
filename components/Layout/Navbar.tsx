@@ -51,6 +51,16 @@ export const Navbar = () => {
       icon: <MessageSquare className="h-full w-full text-neutral-300" />,
       href: "/chat",
     },
+    {
+      title: "Settings",
+      icon: <Settings className="h-full w-full text-neutral-300" />,
+      href: "/settings",
+    },
+    {
+      title: "Referral",
+      icon: <Link className="h-full w-full text-neutral-300" />,
+      href: "/referral",
+    },
   ];
 
   useEffect(() => {

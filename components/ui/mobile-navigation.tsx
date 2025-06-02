@@ -3,6 +3,8 @@ import { EllipsisVertical } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 import { useState } from "react";
+import { Button } from "./button";
+import { useRouter } from "next/navigation";
 
 export const FloatingDock = ({
   items,
@@ -27,6 +29,7 @@ const FloatingDockMobile = ({
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   return (
     <div className={cn("relative block left-[45%] bottom-24 md:hidden", className)}>
       <AnimatePresence>
@@ -48,12 +51,12 @@ const FloatingDockMobile = ({
                   },
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}>
-                <a
-                  href={item.href}
+                <Button
                   key={item.title}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-900">
+                  onClick={() => router.push(item.href)}
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-900 hover:bg-neutral-600">
                   <div className="h-4 w-4">{item.icon}</div>
-                </a>
+                </Button>
               </motion.div>
             ))}
           </motion.div>

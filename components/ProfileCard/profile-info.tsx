@@ -4,14 +4,62 @@ import { DrinkIcon } from "@/utils/drinks";
 import { Profile } from "@/utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LocationButton } from "../LocationButton";
+import { Progress } from "../ui/progress";
+import { useMemo, useState, useEffect } from "react";
+import { getLevels } from "@/api/userFunctions";
 
 interface ProfileInfoProps {
   data: Profile | null;
 }
 
 export const ProfileInfo = ({ data }: ProfileInfoProps) => {
-  const { publicKey } = useWallet();
+  const { publicKey, wallet } = useWallet();
   const { userData } = useUserStore();
+  const [loading, setLoading] = useState(false);
+  const [currentLevel, setCurrentLevel] = useState<any>(null);
+  const [nextLevel, setNextLevel] = useState<any>(null);
+  const [progressPercentage, setProgressPercentage] = useState(0);
+
+  // Memoized function to fetch levels
+  const fetchLevelsData = useMemo(
+    () => async () => {
+      if (!data?.walletAddress) return;
+
+      setLoading(true);
+      try {
+        const response = await getLevels(data.walletAddress);
+        if (response.success && response.levels) {
+          const levels = response.levels;
+          // Find current level based on user's XP
+          const userXP = userData?.gainedXP || 0;
+          const current = levels.find((level) => userXP >= level.startingFrom && userXP <= level.endingAt);
+
+          // Find next level
+          const next = levels.sort((a, b) => a.id - b.id).find((level) => level.startingFrom > (userXP || 0));
+
+          setCurrentLevel(current);
+          setNextLevel(next);
+
+          // Calculate progress percentage
+          if (current && next) {
+            const xpInCurrentLevel = userXP - current.startingFrom;
+            const xpRequiredForNextLevel = next.startingFrom - current.startingFrom;
+            const progress = (xpInCurrentLevel / xpRequiredForNextLevel) * 100;
+            setProgressPercentage(Math.min(progress, 100));
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching levels:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [data?.walletAddress, userData?.gainedXP]
+  );
+
+  useEffect(() => {
+    fetchLevelsData();
+  }, [fetchLevelsData]);
 
   return (
     <div className="space-y-6">
@@ -25,7 +73,30 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               data?.walletAddress.substring(data?.walletAddress.length - 10, data?.walletAddress.length)}
         </p>
       </div>
-      <LocationButton publicKey={publicKey} />
+      {wallet?.adapter.name === "Phantom" && <LocationButton publicKey={publicKey} />}
+      <div className="bg-[#18181B] rounded-lg p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-1">
+                <h3 className="text-xl font-bold text-violet-500">Level {currentLevel?.id || "?"}</h3>
+                <span className={"font-semibold"}>{currentLevel?.name || ""}</span>
+              </div>
+              <p className="text-sm text-gray-400 font-semibold">
+                {userData?.gainedXP || 0} XP / {currentLevel?.endingAt} XP
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Progress value={progressPercentage} className="h-2" />
+          <div className="flex justify-between text-xs text-gray-400">
+            <span>Progress to Level {nextLevel?.id || "?"}</span>
+            <span>{Math.round(progressPercentage)}%</span>
+          </div>
+        </div>
+      </div>
       <div className="bg-[#18181B] rounded-lg p-4">
         <div className="flex items-center justify-between mb-4">
           <h4 className="text-sm font-semibold text-gray-200">Profile Details</h4>

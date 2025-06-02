@@ -23,7 +23,9 @@ export const getUser = async (walletAddress: PublicKey | string) => {
 
     const { data, error } = await supabase
       .from("profiles")
-      .select("id, username, wallet_address, bio, age, drinks, communities, profileImage")
+      .select(
+        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP"
+      )
       .eq("wallet_address", bufferKey)
       .single();
 
@@ -440,5 +442,104 @@ export const updateUserDistances = async (walletAddress: string, radius: number)
     }
   } catch (error) {
     console.error("Error updating profile:", error);
+  }
+};
+
+export const generateReferralCode = async (walletAddress: string, referralCode: string) => {
+  const supabase = await createClient();
+  try {
+    // Verify authentication
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    const { data: existingProfile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .eq("wallet_address", bufferKey)
+      .single();
+    if (fetchError && fetchError.code !== "PGRST116") {
+      console.error("Error checking profile existence:", fetchError);
+      return { success: false, error: "Failed to check if profile exists" };
+    }
+    if (existingProfile) {
+      const { data: existingReferral, error: fetchErrorReferral } = await supabase
+        .from("profiles")
+        .update({
+          myReferral: referralCode,
+        })
+        .eq("wallet_address", bufferKey);
+      if (fetchErrorReferral && fetchErrorReferral.code !== "PGRST116") {
+        console.error("Error checking referral existence:", fetchErrorReferral);
+        return { success: false, error: "Failed to check if referral exists" };
+      } else {
+        return { success: true, referralCode: existingReferral };
+      }
+    }
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: "Failed to insert referral." };
+  }
+};
+
+export const linkReferralCode = async (walletAddress: string, referralCode: string) => {
+  const supabase = await createClient();
+  try {
+    // Verify authentication
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    const { data: existingProfile, error: fetchError } = await supabase
+      .from("profiles")
+      .select("id, username")
+      .eq("wallet_address", bufferKey)
+      .single();
+    if (fetchError && fetchError.code !== "PGRST116") {
+      console.error("Error checking profile existence:", fetchError);
+      return { success: false, error: "Failed to check if profile exists" };
+    }
+    if (existingProfile) {
+      const { data: existingReferral, error: fetchErrorReferral } = await supabase
+        .from("profiles")
+        .update({
+          referralUsed: referralCode,
+        })
+        .eq("wallet_address", bufferKey);
+      if (fetchErrorReferral && fetchErrorReferral.code !== "PGRST116") {
+        console.error("Error redeem referral:", fetchErrorReferral);
+        return { success: false, error: "Failed to redeem referral" };
+      } else {
+        return { success: true, referralCode: existingReferral };
+      }
+    }
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, error: "Failed to insert referral." };
+  }
+};
+
+export const getLevels = async (walletAddress: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const { data: levels, error: fetchError } = await supabase
+      .from("levels")
+      .select("id, name, startingFrom, endingAt, necessaryXP");
+    if (fetchError) {
+      console.error("Error fetching levels:", fetchError);
+      return { success: false, error: "Failed to fetch levels" };
+    }
+    return { success: true, levels: levels };
+  } catch (error) {
+    console.error("Error fetching levels:", error);
+    return { success: false, error: "Failed to fetch levels" };
   }
 };

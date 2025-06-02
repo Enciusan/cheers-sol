@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { MatchProfile, Profile } from "@/utils/types";
 import { supabase } from "@/lib/initSupabaseClient";
 import { fetchMessages, sendMessage } from "@/api/messageFunctions";
+import { MatchInfo } from "../MatchCard/match-info";
 
 interface ChatAreaProps {
   match: MatchProfile;
@@ -45,8 +46,14 @@ export function ChatArea({ match, currentUser }: ChatAreaProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Chat Header */}
-      <div className="p-4 border-b border-gray-800">
-        <h2 className="md:pl-0 pl-10 text-lg font-semibold text-white">{match.username}</h2>
+      <div className="flex items-center justify-between border-b border-gray-800">
+        <div className="flex items-center gap-3 p-3 ">
+          <img src={match.profileImage} alt="Profile" className="w-9 h-9 rounded-full md:ml-1.5 ml-10" />
+          <h2 className="pl-0 text-lg font-semibold text-white">{match.username}</h2>
+        </div>
+        <div className="pr-2">
+          <MatchInfo data={match} />
+        </div>
       </div>
 
       {/* Messages Area */}
@@ -57,7 +64,7 @@ export function ChatArea({ match, currentUser }: ChatAreaProps) {
             className={`flex ${message.sender_id === currentUser.id ? "justify-end" : "justify-start"}`}>
             <div
               className={`break-words max-w-[75%] rounded-2xl p-2.5 md:p-3 text-sm md:text-base ${
-                message.sender_id === currentUser.id ? "bg-indigo-600 text-white" : "bg-gray-700 text-gray-100"
+                message.sender_id === currentUser.id ? "bg-violet-600 text-white" : "bg-gray-700 text-gray-100"
               }`}>
               {message.content}
             </div>
@@ -79,11 +86,11 @@ export function ChatArea({ match, currentUser }: ChatAreaProps) {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 bg-[#7C3AED]/10 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
           <button
             type="submit"
-            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+            className="bg-violet-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">
             Send
           </button>
         </div>

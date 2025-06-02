@@ -13,10 +13,9 @@ const PUBLIC_ROUTES = ["/"];
 
 export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
   const { publicKey, disconnecting, disconnect } = useWallet();
-  const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
+  const { logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
   const { fetchProfiles, fetchUsersLocation } = useUsersStore();
-  const [dataLoaded, setDataLoaded] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 

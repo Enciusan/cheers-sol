@@ -51,3 +51,12 @@ export type Levels = {
   endingAt: number;
   necessaryXP: number;
 };
+
+export type Missions = {
+  id: number;
+  title: string;
+  mission: string;
+  target: number;
+  XPGainedPerMission: number;
+  walletsSolvedMission: string[];
+};

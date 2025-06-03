@@ -543,3 +543,24 @@ export const getLevels = async (walletAddress: string) => {
     return { success: false, error: "Failed to fetch levels" };
   }
 };
+
+export const getMissions = async (walletAddress: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const { data: missions, error: fetchError } = await supabase
+      .from("missions")
+      .select("id, title, mission, walletsSolvedMission, XPGainedPerMission, target");
+    if (fetchError) {
+      console.error("Error fetching missions:", fetchError);
+      return { success: false, error: "Failed to fetch missions" };
+    }
+    return { success: true, missions: missions };
+  } catch (error) {
+    console.error("Error fetching missions:", error);
+    return { success: false, error: "Failed to fetch missions" };
+  }
+};

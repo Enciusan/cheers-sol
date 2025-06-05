@@ -10,6 +10,9 @@ export type Profile = {
   myReferral: string;
   referralUsed: string;
   gainedXP: number;
+  hasDomainChecked: boolean;
+  allDomainName: string;
+  snsName: string;
 };
 
 export interface ProfileFormProps {

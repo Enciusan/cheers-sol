@@ -42,6 +42,9 @@ export const useUserStore = create<UserStore>((set) => ({
             myReferral: data.myReferral,
             referralUsed: data.referralUsed,
             gainedXP: data.gainedXP,
+            hasDomainChecked: data.hasDomainChecked,
+            allDomainName: data.allDomainName,
+            snsName: data.snsName,
           },
         });
       }
@@ -75,6 +78,9 @@ export const useUsersStore = create<UsersStore>((set) => ({
           myReferral: profile.myReferral,
           referralUsed: profile.referralUsed,
           gainedXP: profile.gainedXP,
+          hasDomainChecked: profile.hasDomainChecked,
+          allDomainName: profile.allDomainName,
+          snsName: profile.snsName,
         }));
         console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });

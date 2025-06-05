@@ -138,7 +138,7 @@ export default function MessageComponent() {
                     className="rounded-full object-cover"
                   />
                 )}
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#18181B]" />
+                {/* <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#18181B]" /> */}
               </div>
               <div className="ml-4 flex-1">
                 <h3 className="text-white font-medium">{match.username}</h3>

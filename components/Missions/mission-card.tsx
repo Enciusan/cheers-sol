@@ -6,76 +6,12 @@ import { Card, CardTitle } from "../ui/card";
 import { Missions } from "@/utils/types";
 import { Fragment, useEffect, useState } from "react";
 import { useUserStore } from "@/store/user";
-import { getMissions } from "@/api/userFunctions";
-
-// interface Mission {
-//   id: string;
-//   title: string;
-//   description: string;
-//   progress: number;
-//   target: number;
-//   icon: React.ReactNode;
-//   reward: number;
-// }
-
-// const missions: Mission[] = [
-//   {
-//     id: "profile",
-//     title: "Complete Profile",
-//     description: "Fill out all profile information",
-//     progress: 4,
-//     target: 5,
-//     icon: <UserCircle className="h-5 w-5" />,
-//     reward: 100,
-//   },
-//   {
-//     id: "daily",
-//     title: "Daily Login",
-//     description: "Enter once a day in app",
-//     progress: 1,
-//     target: 1,
-//     icon: <Calendar className="h-5 w-5" />,
-//     reward: 50,
-//   },
-//   {
-//     id: "matches",
-//     title: "Match Master",
-//     description: "Match with 25 persons",
-//     progress: 10,
-//     target: 25,
-//     icon: <UsersIcon className="h-5 w-5" />,
-//     reward: 250,
-//   },
-//   {
-//     id: "conversation",
-//     title: "Conversation Starter",
-//     description: "Initiate conversation with a match",
-//     progress: 0,
-//     target: 1,
-//     icon: <MessageCircle className="h-5 w-5" />,
-//     reward: 75,
-//   },
-//   {
-//     id: "messages",
-//     title: "Deep Connection",
-//     description: "Exchange 10 messages with a match",
-//     progress: 3,
-//     target: 10,
-//     icon: <MessagesSquare className="h-5 w-5" />,
-//     reward: 150,
-//   },
-//   {
-//     id: "referrals",
-//     title: "Community Builder",
-//     description: "10 persons used your referral",
-//     progress: 2,
-//     target: 10,
-//     icon: <UsersIcon className="h-5 w-5" />,
-//     reward: 500,
-//   },
-// ];
+import { getMissions, profileMissionDone } from "@/api/missionFunctions";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Button } from "../ui/button";
 
 export const MissionsCard = () => {
+  const { publicKey } = useWallet();
   const { userData } = useUserStore();
   const [missions, setMissions] = useState<Missions[]>([]);
 
@@ -98,10 +34,56 @@ export const MissionsCard = () => {
       fetched = true;
     };
   }, []);
-  console.log("missions", missions);
+  // console.log("missions", missions);
+
+  // useEffect(() => {
+  //   profileMissionDone(publicKey?.toBase58() || "");
+  // }, [missions]);
+
+  const getIconForMission = (mission: string): React.ReactNode => {
+    const missionLower = mission.toLowerCase();
+
+    if (missionLower.includes("profile")) return <UserCircle className="h-5 w-5" />;
+    if (missionLower.includes("login") || missionLower.includes("daily")) return <Calendar className="h-5 w-5" />;
+    if (missionLower.includes("match") && missionLower.includes("25")) return <UsersIcon className="h-5 w-5" />;
+    if (missionLower.includes("conversation") || missionLower.includes("initiate"))
+      return <MessageCircle className="h-5 w-5" />;
+    if (missionLower.includes("message") || missionLower.includes("10 messages"))
+      return <MessagesSquare className="h-5 w-5" />;
+    if (missionLower.includes("referral")) return <UsersIcon className="h-5 w-5" />;
+
+    // Default icon
+    return <UserCircle className="h-5 w-5" />;
+  };
+
+  const getProgress = (mission: string) => {
+    switch (mission) {
+      case "Complete Profile":
+        return userData?.walletAddress ? 1 : 0;
+      case "Daily Login":
+        return userData?.walletAddress ? 1 : 0;
+      case "Match Master":
+        return userData?.walletAddress ? 1 : 0;
+      case "Conversation Starter":
+        return userData?.walletAddress ? 1 : 0;
+      case "Deep Connection":
+        return userData?.walletAddress ? 1 : 0;
+      case "Community Builder":
+        return userData?.walletAddress ? 1 : 0;
+      default:
+        return 0;
+    }
+  };
+
+  const completeProfileMission = () => {
+    if (userData?.walletAddress && userData?.profileImage) {
+      profileMissionDone(userData.walletAddress);
+    }
+  };
+  console.log(missions);
 
   return (
-    <Card className="w-full max-w-[450px] mx-auto shadow-lg rounded-xl">
+    <Card className="w-full max-w-[30rem] mx-auto shadow-lg rounded-xl">
       <div className="rounded-lg p-6 backdrop-blur-sm ">
         <CardTitle className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold text-white">Daily Missions</h2>
@@ -111,33 +93,56 @@ export const MissionsCard = () => {
         </CardTitle>
 
         <div className="space-y-4 h-[60dvh] md:h-[40dvh] overflow-y-scroll">
-          {missions.map((mission) => (
-            <Fragment key={mission.id}>
-              <div className="group relative rounded-lg bg-[#18181B] bg-opacity-50 backdrop-blur p-4 hover:bg-opacity-70 transition-all">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600 bg-opacity-20">
-                    {/* {mission.icon} */}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex flex-col gap-1">
-                        <h3 className="text-base font-medium text-white truncate">{mission.title}</h3>
-                        <p className="text-sm text-gray-300">{mission.mission}</p>
+          {missions
+            .sort((a, b) => a.id - b.id)
+            .map((mission) => (
+              <Fragment key={mission.id}>
+                <div className="group relative rounded-lg bg-[#18181B] p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1">
+                  {getProgress(mission.title) === mission.target && (
+                    <div className="absolute w-full h-full z-20 backdrop-blur-lg bg-violet-800/10 inset-0 rounded-lg">
+                      <div className="flex flex-col justify-center h-full items-center w-full font-semibold gap-2">
+                        <span className="text-emerald-200 text-sm font-medium px-3 py-1 rounded-full bg-emerald-400/20 backdrop-blur-sm">
+                          Complete
+                        </span>
+                        <Button
+                          variant="outline"
+                          className="bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 text-purple-100 backdrop-blur-sm">
+                          Claim XP
+                        </Button>
                       </div>
-                      <span className="text-xs text-purple-400">+{mission.XPGainedPerMission} XP</span>
                     </div>
-                    <div className="space-y-1">
-                      {/* <Progress value={(mission.progress / mission.target) * 100} className="h-1.5 bg-gray-700" /> */}
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-400">1 / {mission.target}</span>
-                        {/* <span className="text-gray-500">{Math.round((mission.progress / mission.target) * 100)}%</span> */}
+                  )}
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600 bg-opacity-20">
+                      {getIconForMission(mission.mission)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex flex-col gap-1">
+                          <h3 className="text-base font-medium text-white truncate">{mission.title}</h3>
+                          <p className="text-sm text-gray-300">{mission.mission}</p>
+                        </div>
+                        <span className="text-xs text-purple-400">+{mission.XPGainedPerMission} XP</span>
+                      </div>
+                      <div className="space-y-1">
+                        <Progress
+                          value={(getProgress(mission.title) / mission.target) * 100}
+                          className="h-1.5 bg-gray-700"
+                        />
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-400">
+                            {getProgress(mission.title)} / {mission.target}
+                          </span>
+                          <span className="text-gray-500">
+                            {Math.round((getProgress(mission.title) / mission.target) * 100)}%
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Fragment>
-          ))}
+              </Fragment>
+            ))}
         </div>
       </div>
     </Card>

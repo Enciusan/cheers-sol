@@ -13,6 +13,7 @@ export type Profile = {
   hasDomainChecked: boolean;
   allDomainName: string;
   snsName: string;
+  connectedAt: Date;
 };
 
 export interface ProfileFormProps {

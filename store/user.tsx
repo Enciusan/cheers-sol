@@ -45,6 +45,7 @@ export const useUserStore = create<UserStore>((set) => ({
             hasDomainChecked: data.hasDomainChecked,
             allDomainName: data.allDomainName,
             snsName: data.snsName,
+            connectedAt: data.connected_at,
           },
         });
       }
@@ -61,9 +62,9 @@ export const useUsersStore = create<UsersStore>((set) => ({
   updateProfiles: (profiles) => set({ profiles }),
   fetchProfiles: async (walletAddress: string) => {
     try {
-      console.log("Fetching profiles for", walletAddress);
+      // console.log("Fetching profiles for", walletAddress);
       const data = await getAppUserForMatch(walletAddress);
-      console.log("Profiles data received:", data);
+      // console.log("Profiles data received:", data);
 
       if (data) {
         const mappedProfiles = data?.map((profile: any) => ({
@@ -81,6 +82,7 @@ export const useUsersStore = create<UsersStore>((set) => ({
           hasDomainChecked: profile.hasDomainChecked,
           allDomainName: profile.allDomainName,
           snsName: profile.snsName,
+          connectedAt: profile.connected_at,
         }));
         console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });

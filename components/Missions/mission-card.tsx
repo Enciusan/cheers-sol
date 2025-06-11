@@ -6,7 +6,14 @@ import { Card, CardTitle } from "../ui/card";
 import { Missions } from "@/utils/types";
 import { Fragment, useEffect, useState } from "react";
 import { useUserStore } from "@/store/user";
-import { getMissions, profileMissionDone } from "@/api/missionFunctions";
+import {
+  addWalletToMissionDone,
+  checkConversationStarter,
+  getMatchCount,
+  getMissions,
+  getReferralCount,
+  profileMissionDone,
+} from "@/api/missionFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "../ui/button";
 
@@ -14,31 +21,48 @@ export const MissionsCard = () => {
   const { publicKey } = useWallet();
   const { userData } = useUserStore();
   const [missions, setMissions] = useState<Missions[]>([]);
+  const [matchCount, setMatchCount] = useState(0);
+  const [referralCount, setReferralCount] = useState(0);
+  const [hasInitiatedConversation, setHasInitiatedConversation] = useState(false);
+  const [hasMultipleTexts, setHasMultipleTexts] = useState(false);
+  const [initiatedCount, setInitiatedCount] = useState(0);
+  const [mutualConversationCount, setMutualConversationCount] = useState(0);
 
-  useEffect(() => {
-    let fetched = false;
-    const fetchMissions = async () => {
-      if (fetched || !userData?.walletAddress) return;
-      try {
-        const data = await getMissions(userData.walletAddress);
-        if (data.success && data.missions) {
-          setMissions(data.missions);
-        }
-      } catch (error) {
-        console.log("Error fetch missions", error);
-      }
-    };
-    fetchMissions();
+  // Add this function to check conversation initiation
+  const checkConversationInitiation = async () => {
+    if (!userData?.id || !publicKey) return;
 
-    return () => {
-      fetched = true;
-    };
-  }, []);
-  // console.log("missions", missions);
+    const result = await checkConversationStarter(publicKey.toBase58(), userData.id);
+    if (result.success) {
+      setHasInitiatedConversation(result.initiatedConversation);
+      setHasMultipleTexts(result.multipleTexts);
+      setInitiatedCount(result.initiatedCount);
+      setMutualConversationCount(result.mutualConversationCount);
+    }
+  };
 
-  // useEffect(() => {
-  //   profileMissionDone(publicKey?.toBase58() || "");
-  // }, [missions]);
+  const passedOneDay = (): boolean => {
+    if (!userData?.connectedAt) return false;
+    const now = new Date();
+    const lastConnected = new Date(userData.connectedAt);
+    const diffMs = now.getTime() - lastConnected.getTime();
+    const diffHours = diffMs / (1000 * 60 * 60);
+    return diffHours > 24;
+  };
+
+  const countMatches = async () => {
+    if (!userData) return;
+    const { totalMatches } = await getMatchCount(userData.walletAddress, userData.id);
+    if (!totalMatches) return;
+    setMatchCount(totalMatches.length);
+  };
+
+  const countReferral = async () => {
+    if (!userData) return;
+    const { totalReferrals } = await getReferralCount(userData.walletAddress, userData.myReferral);
+    if (!totalReferrals) return;
+    setReferralCount(totalReferrals.length);
+  };
 
   const getIconForMission = (mission: string): React.ReactNode => {
     const missionLower = mission.toLowerCase();
@@ -59,17 +83,17 @@ export const MissionsCard = () => {
   const getProgress = (mission: string) => {
     switch (mission) {
       case "Complete Profile":
-        return userData?.walletAddress ? 1 : 0;
+        return userData?.walletAddress && userData?.profileImage ? 1 : 0;
       case "Daily Login":
-        return userData?.walletAddress ? 1 : 0;
+        return passedOneDay() ? 1 : 0;
       case "Match Master":
-        return userData?.walletAddress ? 1 : 0;
+        return matchCount < 25 ? matchCount : matchCount >= 25 ? 1 : 0;
       case "Conversation Starter":
-        return userData?.walletAddress ? 1 : 0;
+        return hasInitiatedConversation ? 1 : 0;
       case "Deep Connection":
-        return userData?.walletAddress ? 1 : 0;
+        return mutualConversationCount < 10 ? mutualConversationCount : mutualConversationCount >= 10 ? 1 : 0;
       case "Community Builder":
-        return userData?.walletAddress ? 1 : 0;
+        return referralCount < 10 ? referralCount : referralCount >= 10 ? 1 : 0;
       default:
         return 0;
     }
@@ -77,16 +101,75 @@ export const MissionsCard = () => {
 
   const completeProfileMission = () => {
     if (userData?.walletAddress && userData?.profileImage) {
-      profileMissionDone(userData.walletAddress);
+      profileMissionDone(userData.walletAddress, 1);
+      addWalletToMissionDone(userData.walletAddress, 1);
     }
   };
-  console.log(missions);
+
+  const completeLoginDailyMission = () => {
+    if (passedOneDay() && userData?.walletAddress) {
+      profileMissionDone(userData.walletAddress, 2);
+      addWalletToMissionDone(userData.walletAddress, 2);
+    }
+  };
+
+  const completePeopleMatchMission = () => {
+    if (matchCount >= 25 && userData?.walletAddress) {
+      profileMissionDone(userData.walletAddress, 3);
+      addWalletToMissionDone(userData.walletAddress, 3);
+    }
+  };
+
+  const completeConversationStarterMission = () => {
+    if (hasInitiatedConversation && userData?.walletAddress) {
+      profileMissionDone(userData.walletAddress, 4);
+      addWalletToMissionDone(userData.walletAddress, 4);
+    }
+  };
+
+  const completeDeepConnectionMission = () => {
+    if (mutualConversationCount >= 10 && userData?.walletAddress) {
+      profileMissionDone(userData.walletAddress, 5);
+      addWalletToMissionDone(userData.walletAddress, 5);
+    }
+  };
+
+  const completeReferralMission = () => {
+    if (referralCount >= 10 && userData?.walletAddress) {
+      profileMissionDone(userData.walletAddress, 6);
+      addWalletToMissionDone(userData.walletAddress, 6);
+    }
+  };
+
+  useEffect(() => {
+    let fetched = false;
+    if (!publicKey) return;
+    const fetchMissions = async () => {
+      if (fetched || !userData?.walletAddress) return;
+      try {
+        const data = await getMissions(userData.walletAddress);
+        if (data.success && data.missions) {
+          setMissions(data.missions);
+        }
+      } catch (error) {
+        console.log("Error fetch missions", error);
+      }
+    };
+    fetchMissions();
+    countMatches();
+    countReferral();
+    checkConversationInitiation();
+
+    return () => {
+      fetched = true;
+    };
+  }, []);
 
   return (
     <Card className="w-full max-w-[30rem] mx-auto shadow-lg rounded-xl">
       <div className="rounded-lg p-6 backdrop-blur-sm ">
         <CardTitle className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-white">Daily Missions</h2>
+          <h2 className="text-2xl font-bold text-white">Missions</h2>
           <div className="text-sm text-gray-400">
             Total XP Available: {missions.reduce((acc, mission) => acc + mission.XPGainedPerMission, 0)} XP
           </div>

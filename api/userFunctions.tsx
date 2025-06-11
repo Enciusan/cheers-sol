@@ -24,7 +24,7 @@ export const getUser = async (walletAddress: PublicKey | string) => {
     const { data, error } = await supabase
       .from("profiles")
       .select(
-        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasDomainChecked, allDomainName, snsName"
+        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasDomainChecked, allDomainName, snsName, connected_at"
       )
       .eq("wallet_address", bufferKey)
       .single();

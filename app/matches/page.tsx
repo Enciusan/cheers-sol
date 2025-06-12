@@ -2,7 +2,6 @@
 
 import MatchStack from "@/components/MatchCard/match-stack";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
 import { calculateDistance } from "@/utils/clientFunctions";
 import { Profile } from "@/utils/types";
@@ -12,23 +11,18 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function MatchesPage() {
-  // const { publicKey } = useWallet();
   const { userData } = useUserStore();
   const { profiles, usersLocations } = useUsersStore();
   const [filteredByDistanceProfiles, setFilteredByDistanceProfiles] = useState<Profile[]>([]);
   // const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  // console.log(isAuthenticated);
-
   const filteredProfilesBasedOnDistance = () => {
     // console.log(userData, profiles, usersLocations);
-
     if (!userData || !profiles || !usersLocations) {
       setFilteredByDistanceProfiles([]);
       return;
     }
-    // console.log(usersLocations.map((location) => location.walletAddress));
 
     const myLocation = usersLocations.find((location) => location.walletAddress === userData.walletAddress);
 
@@ -36,10 +30,6 @@ export default function MatchesPage() {
       setFilteredByDistanceProfiles([]);
       return;
     }
-    // console.log(
-    //   profiles.map((profile) => profile.walletAddress),
-    //   userData
-    // );
 
     const filteredProfiles = profiles.filter((profile) => {
       if (profile.walletAddress === userData.walletAddress) {
@@ -66,7 +56,7 @@ export default function MatchesPage() {
   };
 
   useEffect(() => {
-    console.log("userData", userData, profiles, usersLocations);
+    // console.log("userData", userData, profiles, usersLocations);
 
     if (userData && profiles && usersLocations) {
       filteredProfilesBasedOnDistance();

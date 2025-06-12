@@ -13,13 +13,16 @@ import {
   getMissions,
   getReferralCount,
   profileMissionDone,
+  userIncreaseXp,
 } from "@/api/missionFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
+import { PublicKey } from "@solana/web3.js";
 
 export const MissionsCard = () => {
   const { publicKey } = useWallet();
-  const { userData } = useUserStore();
+  const { userData, fetchUserProfile } = useUserStore();
   const [missions, setMissions] = useState<Missions[]>([]);
   const [matchCount, setMatchCount] = useState(0);
   const [referralCount, setReferralCount] = useState(0);
@@ -27,8 +30,9 @@ export const MissionsCard = () => {
   const [hasMultipleTexts, setHasMultipleTexts] = useState(false);
   const [initiatedCount, setInitiatedCount] = useState(0);
   const [mutualConversationCount, setMutualConversationCount] = useState(0);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  let bufferKey = Buffer.from(publicKey!.toBytes()).toString("hex");
 
-  // Add this function to check conversation initiation
   const checkConversationInitiation = async () => {
     if (!userData?.id || !publicKey) return;
 
@@ -76,7 +80,6 @@ export const MissionsCard = () => {
       return <MessagesSquare className="h-5 w-5" />;
     if (missionLower.includes("referral")) return <UsersIcon className="h-5 w-5" />;
 
-    // Default icon
     return <UserCircle className="h-5 w-5" />;
   };
 
@@ -99,45 +102,49 @@ export const MissionsCard = () => {
     }
   };
 
-  const completeProfileMission = () => {
-    if (userData?.walletAddress && userData?.profileImage) {
-      profileMissionDone(userData.walletAddress, 1);
-      addWalletToMissionDone(userData.walletAddress, 1);
-    }
-  };
+  const completeMission = async (index: number) => {
+    if (!bufferKey || !publicKey) return;
 
-  const completeLoginDailyMission = () => {
-    if (passedOneDay() && userData?.walletAddress) {
-      profileMissionDone(userData.walletAddress, 2);
-      addWalletToMissionDone(userData.walletAddress, 2);
-    }
-  };
+    console.log(missions);
 
-  const completePeopleMatchMission = () => {
-    if (matchCount >= 25 && userData?.walletAddress) {
-      profileMissionDone(userData.walletAddress, 3);
-      addWalletToMissionDone(userData.walletAddress, 3);
-    }
-  };
+    if (userData && !missions[index - 1].walletsSolvedMission.includes(bufferKey)) {
+      setIsLoading(true);
+      const { success: profileMissionSuccess, error: profileMissionError } = await profileMissionDone(
+        userData.walletAddress,
+        index
+      );
+      if (profileMissionError) {
+        toast.error(profileMissionError);
+        setIsLoading(false);
+        return;
+      }
 
-  const completeConversationStarterMission = () => {
-    if (hasInitiatedConversation && userData?.walletAddress) {
-      profileMissionDone(userData.walletAddress, 4);
-      addWalletToMissionDone(userData.walletAddress, 4);
-    }
-  };
+      const { success: walletMissionSuccess, error: walletMissionError } = await addWalletToMissionDone(
+        userData.walletAddress,
+        index
+      );
+      if (walletMissionError) {
+        toast.error(walletMissionError);
+        setIsLoading(false);
+        return;
+      }
 
-  const completeDeepConnectionMission = () => {
-    if (mutualConversationCount >= 10 && userData?.walletAddress) {
-      profileMissionDone(userData.walletAddress, 5);
-      addWalletToMissionDone(userData.walletAddress, 5);
-    }
-  };
+      const { success: userAddXp, error: userAddXpError } = await userIncreaseXp(
+        publicKey?.toBase58()!,
+        missions[index - 1].XPGainedPerMission
+      );
+      if (userAddXpError) {
+        toast.error(userAddXpError);
+        setIsLoading(false);
+        return;
+      }
 
-  const completeReferralMission = () => {
-    if (referralCount >= 10 && userData?.walletAddress) {
-      profileMissionDone(userData.walletAddress, 6);
-      addWalletToMissionDone(userData.walletAddress, 6);
+      await fetchUserProfile(publicKey.toBase58());
+
+      if (profileMissionSuccess && walletMissionSuccess && userAddXp) {
+        toast.success("Mission completed");
+        setIsLoading(false);
+      }
     }
   };
 
@@ -149,7 +156,7 @@ export const MissionsCard = () => {
       try {
         const data = await getMissions(userData.walletAddress);
         if (data.success && data.missions) {
-          setMissions(data.missions);
+          setMissions(data.missions.sort((a, b) => a.id - b.id));
         }
       } catch (error) {
         console.log("Error fetch missions", error);
@@ -176,56 +183,56 @@ export const MissionsCard = () => {
         </CardTitle>
 
         <div className="space-y-4 h-[60dvh] md:h-[40dvh] overflow-y-scroll">
-          {missions
-            .sort((a, b) => a.id - b.id)
-            .map((mission) => (
-              <Fragment key={mission.id}>
-                <div className="group relative rounded-lg bg-[#18181B] p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1">
-                  {getProgress(mission.title) === mission.target && (
-                    <div className="absolute w-full h-full z-20 backdrop-blur-lg bg-violet-800/10 inset-0 rounded-lg">
-                      <div className="flex flex-col justify-center h-full items-center w-full font-semibold gap-2">
-                        <span className="text-emerald-200 text-sm font-medium px-3 py-1 rounded-full bg-emerald-400/20 backdrop-blur-sm">
-                          Complete
+          {missions.map((mission) => (
+            <Fragment key={mission.id}>
+              <div className="group relative rounded-lg bg-[#18181B] p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1">
+                {getProgress(mission.title) === mission.target && (
+                  <div className="absolute w-full h-full z-20 backdrop-blur-lg bg-violet-800/10 inset-0 rounded-lg">
+                    <div className="flex flex-col justify-center h-full items-center w-full font-semibold gap-2">
+                      <span className="text-emerald-200 text-sm font-medium px-3 py-1 rounded-full bg-emerald-400/20 backdrop-blur-sm">
+                        Complete
+                      </span>
+                      <Button
+                        variant="outline"
+                        onClick={() => completeMission(mission.id)}
+                        disabled={isLoading || mission.walletsSolvedMission.includes(bufferKey)}
+                        className="bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 text-purple-100 backdrop-blur-sm">
+                        {mission.walletsSolvedMission.includes(bufferKey) ? "Claimed" : "Claim XP"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-4">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600 bg-opacity-20">
+                    {getIconForMission(mission.mission)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex flex-col gap-1">
+                        <h3 className="text-base font-medium text-white truncate">{mission.title}</h3>
+                        <p className="text-sm text-gray-300">{mission.mission}</p>
+                      </div>
+                      <span className="text-xs text-purple-400">+{mission.XPGainedPerMission} XP</span>
+                    </div>
+                    <div className="space-y-1">
+                      <Progress
+                        value={(getProgress(mission.title) / mission.target) * 100}
+                        className="h-1.5 bg-gray-700"
+                      />
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-400">
+                          {getProgress(mission.title)} / {mission.target}
                         </span>
-                        <Button
-                          variant="outline"
-                          className="bg-purple-500/10 border-purple-500/20 hover:bg-purple-500/20 text-purple-100 backdrop-blur-sm">
-                          Claim XP
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600 bg-opacity-20">
-                      {getIconForMission(mission.mission)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex flex-col gap-1">
-                          <h3 className="text-base font-medium text-white truncate">{mission.title}</h3>
-                          <p className="text-sm text-gray-300">{mission.mission}</p>
-                        </div>
-                        <span className="text-xs text-purple-400">+{mission.XPGainedPerMission} XP</span>
-                      </div>
-                      <div className="space-y-1">
-                        <Progress
-                          value={(getProgress(mission.title) / mission.target) * 100}
-                          className="h-1.5 bg-gray-700"
-                        />
-                        <div className="flex justify-between text-xs">
-                          <span className="text-gray-400">
-                            {getProgress(mission.title)} / {mission.target}
-                          </span>
-                          <span className="text-gray-500">
-                            {Math.round((getProgress(mission.title) / mission.target) * 100)}%
-                          </span>
-                        </div>
+                        <span className="text-gray-500">
+                          {Math.round((getProgress(mission.title) / mission.target) * 100)}%
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-              </Fragment>
-            ))}
+              </div>
+            </Fragment>
+          ))}
         </div>
       </div>
     </Card>

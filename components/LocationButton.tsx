@@ -1,6 +1,6 @@
 import { addOrUpdateUserLocationServer } from "@/api/userFunctions";
 import { LocationType } from "@/utils/types";
-import { Loader2, MapPin, Pin } from "lucide-react";
+import { Loader2, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
@@ -39,11 +39,10 @@ export const LocationButton = ({ publicKey }: { publicKey: any }) => {
 
     setIsLoading(true);
     try {
-      // Using ipinfo.io to get location based on IP
       const ipResponse = await fetch("https://api.ipify.org?format=json");
       const ipData = await ipResponse.json();
       const ipAddress = ipData.ip;
-      console.log(ipAddress);
+      // console.log(ipAddress);
 
       const response = await fetch(`https://ipinfo.io/${ipAddress}?token=1fce65177febf1`);
 
@@ -55,24 +54,22 @@ export const LocationButton = ({ publicKey }: { publicKey: any }) => {
       console.log(data);
 
       // Parse location data from ipinfo.io
-      // The loc field contains latitude and longitude separated by a comma
       const [latitude, longitude] = data.loc.split(",").map(Number);
 
       const locationData: LocationType = {
         latitude,
         longitude,
-        accuracy: 3000, // IP geolocation is less accurate, typically city-level
+        accuracy: 3000,
         radius: 5000,
       };
 
       await addOrUpdateUserLocationServer(locationData, publicKey.toBase58());
       console.log(locationData);
 
-      toast("Location determined based on your IP address");
+      toast("Location added but not very accurate");
     } catch (error) {
       console.error("Error getting location by IP:", error);
       toast("Could not determine your location. Trying native geolocation...");
-      // Fall back to native geolocation if IP-based fails
       getNativeLocation();
     } finally {
       setIsLoading(false);

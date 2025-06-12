@@ -97,7 +97,7 @@ body {
 }
 
 .wallet-adapter-button-trigger {
-  @apply bg-violet-600 hover:bg-violet-700 h-9 rounded-md px-9 text-sm !important;
+  @apply bg-violet-400/30 hover:bg-violet-500/60 h-9 rounded-md px-3 text-sm !important;
 }
 
 

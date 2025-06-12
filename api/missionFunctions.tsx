@@ -266,3 +266,34 @@ export const checkConversationStarter = async (
     };
   }
 };
+
+export const userIncreaseXp = async (walletAddress: string, xp: number) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    let publicKey = new PublicKey(walletAddress);
+    let bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    const { data: userXp, error: userXpGetError } = await supabase
+      .from("profiles")
+      .select("gainedXP")
+      .eq("wallet_address", bufferKey)
+      .single();
+    if (userXpGetError) {
+      console.error("Error fetching user XP:", userXpGetError);
+      return { success: false, error: "Failed to fetch user XP" };
+    }
+    const newXP = userXp.gainedXP + xp;
+    const { data, error } = await supabase.from("profiles").update({ gainedXP: newXP }).eq("wallet_address", bufferKey);
+    if (error) {
+      console.error("Error increasing XP:", error);
+      return { success: false, error: "Failed to increase XP" };
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Error increasing XP:", error);
+    return { success: false, error: "Failed to increase XP" };
+  }
+};

@@ -52,8 +52,8 @@ export const fetchMatches = async (userData: Profile) => {
     .select(
       `
           *,
-          user2:profiles!matches_user2_id_fkey(id, username, bio, age, drinks, profileImage),
-          user1:profiles!matches_user1_id_fkey(id, username, bio, age, drinks, profileImage)
+          user2:profiles!matches_user2_id_fkey(id, username, bio, age, drinks, profileImage, hasADDomainChecked, hasSNSDomainChecked, snsName, allDomainName, communities),
+          user1:profiles!matches_user1_id_fkey(id, username, bio, age, drinks, profileImage, hasADDomainChecked, hasSNSDomainChecked, snsName, allDomainName, communities)
         `
     )
     .or(`user1_id.eq.${userData.id},user2_id.eq.${userData.id}`);

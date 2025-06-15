@@ -39,7 +39,7 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
       onSwipe?.(direction);
     }
   };
-
+  console.log(matchingProfiles);
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -70,7 +70,9 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
           <div className="relative h-80">
             <Image
               src={
-                matchingProfiles.profileImage !== null ? matchingProfiles.profileImage : "/assets/images/profile.png"
+                matchingProfiles.profileImage !== null
+                  ? matchingProfiles.profileImage
+                  : "@/assets/favicon-noPadding.png"
               }
               alt={matchingProfiles.username}
               layout="fill"
@@ -94,7 +96,12 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
           <div className="p-4">
             <div className="flex justify-between items-center text-2xl font-bold mb-2">
               <h2>
-                {matchingProfiles.username}, {matchingProfiles.age}
+                {matchingProfiles.hasADDomainChecked
+                  ? matchingProfiles.allDomainName
+                  : matchingProfiles.hasSNSDomainChecked
+                    ? matchingProfiles.snsName
+                    : matchingProfiles.username}
+                , {matchingProfiles.age}
               </h2>
               <MatchInfo data={matchingProfiles} />
             </div>

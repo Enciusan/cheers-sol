@@ -14,7 +14,7 @@ export const getAllDomains = async (publicKey: string) => {
   return domains;
 };
 
-export const getMainDomain = async (pubkey: string | PublicKey): Promise<MainDomain | undefined> => {
+export const getMainDomain = async (pubkey: string | PublicKey) => {
   if (typeof pubkey === "string") {
     pubkey = new PublicKey(pubkey);
   }
@@ -22,9 +22,8 @@ export const getMainDomain = async (pubkey: string | PublicKey): Promise<MainDom
   let mainDomain = undefined;
   try {
     mainDomain = await MainDomain.fromAccountAddress(connection, mainDomainPubkey);
-    return mainDomain;
+    return { domain: mainDomain.domain, tld: mainDomain.tld };
   } catch (e) {
     console.log("No main domain found");
   }
-  return mainDomain;
 };

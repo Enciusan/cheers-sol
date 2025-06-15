@@ -10,8 +10,9 @@ export type Profile = {
   myReferral: string;
   referralUsed: string;
   gainedXP: number;
-  hasDomainChecked: boolean;
+  hasADDomainChecked: boolean;
   allDomainName: string;
+  hasSNSDomainChecked: boolean;
   snsName: string;
   connectedAt: Date;
 };

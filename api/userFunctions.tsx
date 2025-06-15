@@ -5,6 +5,7 @@ import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";
 import { LocationType } from "@/utils/types";
+import { unstable_cache } from "next/cache";
 
 export const getUser = async (walletAddress: PublicKey | string) => {
   const supabase = await createClient();
@@ -21,19 +22,30 @@ export const getUser = async (walletAddress: PublicKey | string) => {
     bufferKey = Buffer.from(bufferKey.toBytes()).toString("hex");
     console.log(bufferKey);
 
-    const { data, error } = await supabase
-      .from("profiles")
-      .select(
-        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasDomainChecked, allDomainName, snsName, connected_at"
-      )
-      .eq("wallet_address", bufferKey)
-      .single();
+    const cachedQuery = unstable_cache(
+      async (key: string) => {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select(
+            "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasADDomainChecked, hasSNSDomainChecked, allDomainName, snsName, connected_at"
+          )
+          .eq("wallet_address", key)
+          .single();
 
-    if (error) {
-      console.error("Error fetching profile in userFunc:", error);
-      return;
-    }
-    return data;
+        if (error) {
+          console.error("Error fetching profile in userFunc:", error);
+          return null;
+        }
+        return data;
+      },
+      [`user-profile-${bufferKey}`],
+      {
+        revalidate: 300,
+        tags: [`user-${bufferKey}`, "profiles"],
+      }
+    );
+
+    return await cachedQuery(bufferKey);
   } catch (error) {
     console.error("Error fetching profile:", error);
   }
@@ -541,5 +553,91 @@ export const getLevels = async (walletAddress: string) => {
   } catch (error) {
     console.error("Error fetching levels:", error);
     return { success: false, error: "Failed to fetch levels" };
+  }
+};
+
+export const setUserDomain = async (walletAddress: string, domain: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    if (domain.split(".")[1] !== "sol") {
+      const { error: errorUpdatingUserDomain } = await supabase
+        .from("profiles")
+        .update({
+          hasADDomainChecked: true,
+          allDomainName: domain,
+        })
+        .eq("wallet_address", bufferKey);
+      if (errorUpdatingUserDomain) {
+        console.error("Error updating user domain:", errorUpdatingUserDomain);
+        return { success: false, error: "Failed to update active domain" };
+      } else {
+        return { success: true };
+      }
+    } else {
+      const { error: errorUpdatingUserDomain } = await supabase
+        .from("profiles")
+        .update({
+          hasSNSDomainChecked: true,
+          snsName: domain,
+        })
+        .eq("wallet_address", bufferKey);
+      if (errorUpdatingUserDomain) {
+        console.error("Error updating user domain:", errorUpdatingUserDomain);
+        return { success: false, error: "Failed to update active domain" };
+      } else {
+        return { success: true };
+      }
+    }
+  } catch (error) {
+    return { success: false, error: "Failed to update active domain" };
+  }
+};
+
+export const setInactiveDomain = async (walletAddress: string, domain: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    if (domain.split(".")[1] !== "sol") {
+      const { error: errorUpdatingUserDomain } = await supabase
+        .from("profiles")
+        .update({
+          hasADDomainChecked: false,
+          allDomainName: null,
+        })
+        .eq("wallet_address", bufferKey);
+      if (errorUpdatingUserDomain) {
+        console.error("Error inactivate user domain:", errorUpdatingUserDomain);
+        return { success: false, error: "Failed to inactivate domain" };
+      } else {
+        return { success: true };
+      }
+    } else {
+      const { error: errorUpdatingUserDomain } = await supabase
+        .from("profiles")
+        .update({
+          hasSNSDomainChecked: false,
+          snsName: null,
+        })
+        .eq("wallet_address", bufferKey);
+      if (errorUpdatingUserDomain) {
+        console.error("Error inactivate user domain:", errorUpdatingUserDomain);
+        return { success: false, error: "Failed to inactivate domain" };
+      } else {
+        return { success: true };
+      }
+    }
+  } catch (error) {
+    return { success: false, error: "Failed to inactivate domain" };
   }
 };

@@ -112,6 +112,7 @@ export default function MessageComponent() {
     return words.length > 4 ? `${preview}...` : preview;
   };
   // console.log(matches);
+  console.log(matches);
 
   return (
     <div className="flex h-[75dvh] w-[95dvw] md:w-3/4 bg-[#18181B] rounded-lg">
@@ -141,7 +142,13 @@ export default function MessageComponent() {
                 {/* <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#18181B]" /> */}
               </div>
               <div className="ml-4 flex-1">
-                <h3 className="text-white font-medium">{match.username}</h3>
+                <h3 className="text-violet-200 font-medium">
+                  {match.hasADDomainChecked
+                    ? match.allDomainName
+                    : match.hasSNSDomainChecked
+                      ? match.snsName
+                      : match.username}
+                </h3>
                 <p className="text-gray-400 text-sm truncate line-clamp-1">{getMessagePreview(match)}</p>
               </div>
               <span className="text-xs text-gray-500">

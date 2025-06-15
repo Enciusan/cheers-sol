@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useUserStore } from "@/store/user";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { generateReferralCode, linkReferralCode } from "@/api/userFunctions";
+import { userIncreaseXp } from "@/api/missionFunctions";
 
 export const ReferralCard = () => {
   const [referralCode, setReferralCode] = useState("");
@@ -26,12 +27,13 @@ export const ReferralCard = () => {
     if (!publicKey) return toast("Please connect your wallet.");
     e.preventDefault();
     await linkReferralCode(publicKey.toBase58(), referralCode);
+    await userIncreaseXp(publicKey.toBase58(), 20);
     await fetchUserProfile(publicKey.toBase58());
-    toast.success("The referral code has been successfully applied to your account.");
+    toast.success("Refferal code added, you received extra 20XP!🥂");
   };
 
   const copyToClipboard = async () => {
-    console.log(userData?.myReferral);
+    // console.log(userData?.myReferral);
 
     if (userData?.myReferral === null) return toast("No referral code to copy.");
     await navigator.clipboard.writeText(userData?.myReferral ?? "");

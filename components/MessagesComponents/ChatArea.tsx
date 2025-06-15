@@ -49,7 +49,13 @@ export function ChatArea({ match, currentUser }: ChatAreaProps) {
       <div className="flex items-center justify-between border-b border-gray-800">
         <div className="flex items-center gap-3 p-3 ">
           <img src={match.profileImage} alt="Profile" className="w-9 h-9 rounded-full md:ml-1.5 ml-10" />
-          <h2 className="pl-0 text-lg font-semibold text-white">{match.username}</h2>
+          <h2 className="pl-0 text-lg font-semibold text-white">
+            {match.hasADDomainChecked
+              ? match.allDomainName
+              : match.hasSNSDomainChecked
+                ? match.snsName
+                : match.username}
+          </h2>
         </div>
         <div className="pr-2">
           <MatchInfo data={match} />

@@ -1,6 +1,14 @@
 "use client";
 import { Progress } from "@/components/ui/progress";
-import { UserCircle, Calendar, MessageCircle, MessagesSquare, Users as UsersIcon } from "lucide-react";
+import {
+  UserCircle,
+  Calendar,
+  MessageCircle,
+  MessagesSquare,
+  Users as UsersIcon,
+  CheckIcon,
+  CheckCheck,
+} from "lucide-react";
 import { Card, CardTitle } from "../ui/card";
 import { Missions } from "@/utils/types";
 import { Fragment, useEffect, useState } from "react";
@@ -184,8 +192,7 @@ export const MissionsCard = () => {
         <div className="space-y-4 h-[60dvh] md:h-[40dvh] overflow-y-scroll">
           {missions.map((mission) => (
             <Fragment key={mission.id}>
-              <div
-                className={`group relative rounded-lg ${mission.walletsSolvedMission.includes(bufferKey) ? "bg-emerald-600/30" : "bg-[#18181B]"} p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1`}>
+              <div className="group relative rounded-lg bg-[#18181B] p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1">
                 {getProgress(mission.title) === mission.target && !mission.walletsSolvedMission.includes(bufferKey) && (
                   <div className="absolute w-full h-full z-20 backdrop-blur-lg bg-violet-800/10 inset-0 rounded-lg">
                     <div className="flex flex-col justify-center h-full items-center w-full font-semibold gap-2">
@@ -204,7 +211,11 @@ export const MissionsCard = () => {
                 )}
                 <div className="flex items-center gap-4">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-purple-600 bg-opacity-20">
-                    {getIconForMission(mission.mission)}
+                    {mission.walletsSolvedMission.includes(bufferKey) ? (
+                      <CheckCheck className="h-5 w-5 text-emerald-400" />
+                    ) : (
+                      getIconForMission(mission.mission)
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
@@ -215,14 +226,24 @@ export const MissionsCard = () => {
                       <span className="text-xs text-purple-400">+{mission.XPGainedPerMission} XP</span>
                     </div>
                     <div className="space-y-1">
-                      <Progress
-                        value={(getProgress(mission.title) / mission.target) * 100}
-                        className="h-1.5 bg-gray-700"
-                      />
+                      {mission.walletsSolvedMission.includes(bufferKey) ? (
+                        ""
+                      ) : (
+                        <Progress
+                          value={(getProgress(mission.title) / mission.target) * 100}
+                          className="h-1.5 bg-gray-700"
+                        />
+                      )}
                       <div className="flex justify-between text-xs">
-                        <span className="text-gray-400">
-                          {getProgress(mission.title)} / {mission.target}
-                        </span>
+                        {mission.walletsSolvedMission.includes(bufferKey) ? (
+                          <span className="text-emerald-200 text-sm font-medium px-3 py-1 rounded-full bg-emerald-400/20 backdrop-blur-sm">
+                            Complete
+                          </span>
+                        ) : (
+                          <span className="text-gray-400">
+                            {getProgress(mission.title)} / {mission.target}
+                          </span>
+                        )}
                         <span className="text-gray-500">
                           {Math.round((getProgress(mission.title) / mission.target) * 100)}%
                         </span>

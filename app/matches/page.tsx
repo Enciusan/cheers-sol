@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useUsersStore, useUserStore } from "@/store/user";
 import { calculateDistance } from "@/utils/clientFunctions";
 import { Profile } from "@/utils/types";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -12,6 +13,7 @@ import { useEffect, useState } from "react";
 
 export default function MatchesPage() {
   const { userData } = useUserStore();
+  const { publicKey } = useWallet();
   const { profiles, usersLocations } = useUsersStore();
   const [filteredByDistanceProfiles, setFilteredByDistanceProfiles] = useState<Profile[]>([]);
   // const { isAuthenticated } = useAuth();
@@ -61,10 +63,9 @@ export default function MatchesPage() {
     if (userData && profiles && usersLocations) {
       filteredProfilesBasedOnDistance();
     }
-  }, [userData, profiles, usersLocations]);
+  }, [publicKey, userData, profiles, usersLocations]);
 
-  const isLoading = !userData || !profiles || profiles.length === 0 || !usersLocations || usersLocations.length === 0;
-  // console.log(filteredByDistanceProfiles);
+  const isLoading = !userData || !profiles || profiles.length === 0;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">

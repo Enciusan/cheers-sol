@@ -141,7 +141,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         navigator.geolocation.getCurrentPosition(
           async (position) => {
             const { latitude, longitude, accuracy } = position.coords;
-            const radius = 5000;
+            const radius = 0;
             await addOrUpdateUserLocationServer({ latitude, longitude, accuracy, radius }, publicKey.toBase58());
           },
           (error) => {

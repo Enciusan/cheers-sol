@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-mo
 import Image from "next/image";
 import { useState } from "react";
 import { MatchInfo } from "./match-info";
+import logo from "@/assets/favicon-noPadding.png";
 
 interface MatchCardProps {
   matchingProfiles: Profile;
@@ -66,11 +67,7 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
         <div className="bg-[#18181B] bg-opacity-90 rounded-xl overflow-hidden shadow-lg max-w-sm w-full backdrop-blur-xl">
           <div className="relative h-80">
             <Image
-              src={
-                matchingProfiles.profileImage !== null
-                  ? matchingProfiles.profileImage
-                  : "@/assets/favicon-noPadding.png"
-              }
+              src={matchingProfiles.profileImage !== null ? matchingProfiles.profileImage : logo}
               alt={matchingProfiles.username}
               layout="fill"
               className="object-cover"

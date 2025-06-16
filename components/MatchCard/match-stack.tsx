@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Users, X } from "lucide-react";
 import { useState } from "react";
 import MatchCard from "./match-card";
+import { handleSwipe } from "@/api/matchFunctions";
 
 interface MatchStackProps {
   profiles: Profile[];
@@ -12,48 +13,6 @@ interface MatchStackProps {
 
 export default function MatchStack({ profiles, currentUserId }: MatchStackProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  // console.log("profiles", profiles);
-
-  const handleSwipe = async (profileId: string, direction: "left" | "right") => {
-    const action = direction === "right" ? "like" : "dislike";
-
-    // Insert the swipe action into the swipes table
-    const { error: swipeError } = await supabase.from("swipes").insert({
-      swiper_id: currentUserId,
-      swiped_id: profileId,
-      action: action,
-    });
-
-    if (swipeError) {
-      console.error("Error saving swipe:", swipeError);
-      return;
-    }
-
-    // If it's a like, check if there's a mutual match
-    if (action === "like") {
-      const { data: existingSwipe } = await supabase
-        .from("swipes")
-        .select("*")
-        .eq("swiper_id", profileId)
-        .eq("swiped_id", currentUserId)
-        .eq("action", "like")
-        .single();
-
-      // If there's a mutual like, create a match
-      if (existingSwipe) {
-        const { error: matchError } = await supabase.from("matches").insert({
-          user_id1: currentUserId,
-          user_id2: profileId,
-        });
-
-        if (matchError) {
-          console.error("Error creating match:", matchError);
-        }
-      }
-    }
-
-    setCurrentIndex((prev) => prev + 1);
-  };
 
   const hasMoreProfiles = currentIndex < profiles.length;
 
@@ -69,7 +28,13 @@ export default function MatchStack({ profiles, currentUserId }: MatchStackProps)
                 style={{
                   zIndex: profiles.length - index,
                 }}>
-                <MatchCard matchingProfiles={profile} onSwipe={(direction) => handleSwipe(profile.id, direction)} />
+                <MatchCard
+                  matchingProfiles={profile}
+                  onSwipe={(direction) => {
+                    handleSwipe(profile.id, direction, currentUserId);
+                    setCurrentIndex((prev) => prev + 1);
+                  }}
+                />
               </div>
             ))
           ) : (
@@ -89,12 +54,18 @@ export default function MatchStack({ profiles, currentUserId }: MatchStackProps)
       {hasMoreProfiles && (
         <div className="md:flex hidden justify-center space-x-4 mt-4">
           <button
-            onClick={() => profiles[currentIndex] && handleSwipe(profiles[currentIndex].id, "left")}
+            onClick={() => {
+              profiles[currentIndex] && handleSwipe(profiles[currentIndex].id, "left", currentUserId);
+              setCurrentIndex((prev) => prev + 1);
+            }}
             className="bg-rose-400 hover:bg-rose-500 text-white p-4 rounded-full transition-colors duration-200 shadow-lg">
             <X className="w-8 h-8" />
           </button>
           <button
-            onClick={() => profiles[currentIndex] && handleSwipe(profiles[currentIndex].id, "right")}
+            onClick={() => {
+              profiles[currentIndex] && handleSwipe(profiles[currentIndex].id, "right", currentUserId);
+              setCurrentIndex((prev) => prev + 1);
+            }}
             className="bg-violet-400 hover:bg-violet-500 text-white p-4 rounded-full transition-colors duration-200 shadow-lg">
             <Heart className="w-8 h-8" />
           </button>

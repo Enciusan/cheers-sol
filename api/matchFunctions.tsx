@@ -68,3 +68,40 @@ export const fetchMatches = async (userData: Profile) => {
     return transformedMatches;
   }
 };
+
+export const handleSwipe = async (profileId: string, direction: "left" | "right", currentUserId: string) => {
+  const action = direction === "right" ? "like" : "dislike";
+  // Insert the swipe action into the swipes table
+  const { error: swipeError } = await supabase.from("swipes").insert({
+    swiper_id: currentUserId,
+    swiped_id: profileId,
+    action: action,
+  });
+  if (swipeError) {
+    console.error("Error saving swipe:", swipeError);
+    return { error: swipeError };
+  }
+  // If it's a like, check if there's a mutual match
+  if (action === "like") {
+    const { data: existingSwipe } = await supabase
+      .from("swipes")
+      .select("*")
+      .eq("swiper_id", profileId)
+      .eq("swiped_id", currentUserId)
+      .eq("action", "like")
+      .single();
+    // If there's a mutual like, create a match
+    if (existingSwipe) {
+      const { error: matchError } = await supabase.from("matches").insert({
+        user_id1: currentUserId,
+        user_id2: profileId,
+      });
+      if (matchError) {
+        console.error("Error creating match:", matchError);
+        return { error: matchError };
+      }
+      return { isMatch: true };
+    }
+  }
+  return { isMatch: false };
+};

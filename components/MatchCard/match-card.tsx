@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { Beer, Wine, Martini, Coffee, CupSoda, Coffee as Tea, GlassWater, Milk, Info } from "lucide-react";
-import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
-import { Profile } from "@/utils/types";
 import { COMMUNITIES } from "@/utils/communities";
-import ginTonic from "@/assets/drinks/ginTonic.png";
-import whisky from "@/assets/drinks/whisky.png";
-import { MatchInfo } from "./match-info";
 import { DrinkIcon } from "@/utils/drinks";
+import { Profile } from "@/utils/types";
+import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
+import Image from "next/image";
+import { useState } from "react";
+import { MatchInfo } from "./match-info";
 
 interface MatchCardProps {
   matchingProfiles: Profile;

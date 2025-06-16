@@ -118,7 +118,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               <span
                 key={index}
                 className="bg-[#7C3AED] bg-opacity-10 text-[#7C3AED] px-3 py-1.5 rounded-full text-sm flex items-center gap-2">
-                <DrinkIcon drink={drink} />
+                <DrinkIcon drink={drink} route="profile" />
                 {drink}
               </span>
             ))}

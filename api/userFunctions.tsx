@@ -22,30 +22,30 @@ export const getUser = async (walletAddress: PublicKey | string) => {
     bufferKey = Buffer.from(bufferKey.toBytes()).toString("hex");
     console.log(bufferKey);
 
-    const cachedQuery = unstable_cache(
-      async (key: string) => {
-        const { data, error } = await supabase
-          .from("profiles")
-          .select(
-            "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasADDomainChecked, hasSNSDomainChecked, allDomainName, snsName, connected_at"
-          )
-          .eq("wallet_address", key)
-          .single();
+    // const cachedQuery = unstable_cache(
+    //   async (key: string) => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select(
+        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasADDomainChecked, hasSNSDomainChecked, allDomainName, snsName, connected_at"
+      )
+      .eq("wallet_address", bufferKey)
+      .single();
 
-        if (error) {
-          console.error("Error fetching profile in userFunc:", error);
-          return null;
-        }
-        return data;
-      },
-      [`user-profile-${bufferKey}`],
-      {
-        revalidate: 300,
-        tags: [`user-${bufferKey}`, "profiles"],
-      }
-    );
+    if (error) {
+      console.error("Error fetching profile in userFunc:", error);
+      return null;
+    }
+    return data;
+    //   },
+    //   [`user-profile-${bufferKey}`],
+    //   {
+    //     revalidate: 300,
+    //     tags: [`user-${bufferKey}`, "profiles"],
+    //   }
+    // );
 
-    return await cachedQuery(bufferKey);
+    // return data;
   } catch (error) {
     console.error("Error fetching profile:", error);
   }

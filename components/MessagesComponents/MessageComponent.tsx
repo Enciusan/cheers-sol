@@ -112,7 +112,6 @@ export default function MessageComponent() {
     return words.length > 4 ? `${preview}...` : preview;
   };
   // console.log(matches);
-  console.log(matches);
 
   return (
     <div className="flex h-[75dvh] w-[95dvw] md:w-3/4 bg-[#18181B] rounded-lg">

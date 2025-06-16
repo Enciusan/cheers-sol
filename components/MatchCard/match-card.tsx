@@ -36,7 +36,7 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
       onSwipe?.(direction);
     }
   };
-  console.log(matchingProfiles);
+  // console.log(matchingProfiles);
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -111,7 +111,7 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
                     <span
                       key={index}
                       className="bg-[#7C3AED] text-white px-2 py-1 rounded-full text-xs flex items-center">
-                      <DrinkIcon drink={drink} />
+                      <DrinkIcon drink={drink} route={"match"} />
                       <span className="ml-1">{drink}</span>
                     </span>
                   ))}

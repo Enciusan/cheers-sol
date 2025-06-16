@@ -30,6 +30,8 @@ export default function Settings() {
   };
 
   const handleChooseADDomain = async (isChecked: boolean) => {
+    console.log(isChecked);
+
     if (publicKey) {
       if (isChecked) {
         const { success, error } = await setUserDomain(publicKey.toBase58(), adDomains);
@@ -54,6 +56,7 @@ export default function Settings() {
         if (inactiveSuccess) {
           toast.success("Domain unset");
           fetchUserProfile(publicKey.toBase58());
+          return false;
         }
       }
     }
@@ -84,6 +87,7 @@ export default function Settings() {
         if (inactiveSuccess) {
           toast.success("Domain unset");
           fetchUserProfile(publicKey.toBase58());
+          return false;
         }
       }
     }
@@ -119,7 +123,7 @@ export default function Settings() {
       fetched = true;
     };
   }, [usersLocations, publicKey]);
-  console.log(snsDomain, adDomains);
+  // console.log(userData);
 
   return (
     <div className="flex justify-center items-center min-h-screen px-2 sm:px-4 sm:pb-0 pb-20">

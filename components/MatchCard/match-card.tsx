@@ -92,14 +92,14 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
           </div>
           <div className="p-4">
             <div className="flex justify-between items-center text-2xl font-bold mb-2">
-              <h2>
+              <h3>
                 {matchingProfiles.hasADDomainChecked
                   ? matchingProfiles.allDomainName
                   : matchingProfiles.hasSNSDomainChecked
                     ? matchingProfiles.snsName
                     : matchingProfiles.username}
                 , {matchingProfiles.age}
-              </h2>
+              </h3>
               <MatchInfo data={matchingProfiles} />
             </div>
             <p className="text-gray-400 mb-4 line-clamp-1">{matchingProfiles.bio}</p>

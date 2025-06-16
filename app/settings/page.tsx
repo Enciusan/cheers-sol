@@ -130,7 +130,7 @@ export default function Settings() {
       <Card className="w-full max-w-[450px] min-h-[20rem] mx-auto shadow-lg rounded-xl">
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span className="text-lg sm:text-xl">Settings</span>
+            <h1 className="text-3xl font-[chicle] tracking-wide">Settings</h1>
           </CardTitle>
         </CardHeader>
 

@@ -1,5 +1,4 @@
 "use client";
-
 import { Progress } from "@/components/ui/progress";
 import { UserCircle, Calendar, MessageCircle, MessagesSquare, Users as UsersIcon } from "lucide-react";
 import { Card, CardTitle } from "../ui/card";
@@ -185,8 +184,9 @@ export const MissionsCard = () => {
         <div className="space-y-4 h-[60dvh] md:h-[40dvh] overflow-y-scroll">
           {missions.map((mission) => (
             <Fragment key={mission.id}>
-              <div className="group relative rounded-lg bg-[#18181B] p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1">
-                {getProgress(mission.title) === mission.target && (
+              <div
+                className={`group relative rounded-lg ${mission.walletsSolvedMission.includes(bufferKey) ? "bg-emerald-600/30" : "bg-[#18181B]"} p-4 transition-transform duration-300 hover:transform hover:scale-[1.02] m-1`}>
+                {getProgress(mission.title) === mission.target && !mission.walletsSolvedMission.includes(bufferKey) && (
                   <div className="absolute w-full h-full z-20 backdrop-blur-lg bg-violet-800/10 inset-0 rounded-lg">
                     <div className="flex flex-col justify-center h-full items-center w-full font-semibold gap-2">
                       <span className="text-emerald-200 text-sm font-medium px-3 py-1 rounded-full bg-emerald-400/20 backdrop-blur-sm">

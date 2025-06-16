@@ -43,7 +43,7 @@ export const ReferralCard = () => {
     <Card className="w-full max-w-[450px] mx-auto shadow-lg rounded-xl">
       <CardHeader>
         <CardTitle className="flex justify-between items-center">
-          <span className="text-lg sm:text-xl">Referral Program</span>
+          <h1 className="text-3xl">Referral Program</h1>
         </CardTitle>
       </CardHeader>
 

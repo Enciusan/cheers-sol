@@ -118,7 +118,7 @@ export default function MessageComponent() {
       {/* Matches List Sidebar - Hidden on mobile when chat is open */}
       <div className={`${selectedMatch ? "hidden md:w-80 md:block" : "w-full md:w-80"} border-r border-gray-800`}>
         <div className="p-4 border-b border-gray-800">
-          <h1 className="text-xl font-semibold text-violet-500">Matches</h1>
+          <h1 className="text-3xl  font-[chicle] tracking-wide">Matches</h1>
         </div>
 
         <div className="overflow-y-auto h-[65dvh]">

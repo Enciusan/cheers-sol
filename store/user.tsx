@@ -86,7 +86,7 @@ export const useUsersStore = create<UsersStore>((set) => ({
           snsName: profile.snsName,
           connectedAt: profile.connected_at,
         }));
-        console.log("Mapped profiles:", mappedProfiles);
+        // console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });
       }
     } catch (error) {

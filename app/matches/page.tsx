@@ -68,7 +68,7 @@ export default function MatchesPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
-      <h1 className="text-3xl font-bold mb-8 text-[#7C3AED]">Find Your Match</h1>
+      <h1 className="mb-5 text-center">Find Your Match</h1>
       <div className="w-full max-w-sm">
         {userData !== null ? (
           isLoading ? (

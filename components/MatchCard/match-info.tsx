@@ -12,6 +12,7 @@ import {
 
 export const MatchInfo = (props: any) => {
   const { data } = props;
+
   return (
     <MorphingDialog
       transition={{
@@ -36,7 +37,8 @@ export const MatchInfo = (props: any) => {
           <div className="flex flex-col p-6 gap-2 md:h-auto h-[30dvh] overflow-y-scroll">
             <div className="bg-[#18181B] rounded-lg p-4">
               <div className="text-2xl text-white">
-                {data.username}, {data.age}
+                {data.hasADDomainChecked ? data.allDomainName : data.hasSNSDomainChecked ? data.snsName : data.username}
+                , {data.age}
               </div>
               <div className="text-gray-400">{data.bio}</div>
             </div>
@@ -55,7 +57,7 @@ export const MatchInfo = (props: any) => {
                     <span
                       key={index}
                       className="bg-[#7C3AED] bg-opacity-10 text-[#7C3AED] px-3 py-1.5 rounded-full text-sm flex items-center gap-2">
-                      <DrinkIcon drink={drink} />
+                      <DrinkIcon drink={drink} route="profile" />
                       {drink}
                     </span>
                   ))}

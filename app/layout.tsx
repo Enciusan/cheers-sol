@@ -1,10 +1,10 @@
-import type { Metadata } from "next";
-import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
-import { ContextProvider } from "@/contexts/ContextProvider";
 import { ProtectedRoutesWrapper } from "@/components/ProtectedRoutesWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import { ContextProvider } from "@/contexts/ContextProvider";
 import { Analytics } from "@vercel/analytics/next";
+import type { Metadata } from "next";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CheersUp",

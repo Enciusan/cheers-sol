@@ -29,7 +29,7 @@ export const ProfileCard = () => {
       <Card className="w-full max-w-[450px] min-h-[20rem] mx-auto shadow-lg rounded-xl">
         <CardHeader>
           <CardTitle className="flex justify-between items-center">
-            <span className="text-lg sm:text-xl">Profile</span>
+            <span className="text-3xl font-[chicle] tracking-wide">Profile</span>
             {userData && (
               <Button
                 className="px-3 py-1.5 h-8 text-xs sm:text-sm font-semibold bg-[#18181B] text-slate-200 hover:transition-transform hover:scale-105 hover:bg-[#202020]"

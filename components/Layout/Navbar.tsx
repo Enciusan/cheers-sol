@@ -1,5 +1,5 @@
 "use client";
-import logo from "@/assets/logoNoPadding.png";
+import logo from "@/assets/favicon-noPadding.png";
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -78,11 +78,9 @@ export const Navbar = () => {
     <nav className="fixed md:top-0 bottom-0 md:bottom-auto w-full border-t md:border-t-0 md:border-b border-violet-900/20 bg-[#09090B]/95 backdrop-blur supports-[backdrop-filter]:bg-[#09090B]/60 z-50 md:pb-0 safe-area-pb">
       <div className="flex h-0 md:h-16 items-center md:justify-between justify-center px-4 w-full">
         {/* Logo - hidden on mobile */}
-        <div
-          className="hidden md:flex items-center space-x-2 text-violet-500 cursor-pointer"
-          onClick={() => router.push("/")}>
-          <Image src={logo} alt="logo" width={20} height={20} />
-          <span className="text-xl font-bold pt-1">CheersUp</span>
+        <div className="hidden md:flex items-center space-x-2 cursor-pointer" onClick={() => router.push("/")}>
+          <Image src={logo} alt="logo" width={35} height={35} />
+          <h1 className="pt-1">CheersUp</h1>
         </div>
 
         {/* Navigation Menu */}

@@ -1,9 +1,11 @@
 import { Beer, CupSoda, Martini, Wine, Coffee as Tea, Coffee, GlassWater, Milk } from "lucide-react";
-import ginTonic from "@/assets/drinks/ginPurple.png";
-import whisky from "@/assets/drinks/whisky.png";
+import ginTonicPurple from "@/assets/drinks/ginPurple.png";
+import ginTonicWhite from "@/assets/drinks/ginWhite.png";
+import whiskyPurple from "@/assets/drinks/whiskyPurple.png";
+import whiskyWhite from "@/assets/drinks/whiskyWhite.png";
 import Image from "next/image";
 
-export const DrinkIcon = ({ drink }: { drink: string }) => {
+export const DrinkIcon = ({ drink, route }: { drink: string; route: string }) => {
   switch (drink.toLowerCase()) {
     case "beer":
       return <Beer className="w-4 h-4" />;
@@ -18,9 +20,9 @@ export const DrinkIcon = ({ drink }: { drink: string }) => {
     case "coffee":
       return <Coffee className="w-4 h-4" />;
     case "gin":
-      return <Image src={ginTonic} alt="Gin Tonic" className="w-4 h-5" />;
+      return <Image src={route === "match" ? ginTonicWhite : ginTonicPurple} alt="Gin Tonic" className="w-4 h-5" />;
     case "whisky":
-      return <Image src={whisky} alt="Gin Tonic" className="w-4 h-4" />;
+      return <Image src={route === "match" ? whiskyWhite : whiskyPurple} alt="Whisky" className="w-4 h-4" />;
     case "vodka":
       return <GlassWater className="w-4 h-4" />;
     case "rum":

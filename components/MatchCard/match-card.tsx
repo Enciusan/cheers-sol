@@ -1,15 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
-import { Beer, Wine, Martini, Coffee, CupSoda, Coffee as Tea, GlassWater, Milk, Info } from "lucide-react";
-import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
-import { Profile } from "@/utils/types";
 import { COMMUNITIES } from "@/utils/communities";
-import ginTonic from "@/assets/drinks/ginTonic.png";
-import whisky from "@/assets/drinks/whisky.png";
-import { MatchInfo } from "./match-info";
 import { DrinkIcon } from "@/utils/drinks";
+import { Profile } from "@/utils/types";
+import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
+import Image from "next/image";
+import { useState } from "react";
+import { MatchInfo } from "./match-info";
 
 interface MatchCardProps {
   matchingProfiles: Profile;
@@ -39,7 +36,7 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
       onSwipe?.(direction);
     }
   };
-
+  // console.log(matchingProfiles);
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -70,7 +67,9 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
           <div className="relative h-80">
             <Image
               src={
-                matchingProfiles.profileImage !== null ? matchingProfiles.profileImage : "/assets/images/profile.png"
+                matchingProfiles.profileImage !== null
+                  ? matchingProfiles.profileImage
+                  : "@/assets/favicon-noPadding.png"
               }
               alt={matchingProfiles.username}
               layout="fill"
@@ -93,9 +92,14 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
           </div>
           <div className="p-4">
             <div className="flex justify-between items-center text-2xl font-bold mb-2">
-              <h2>
-                {matchingProfiles.username}, {matchingProfiles.age}
-              </h2>
+              <h3>
+                {matchingProfiles.hasADDomainChecked
+                  ? matchingProfiles.allDomainName
+                  : matchingProfiles.hasSNSDomainChecked
+                    ? matchingProfiles.snsName
+                    : matchingProfiles.username}
+                , {matchingProfiles.age}
+              </h3>
               <MatchInfo data={matchingProfiles} />
             </div>
             <p className="text-gray-400 mb-4 line-clamp-1">{matchingProfiles.bio}</p>
@@ -107,7 +111,7 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
                     <span
                       key={index}
                       className="bg-[#7C3AED] text-white px-2 py-1 rounded-full text-xs flex items-center">
-                      <DrinkIcon drink={drink} />
+                      <DrinkIcon drink={drink} route={"match"} />
                       <span className="ml-1">{drink}</span>
                     </span>
                   ))}

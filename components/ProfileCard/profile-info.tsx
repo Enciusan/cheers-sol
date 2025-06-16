@@ -64,7 +64,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col items-center gap-4">
-        <h2 className="text-2xl font-semibold">{data?.username}</h2>
+        <h3 className="text-2xl font-semibold">{data?.username}</h3>
         <p className="text-sm text-gray-400 font-mono">
           {window.innerWidth >= 768
             ? data?.walletAddress
@@ -118,7 +118,7 @@ export const ProfileInfo = ({ data }: ProfileInfoProps) => {
               <span
                 key={index}
                 className="bg-[#7C3AED] bg-opacity-10 text-[#7C3AED] px-3 py-1.5 rounded-full text-sm flex items-center gap-2">
-                <DrinkIcon drink={drink} />
+                <DrinkIcon drink={drink} route="profile" />
                 {drink}
               </span>
             ))}

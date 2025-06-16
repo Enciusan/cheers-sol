@@ -10,6 +10,11 @@ export type Profile = {
   myReferral: string;
   referralUsed: string;
   gainedXP: number;
+  hasADDomainChecked: boolean;
+  allDomainName: string;
+  hasSNSDomainChecked: boolean;
+  snsName: string;
+  connectedAt: Date;
 };
 
 export interface ProfileFormProps {
@@ -50,4 +55,13 @@ export type Levels = {
   startingFrom: number;
   endingAt: number;
   necessaryXP: number;
+};
+
+export type Missions = {
+  id: number;
+  title: string;
+  mission: string;
+  target: number;
+  XPGainedPerMission: number;
+  walletsSolvedMission: string[];
 };

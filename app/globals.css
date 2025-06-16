@@ -1,9 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Chicle&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.chicle {
+  font-family: 'Chicle', serif;
+}
+
+h1, h2 {
+  @apply tracking-wide font-[chicle] text-3xl font-normal;
+}
+
+.openSans {
+  font-family: 'Open Sans', sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300 800;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
 }
 
 @layer base {
@@ -97,7 +116,7 @@ body {
 }
 
 .wallet-adapter-button-trigger {
-  @apply bg-violet-600 hover:bg-violet-700 h-9 rounded-md px-9 text-sm !important;
+  @apply bg-violet-400/30 hover:bg-violet-500/60 h-9 rounded-md px-3 text-sm !important;
 }
 
 

@@ -118,7 +118,7 @@ export default function MessageComponent() {
       {/* Matches List Sidebar - Hidden on mobile when chat is open */}
       <div className={`${selectedMatch ? "hidden md:w-80 md:block" : "w-full md:w-80"} border-r border-gray-800`}>
         <div className="p-4 border-b border-gray-800">
-          <h1 className="text-xl font-semibold text-violet-500">Matches</h1>
+          <h1 className="text-3xl  font-[chicle] tracking-wide">Matches</h1>
         </div>
 
         <div className="overflow-y-auto h-[65dvh]">
@@ -138,10 +138,16 @@ export default function MessageComponent() {
                     className="rounded-full object-cover"
                   />
                 )}
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#18181B]" />
+                {/* <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-[#18181B]" /> */}
               </div>
               <div className="ml-4 flex-1">
-                <h3 className="text-white font-medium">{match.username}</h3>
+                <h3 className="text-violet-200 font-medium">
+                  {match.hasADDomainChecked
+                    ? match.allDomainName
+                    : match.hasSNSDomainChecked
+                      ? match.snsName
+                      : match.username}
+                </h3>
                 <p className="text-gray-400 text-sm truncate line-clamp-1">{getMessagePreview(match)}</p>
               </div>
               <span className="text-xs text-gray-500">

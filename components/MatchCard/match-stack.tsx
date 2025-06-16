@@ -1,10 +1,9 @@
-import { supabase } from "@/lib/initSupabaseClient";
+import { handleSwipe } from "@/api/matchFunctions";
 import { Profile } from "@/utils/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Users, X } from "lucide-react";
 import { useState } from "react";
 import MatchCard from "./match-card";
-import { handleSwipe } from "@/api/matchFunctions";
 
 interface MatchStackProps {
   profiles: Profile[];

@@ -1,31 +1,23 @@
 "use client";
-import { Progress } from "@/components/ui/progress";
-import {
-  UserCircle,
-  Calendar,
-  MessageCircle,
-  MessagesSquare,
-  Users as UsersIcon,
-  CheckIcon,
-  CheckCheck,
-} from "lucide-react";
-import { Card, CardTitle } from "../ui/card";
-import { Missions } from "@/utils/types";
-import { Fragment, useEffect, useState } from "react";
-import { useUserStore } from "@/store/user";
 import {
   addWalletToMissionDone,
   checkConversationStarter,
+  checkDailyLogin,
   getMatchCount,
   getMissions,
   getReferralCount,
   profileMissionDone,
   userIncreaseXp,
 } from "@/api/missionFunctions";
+import { Progress } from "@/components/ui/progress";
+import { useUserStore } from "@/store/user";
+import { Missions } from "@/utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { Button } from "../ui/button";
+import { Calendar, CheckCheck, MessageCircle, MessagesSquare, UserCircle, Users as UsersIcon } from "lucide-react";
+import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { PublicKey } from "@solana/web3.js";
+import { Button } from "../ui/button";
+import { Card, CardTitle } from "../ui/card";
 
 export const MissionsCard = () => {
   const { publicKey } = useWallet();
@@ -40,6 +32,18 @@ export const MissionsCard = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   let bufferKey = Buffer.from(publicKey!.toBytes()).toString("hex");
 
+  const fetchMissions = async () => {
+    if (!userData?.walletAddress) return;
+    try {
+      const data = await getMissions(userData.walletAddress);
+      if (data.success && data.missions) {
+        setMissions(data.missions.sort((a, b) => a.id - b.id));
+      }
+    } catch (error) {
+      console.log("Error fetch missions", error);
+    }
+  };
+
   const checkConversationInitiation = async () => {
     if (!userData?.id || !publicKey) return;
 
@@ -53,12 +57,12 @@ export const MissionsCard = () => {
   };
 
   const passedOneDay = (): boolean => {
-    if (!userData?.connectedAt) return false;
+    if (!userData?.connectedAt || !publicKey) return false;
     const now = new Date();
     const lastConnected = new Date(userData.connectedAt);
     const diffMs = now.getTime() - lastConnected.getTime();
     const diffHours = diffMs / (1000 * 60 * 60);
-    return diffHours > 24;
+    return diffHours < 24;
   };
 
   const countMatches = async () => {
@@ -112,8 +116,6 @@ export const MissionsCard = () => {
   const completeMission = async (index: number) => {
     if (!bufferKey || !publicKey) return;
 
-    console.log(missions);
-
     if (userData && !missions[index - 1].walletsSolvedMission.includes(bufferKey)) {
       setIsLoading(true);
       const { success: profileMissionSuccess, error: profileMissionError } = await profileMissionDone(
@@ -146,9 +148,9 @@ export const MissionsCard = () => {
         return;
       }
 
-      await fetchUserProfile(publicKey.toBase58());
-
       if (profileMissionSuccess && walletMissionSuccess && userAddXp) {
+        await fetchUserProfile(publicKey.toBase58());
+        await fetchMissions();
         toast.success("Mission completed");
         setIsLoading(false);
       }
@@ -158,18 +160,9 @@ export const MissionsCard = () => {
   useEffect(() => {
     let fetched = false;
     if (!publicKey) return;
-    const fetchMissions = async () => {
-      if (fetched || !userData?.walletAddress) return;
-      try {
-        const data = await getMissions(userData.walletAddress);
-        if (data.success && data.missions) {
-          setMissions(data.missions.sort((a, b) => a.id - b.id));
-        }
-      } catch (error) {
-        console.log("Error fetch missions", error);
-      }
-    };
-    fetchMissions();
+    if (!fetched) {
+      fetchMissions();
+    }
     countMatches();
     countReferral();
     checkConversationInitiation();

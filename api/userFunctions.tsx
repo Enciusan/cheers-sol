@@ -70,7 +70,7 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
     if (!userData) return;
 
     const { data: swipes } = await supabase.from("swipes").select("swiped_id").eq("swiper_id", userData.id);
-    console.log(swipes);
+    // console.log(swipes);
     const swipedIds = swipes?.map((swipe) => swipe.swiped_id) || [];
 
     const query = supabase.from("profiles").select("*").neq("id", userData.id);
@@ -88,7 +88,7 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
     }
     console.log(data);
 
-    return data;
+    return { success: true, matches: data };
   } catch (error) {
     console.error("Error fetching profile:", error);
   }

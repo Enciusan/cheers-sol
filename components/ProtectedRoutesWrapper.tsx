@@ -105,9 +105,9 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   useEffect(() => {
     const loadUserProfiles = async () => {
       if (isAuthenticated && userData && publicKey) {
-        await checkDailyLogin(publicKey.toBase58());
         await fetchProfiles(publicKey.toBase58());
         await fetchUsersLocation(publicKey.toBase58());
+        await checkDailyLogin(publicKey.toBase58());
       }
     };
     if (isAuthenticated && userData) {

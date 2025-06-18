@@ -67,8 +67,8 @@ export const useUsersStore = create<UsersStore>((set) => ({
       const data = await getAppUserForMatch(walletAddress);
       // console.log("Profiles data received:", data);
 
-      if (data) {
-        const mappedProfiles = data?.map((profile: any) => ({
+      if (data?.matches) {
+        const mappedProfiles = data?.matches?.map((profile: any) => ({
           id: profile.id,
           username: profile.username,
           walletAddress: new PublicKey(Buffer.from(profile.wallet_address, "hex")).toBase58(),

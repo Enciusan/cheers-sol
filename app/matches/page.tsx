@@ -66,12 +66,13 @@ export default function MatchesPage() {
   }, [publicKey, userData, profiles, usersLocations]);
 
   const isLoading = !userData || !profiles || profiles.length === 0;
+  // console.log(isLoading, userData, profiles);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
       <h1 className="mb-5 text-center">Find Your Match</h1>
       <div className="w-full max-w-sm">
-        {userData !== null ? (
+        {userData !== undefined ? (
           isLoading ? (
             // Show loading state while data is being fetched
             <div className="relative h-[550px] w-full max-w-sm mx-auto flex items-center justify-center">

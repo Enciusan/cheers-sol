@@ -173,7 +173,7 @@ export const checkDailyLogin = async (walletAddress: string) => {
     }
 
     const lastLoginDate = new Date(lastLogin.connected_at);
-    console.log(lastLoginDate, twentyFourHoursAgo);
+    console.log(lastLoginDate.toString(), twentyFourHoursAgo.toString());
 
     if (lastLoginDate > twentyFourHoursAgo) {
       return { success: true, message: "Logged in within last 24h" };

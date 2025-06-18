@@ -9,28 +9,26 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export default function MatchesPage() {
   const { userData } = useUserStore();
   const { publicKey } = useWallet();
   const { profiles, usersLocations } = useUsersStore();
-  const [filteredByDistanceProfiles, setFilteredByDistanceProfiles] = useState<Profile[]>([]);
   // const { isAuthenticated } = useAuth();
   const router = useRouter();
 
-  const filteredProfilesBasedOnDistance = () => {
-    // console.log(userData, profiles, usersLocations);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  const filteredProfilesBasedOnDistance = useMemo(() => {
     if (!userData || !profiles || !usersLocations) {
-      setFilteredByDistanceProfiles([]);
-      return;
+      return [];
     }
 
     const myLocation = usersLocations.find((location) => location.walletAddress === userData.walletAddress);
 
     if (!myLocation) {
-      setFilteredByDistanceProfiles([]);
-      return;
+      return [];
     }
 
     const filteredProfiles = profiles.filter((profile) => {
@@ -46,26 +44,53 @@ export default function MatchesPage() {
         { latitude: Number(myLocation.latitude), longitude: Number(myLocation.longitude) },
         { latitude: Number(profileLocation.latitude), longitude: Number(profileLocation.longitude) }
       );
-      // console.log(distance);
 
       if (distance === undefined) {
-        return;
+        return false;
       }
       return myLocation.radius === 0 ? true : distance <= myLocation.radius;
     });
 
-    setFilteredByDistanceProfiles(filteredProfiles);
-  };
+    return filteredProfiles;
+  }, [userData, profiles, usersLocations]);
 
   useEffect(() => {
-    // console.log("userData", userData, profiles, usersLocations);
+    const hasUserData = userData !== null;
+    const hasProfiles = profiles && profiles.length > 0;
 
-    if (userData && profiles && usersLocations) {
-      filteredProfilesBasedOnDistance();
+    // console.log("Data loading check:", {
+    //   hasUserData,
+    //   hasProfiles,
+    //   profilesCount: profiles?.length || 0,
+    //   locationsCount: usersLocations?.length || 0,
+    // });
+
+    if (hasUserData && hasProfiles) {
+      // Add a small delay to ensure all data is properly loaded
+      const timer = setTimeout(() => {
+        console.log("Setting isDataLoaded to true");
+        setIsDataLoaded(true);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    } else {
+      console.log("Setting isDataLoaded to false");
+      setIsDataLoaded(false);
     }
-  }, [publicKey, userData, profiles, usersLocations]);
+  }, [userData, profiles, usersLocations]);
 
-  const isLoading = !userData || !profiles || profiles.length === 0;
+  const isLoading = !userData || !profiles || !usersLocations || !isDataLoaded;
+
+  // useEffect(() => {
+  //   console.log("MatchesPage state:", {
+  //     userData: !!userData,
+  //     profiles: profiles?.length || 0,
+  //     usersLocations: usersLocations?.length || 0,
+  //     isDataLoaded,
+  //     isLoading,
+  //   });
+  // }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
+  // console.log(isLoading, userData, profiles);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
@@ -78,7 +103,7 @@ export default function MatchesPage() {
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C3AED]"></div>
             </div>
           ) : (
-            <MatchStack profiles={filteredByDistanceProfiles || []} currentUserId={userData.id} />
+            <MatchStack profiles={filteredProfilesBasedOnDistance || []} currentUserId={userData.id} />
           )
         ) : (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">

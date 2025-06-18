@@ -69,7 +69,8 @@ export default function MatchCard({ matchingProfiles, onSwipe }: MatchCardProps)
             <Image
               src={matchingProfiles.profileImage !== null ? matchingProfiles.profileImage : logo}
               alt={matchingProfiles.username}
-              layout="fill"
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
 

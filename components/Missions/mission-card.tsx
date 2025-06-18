@@ -30,7 +30,7 @@ export const MissionsCard = () => {
   const [initiatedCount, setInitiatedCount] = useState(0);
   const [mutualConversationCount, setMutualConversationCount] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  let bufferKey = Buffer.from(publicKey!.toBytes()).toString("hex");
+  let bufferKey = publicKey ? Buffer.from(publicKey!.toBytes()).toString("hex") : "";
 
   const fetchMissions = async () => {
     if (!userData?.walletAddress) return;

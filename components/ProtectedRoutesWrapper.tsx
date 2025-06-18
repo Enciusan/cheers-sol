@@ -8,12 +8,12 @@ import { connection } from "@/utils/clientFunctions";
 import { getAssetsByOwner } from "@/utils/serverFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState, useCallback } from "react";
 
 const PUBLIC_ROUTES = ["/"];
 
 export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
-  const { publicKey, disconnecting, disconnect } = useWallet();
+  const { publicKey, disconnecting, disconnect, connected } = useWallet();
   const { logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData } = useUserStore();
   const { fetchProfiles, fetchUsersLocation } = useUsersStore();
@@ -22,74 +22,83 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
-  // Handle authentication
+  // Memoized authentication function
+  const performAuthentication = useCallback(async () => {
+    if (!publicKey) {
+      setIsAuthenticated(false);
+      clearUserData();
+      return false;
+    }
+
+    try {
+      const authResult = await isAuthorized(publicKey.toString());
+      console.log("Auth result:", authResult);
+
+      if (authResult) {
+        console.log("User is authenticated");
+        setIsAuthenticated(true);
+        return true;
+      } else {
+        console.log("User not authenticated, attempting authentication...");
+        const authResponse = await authenticateWithWallet();
+        console.log(authResponse);
+
+        if (authResponse && authResponse.success) {
+          console.log("Authentication successful");
+          setIsAuthenticated(true);
+          return true;
+        } else {
+          console.log("Authentication failed");
+          setIsAuthenticated(false);
+          clearUserData();
+          return false;
+        }
+      }
+    } catch (error) {
+      console.error("Authentication verification failed:", error);
+      setIsAuthenticated(false);
+      clearUserData();
+      return false;
+    }
+  }, [publicKey, authenticateWithWallet, clearUserData]);
+
   useEffect(() => {
-    console.log("UserInitializer useEffect disconecting value:", disconnecting);
+    console.log("UserInitializer useEffect disconnecting value:", disconnecting);
 
-    const checkAuth = async () => {
-      if (!publicKey) {
+    const handleWalletState = async () => {
+      if (disconnecting) {
+        disconnect();
+        logout();
         setIsAuthenticated(false);
+        setAuthAttempted(false);
+        setIsInitializing(false);
         clearUserData();
         return;
       }
 
-      try {
-        const authResult = await isAuthorized(publicKey.toString());
-        console.log("Auth result:", authResult);
-
-        if (authResult) {
-          console.log("User is authenticated");
-          setIsAuthenticated(true);
-        } else {
-          console.log("User not authenticated, attempting authentication...");
-          const authResponse = await authenticateWithWallet();
-
-          if (authResponse && authResponse.success) {
-            console.log("Authentication successful");
-            setIsAuthenticated(true);
-          } else {
-            console.log("Authentication failed");
-            setIsAuthenticated(false);
-            clearUserData();
-          }
-        }
-      } catch (error) {
-        console.error("Authentication verification failed:", error);
-        setIsAuthenticated(false);
-        clearUserData();
-      } finally {
+      if (connected && publicKey) {
+        setIsInitializing(true);
+        const authSuccess = await performAuthentication();
         setAuthAttempted(true);
+        setIsInitializing(false);
+      } else if (!connected) {
+        setIsAuthenticated(false);
+        setAuthAttempted(true);
+        setIsInitializing(false);
+        clearUserData();
       }
     };
 
-    if (disconnecting) {
-      disconnect();
-      logout();
-      setIsAuthenticated(false);
-      setAuthAttempted(false);
-      clearUserData();
-    } else if (publicKey) {
-      checkAuth();
-    }
-  }, [publicKey, disconnecting]);
-
-  useEffect(() => {
-    const fetchCommunities = async () => {
-      if (publicKey && connection) {
-        const com2 = await getAssetsByOwner(publicKey.toBase58());
-
-        await addOrUpdateUserCommunities(com2, publicKey?.toBase58());
-        await fetchUserProfile(publicKey?.toBase58());
-      }
-    };
-    fetchCommunities();
-  }, [publicKey, connection]);
+    handleWalletState();
+  }, [publicKey, disconnecting, connected, performAuthentication, disconnect, logout, clearUserData]);
 
   useEffect(() => {
     const loadUserProfile = async () => {
-      if (isAuthenticated && publicKey) {
+      if (isAuthenticated && publicKey && !userData) {
         try {
+          console.log("Fetching user profile...");
           await fetchUserProfile(publicKey.toBase58());
         } catch (error) {
           console.error("Error fetching user profile:", error);
@@ -97,54 +106,71 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       }
     };
 
-    if (authAttempted) {
+    if (authAttempted && isAuthenticated) {
       loadUserProfile();
     }
-  }, [isAuthenticated, publicKey, authAttempted]);
+  }, [isAuthenticated, publicKey, authAttempted, userData, fetchUserProfile]);
 
   useEffect(() => {
-    const loadUserProfiles = async () => {
-      if (isAuthenticated && userData && publicKey) {
-        await checkDailyLogin(publicKey.toBase58());
-        await fetchProfiles(publicKey.toBase58());
-        await fetchUsersLocation(publicKey.toBase58());
+    const fetchCommunities = async () => {
+      if (isAuthenticated && publicKey && connection) {
+        try {
+          console.log("Fetching communities...");
+          const com2 = await getAssetsByOwner(publicKey.toBase58());
+          await addOrUpdateUserCommunities(com2, publicKey.toBase58());
+        } catch (error) {
+          console.error("Error fetching communities:", error);
+        }
       }
     };
-    if (isAuthenticated && userData) {
-      loadUserProfiles();
+
+    if (isAuthenticated && publicKey) {
+      fetchCommunities();
     }
-  }, [isAuthenticated, userData]);
+  }, [isAuthenticated, publicKey, connection]);
 
   useEffect(() => {
-    if (authAttempted) {
-      // If not authenticated and not on a public route, redirect to landing page
-      if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
-        router.replace("/");
-        return;
-      }
+    const loadAdditionalData = async () => {
+      if (isAuthenticated && userData && publicKey) {
+        try {
+          console.log("Fetching additional user data...");
 
-      // If authenticated but no user data and not on the profile page, redirect to profile
-      if (isAuthenticated && userData === null && pathname !== "/profile") {
-        router.replace("/profile");
-        return;
-      }
+          // Fetch profiles first
+          console.log("Fetching profiles...");
+          await fetchProfiles(publicKey.toBase58());
 
-      // If authenticated, has user data, and is on the landing page, redirect to matches
-      if (isAuthenticated && userData !== null && pathname === "/") {
-        router.replace("/matches");
-        return;
+          // Then fetch user locations
+          console.log("Fetching user locations...");
+          await fetchUsersLocation(publicKey.toBase58());
+
+          // Finally check daily login
+          console.log("Checking daily login...");
+          await checkDailyLogin(publicKey.toBase58());
+
+          console.log("All additional data fetched successfully");
+        } catch (error) {
+          console.error("Error fetching additional data:", error);
+        }
       }
+    };
+
+    if (isAuthenticated && userData) {
+      loadAdditionalData();
     }
-  }, [isAuthenticated, authAttempted, userData, pathname, router]);
+  }, [isAuthenticated, userData, publicKey, fetchProfiles, fetchUsersLocation]);
 
   useEffect(() => {
     const addOrUpdateUserLocation = () => {
-      if (publicKey && userData) {
+      if (isAuthenticated && userData && publicKey) {
         navigator.geolocation.getCurrentPosition(
           async (position) => {
-            const { latitude, longitude, accuracy } = position.coords;
-            const radius = 0;
-            await addOrUpdateUserLocationServer({ latitude, longitude, accuracy, radius }, publicKey.toBase58());
+            try {
+              const { latitude, longitude, accuracy } = position.coords;
+              const radius = 0;
+              await addOrUpdateUserLocationServer({ latitude, longitude, accuracy, radius }, publicKey.toBase58());
+            } catch (error) {
+              console.error("Error updating user location:", error);
+            }
           },
           (error) => {
             console.error("Error getting user location:", error);
@@ -157,6 +183,40 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       addOrUpdateUserLocation();
     }
   }, [isAuthenticated, userData, publicKey]);
+
+  useEffect(() => {
+    if (isInitializing || !authAttempted) {
+      return;
+    }
+
+    if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+      console.log("Redirecting to landing page - not authenticated");
+      router.replace("/");
+      return;
+    }
+
+    if (isAuthenticated && userData === null && pathname !== "/profile") {
+      console.log("Redirecting to profile - no user data");
+      router.replace("/profile");
+      return;
+    }
+
+    if (isAuthenticated && userData !== null && pathname === "/") {
+      console.log("Redirecting to matches - authenticated with user data");
+      router.replace("/matches");
+      return;
+    }
+  }, [isAuthenticated, authAttempted, userData, pathname, router, isInitializing]);
+
+
+  // WIP loading page
+  // if (isInitializing) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C3AED]"></div>
+  //     </div>
+  //   );
+  // }
 
   return <>{children}</>;
 };

@@ -63,7 +63,7 @@ export const MatchInfo = (props: any) => {
                   ))}
                 </div>
               </div>
-              {data?.communities !== undefined && data?.communities.length > 0 ? (
+              {data?.communities !== undefined && data?.communities?.length > 0 ? (
                 <div className="bg-[#18181B] rounded-lg p-4 overflow-y-auto">
                   <h4 className="text-sm font-semibold mb-3 text-gray-200">Communities</h4>
                   <div className="flex gap-2 flex-wrap">

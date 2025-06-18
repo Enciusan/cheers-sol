@@ -1,4 +1,5 @@
 "use client";
+import { checkDailyLogin } from "@/api/missionFunctions";
 import { isAuthorized } from "@/api/serverAuth";
 import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
@@ -104,6 +105,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   useEffect(() => {
     const loadUserProfiles = async () => {
       if (isAuthenticated && userData && publicKey) {
+        await checkDailyLogin(publicKey.toBase58());
         await fetchProfiles(publicKey.toBase58());
         await fetchUsersLocation(publicKey.toBase58());
       }

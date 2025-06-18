@@ -187,6 +187,7 @@ export const createOrUpdateProfile = async (profileData: {
             bio: profileData.bio,
             age: profileData.age,
             drinks: profileData.drinks,
+            profileImage: null,
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString(),
           },

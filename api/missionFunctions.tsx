@@ -1,11 +1,9 @@
 "use server";
 
-import "server-only";
 import { createClient } from "@/lib/initSupabaseServerClient";
-import { verifyAuth } from "./serverAuth";
 import { PublicKey } from "@solana/web3.js";
-import { UUID } from "crypto";
-import { PostgrestError } from "@supabase/supabase-js";
+import "server-only";
+import { verifyAuth } from "./serverAuth";
 
 export const getMissions = async (walletAddress: string) => {
   const supabase = await createClient();
@@ -142,6 +140,60 @@ export const getReferralCount = async (walletAddress: string, refCode: string) =
   } catch (error) {
     console.error("Error fetching missions:", error);
     return { success: false, error: "Failed to fetch referral count" };
+  }
+};
+
+export const checkDailyLogin = async (walletAddress: string) => {
+  const supabase = await createClient();
+  try {
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const { data: lastLogin, error: fetchError } = await supabase
+      .from("profiles")
+      .select("connected_at")
+      .eq("wallet_address", bufferKey)
+      .single();
+
+    if (fetchError) {
+      console.error("Error fetching last login:", fetchError);
+      return { success: false, error: "Failed to fetch last login" };
+    }
+
+    if (!lastLogin || !lastLogin.connected_at) {
+      return { success: false, error: "No last login found" };
+    }
+
+    const lastLoginDate = new Date(lastLogin.connected_at);
+    console.log(lastLoginDate, twentyFourHoursAgo);
+
+    if (lastLoginDate > twentyFourHoursAgo) {
+      return { success: true, message: "Logged in within last 24h" };
+    }
+
+    // Update connected_at to now
+    const { error: updateError } = await supabase
+      .from("profiles")
+      .update({ connected_at: now.toISOString() })
+      .eq("wallet_address", bufferKey);
+
+    if (updateError) {
+      console.error("Error updating connected_at:", updateError);
+      return { success: false, error: "Failed to update login time" };
+    }
+
+    return { success: true, message: "Login refreshed after 24h" };
+  } catch (error) {
+    console.error("Error checking daily login:", error);
+    return { success: false, error: "Internal server error" };
   }
 };
 

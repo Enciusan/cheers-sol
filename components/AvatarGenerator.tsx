@@ -112,7 +112,6 @@ const UUIDAvatar: React.FC<AvatarProps> = ({
       <div className="border-8 border-[#2b2b2b] rounded-full">
         <div className={`${sizeClasses[size]} rounded-full overflow-hidden`}>
           {(() => {
-            // Add this log
             if (profileImage === null) {
               return (
                 <svg viewBox="0 0 5 5" className="w-full h-full" style={{ background: "#f1f1f1" }}>

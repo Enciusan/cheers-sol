@@ -6,14 +6,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useUserStore } from "@/store/user";
 import { Profile } from "@/utils/types";
 import { ChevronLeft, Pencil, UserCheck } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ProfileInfo } from "./profile-info";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const ProfileCard = () => {
+  const { publicKey } = useWallet();
   const [isInEditMode, setIsInEditMode] = useState<boolean>(false);
 
-  const { userData, updateUserData } = useUserStore();
+  const { userData, updateUserData, fetchUserProfile } = useUserStore();
 
   const handleSubmit = (updatedProfile: Profile) => {
     updateUserData(updatedProfile);
@@ -23,6 +25,11 @@ export const ProfileCard = () => {
   const handleCancel = () => {
     setIsInEditMode(false);
   };
+
+  useEffect(() => {
+    if (!publicKey) return;
+    fetchUserProfile(publicKey.toBase58());
+  }, [userData]);
 
   return (
     <div className="flex justify-center items-center min-h-screen px-2 sm:px-4 sm:pb-0 pb-20">

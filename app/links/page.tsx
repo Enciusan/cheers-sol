@@ -4,7 +4,6 @@ import MatchStack from "@/components/MatchCard/match-stack";
 import { Button } from "@/components/ui/button";
 import { useUsersStore, useUserStore } from "@/store/user";
 import { calculateDistance } from "@/utils/clientFunctions";
-import { Profile } from "@/utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
@@ -94,7 +93,7 @@ export default function MatchesPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
-      <h1 className="mb-5 text-center">Find Your Match</h1>
+      <h1 className="mb-5 text-center">Find Your Link</h1>
       <div className="w-full max-w-sm">
         {userData !== null ? (
           isLoading ? (

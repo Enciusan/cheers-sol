@@ -1,5 +1,5 @@
 "use client";
-import { fetchMatches } from "@/api/matchFunctions";
+import { fetchMatches, revalidateUserMatches } from "@/api/matchFunctions";
 import { fetchMessages } from "@/api/messageFunctions";
 import { useUserStore } from "@/store/user";
 import { MatchProfile } from "@/utils/types";
@@ -74,6 +74,7 @@ export default function MessageComponent() {
       if (!publicKey || !userData) return;
 
       if (isAuthenticated && publicKey) {
+        await revalidateUserMatches(userData.id);
         const matchesResponse = await fetchMatches(userData);
         if (matchesResponse) {
           setMatches(matchesResponse);
@@ -118,7 +119,7 @@ export default function MessageComponent() {
       {/* Matches List Sidebar - Hidden on mobile when chat is open */}
       <div className={`${selectedMatch ? "hidden md:w-80 md:block" : "w-full md:w-80"} border-r border-gray-800`}>
         <div className="p-4 border-b border-gray-800">
-          <h1 className="text-3xl  font-[chicle] tracking-wide">Matches</h1>
+          <h1 className="text-3xl  font-[chicle] tracking-wide">Links</h1>
         </div>
 
         <div className="overflow-y-auto h-[65dvh]">

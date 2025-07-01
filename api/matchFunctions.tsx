@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/initSupabaseServerClient";
 import { MatchProfile, Profile } from "@/utils/types";
-import { unstable_cache } from "next/cache";
+import { revalidateTag, unstable_cache } from "next/cache";
 import "server-only";
 
 const supabase = await createClient();
@@ -78,6 +78,18 @@ export const fetchMatches = async (userData: Profile) => {
   );
 
   return cachedQuery(userData.id);
+};
+
+export const revalidateUserMatches = async (userId: string) => {
+  try {
+    // Revalidate specific user's matches
+    revalidateTag(`user-${userId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error revalidating user matches cache:", error);
+    return { success: false, error };
+  }
 };
 
 export const handleSwipe = async (profileId: string, direction: "left" | "right", currentUserId: string) => {

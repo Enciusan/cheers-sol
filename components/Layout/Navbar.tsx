@@ -42,9 +42,9 @@ export const Navbar = () => {
       href: "/missions",
     },
     {
-      title: "Match",
-      icon: <Users className="h-full w-full text-neutral-300" />,
-      href: "/matches",
+      title: "Links",
+      icon: <Link className="h-full w-full text-neutral-300" />,
+      href: "/links",
     },
     {
       title: "Chat",
@@ -58,7 +58,7 @@ export const Navbar = () => {
     },
     {
       title: "Referral",
-      icon: <Link className="h-full w-full text-neutral-300" />,
+      icon: <Users className="h-full w-full text-neutral-300" />,
       href: "/referral",
     },
   ];
@@ -114,15 +114,15 @@ export const Navbar = () => {
                   </NavigationMenuLink>
                 </NavigationMenuItem>
 
-                <NavigationMenuItem onClick={() => router.push("/matches")}>
+                <NavigationMenuItem onClick={() => router.push("/links")}>
                   <NavigationMenuLink
                     className={`${navigationMenuTriggerStyle()} flex flex-col items-center md:flex-row p-0 md:p-2 bg-transparent hover:bg-transparent hover:text-violet-400 ${
-                      pathname === "/matches" ? "text-violet-500" : "text-violet-100"
+                      pathname === "/links" ? "text-violet-500" : "text-violet-100"
                     }`}
                     asChild>
                     <div className="flex flex-col md:flex-row items-center">
-                      <Users className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
-                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Matches</span>
+                      <Link className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
+                      <span className="text-xs mt-1 md:mt-0 md:text-sm">Links</span>
                     </div>
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -170,7 +170,7 @@ export const Navbar = () => {
                   }`}
                   asChild>
                   <div className="flex flex-col md:flex-row items-center">
-                    <Link className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
+                    <Users className="h-6 w-6 md:h-4 md:w-4 md:mr-2" />
                     <span className="text-xs mt-1 md:mt-0 md:text-sm">Referral</span>
                   </div>
                 </NavigationMenuLink>

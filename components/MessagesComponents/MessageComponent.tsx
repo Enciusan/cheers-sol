@@ -181,7 +181,7 @@ export default function MessageComponent() {
         ) : (
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center text-gray-500">
-              <p className="text-lg">Select a match to start chatting</p>
+              <p className="text-lg">Select a link to start chatting</p>
             </div>
           </div>
         )}

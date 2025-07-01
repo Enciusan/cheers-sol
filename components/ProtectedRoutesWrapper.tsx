@@ -81,6 +81,9 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       if (connected && publicKey) {
         setIsInitializing(true);
         const authSuccess = await performAuthentication();
+        if (authSuccess) {
+          setIsAuthenticated(true);
+        }
         setAuthAttempted(true);
         setIsInitializing(false);
       } else if (!connected) {
@@ -202,12 +205,11 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     }
 
     if (isAuthenticated && userData !== null && pathname === "/") {
-      console.log("Redirecting to matches - authenticated with user data");
-      router.replace("/matches");
+      console.log("Redirecting to links - authenticated with user data");
+      router.replace("/links");
       return;
     }
   }, [isAuthenticated, authAttempted, userData, pathname, router, isInitializing]);
-
 
   // WIP loading page
   // if (isInitializing) {

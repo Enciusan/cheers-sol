@@ -1,11 +1,10 @@
 "use server";
 
 import { createClient } from "@/lib/initSupabaseServerClient";
+import { LocationType } from "@/utils/types";
 import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";
-import { LocationType } from "@/utils/types";
-import { unstable_cache } from "next/cache";
 
 export const getUser = async (walletAddress: PublicKey | string) => {
   const supabase = await createClient();
@@ -507,6 +506,7 @@ export const linkReferralCode = async (walletAddress: string, referralCode: stri
     }
     const publicKey = new PublicKey(walletAddress);
     const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    let referralExist = false;
     const { data: existingProfile, error: fetchError } = await supabase
       .from("profiles")
       .select("id, username")
@@ -516,7 +516,19 @@ export const linkReferralCode = async (walletAddress: string, referralCode: stri
       console.error("Error checking profile existence:", fetchError);
       return { success: false, error: "Failed to check if profile exists" };
     }
-    if (existingProfile) {
+    const { data: allReferrals, error: referralsError } = await supabase.from("profiles").select("myReferral");
+
+    if (referralsError && referralsError.code !== "PGRST116") {
+      console.error("Error checking referral existence:", referralsError);
+      return { success: false, error: "Failed to check if referral exists" };
+    }
+    if (allReferrals) {
+      const referral = allReferrals.find((referral) => referral.myReferral === referralCode);
+      if (referral) {
+        referralExist = true;
+      }
+    }
+    if (existingProfile && referralExist) {
       const { data: existingReferral, error: fetchErrorReferral } = await supabase
         .from("profiles")
         .update({
@@ -529,6 +541,8 @@ export const linkReferralCode = async (walletAddress: string, referralCode: stri
       } else {
         return { success: true, referralCode: existingReferral };
       }
+    } else {
+      return { success: false, error: "Failed to insert referral. Referral don't exist." };
     }
   } catch (error) {
     console.error("Error updating profile:", error);

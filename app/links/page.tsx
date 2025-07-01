@@ -14,10 +14,12 @@ export default function MatchesPage() {
   const { userData } = useUserStore();
   const { publicKey } = useWallet();
   const { profiles, usersLocations } = useUsersStore();
-  // const { isAuthenticated } = useAuth();
+
   const router = useRouter();
 
   const [isDataLoaded, setIsDataLoaded] = useState(false);
+
+  const isLoading = !userData || !profiles || !usersLocations || !isDataLoaded;
 
   const filteredProfilesBasedOnDistance = useMemo(() => {
     if (!userData || !profiles || !usersLocations) {
@@ -51,7 +53,7 @@ export default function MatchesPage() {
     });
 
     return filteredProfiles;
-  }, [userData, profiles, usersLocations]);
+  }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
 
   useEffect(() => {
     const hasUserData = userData !== null;
@@ -69,7 +71,7 @@ export default function MatchesPage() {
       const timer = setTimeout(() => {
         console.log("Setting isDataLoaded to true");
         setIsDataLoaded(true);
-      }, 100);
+      }, 1000);
 
       return () => clearTimeout(timer);
     } else {
@@ -77,8 +79,6 @@ export default function MatchesPage() {
       setIsDataLoaded(false);
     }
   }, [userData, profiles, usersLocations]);
-
-  const isLoading = !userData || !profiles || !usersLocations || !isDataLoaded;
 
   // useEffect(() => {
   //   console.log("MatchesPage state:", {
@@ -96,14 +96,15 @@ export default function MatchesPage() {
       <h1 className="mb-5 text-center">Find Your Link</h1>
       <div className="w-full max-w-sm">
         {userData !== null ? (
-          isLoading ? (
-            // Show loading state while data is being fetched
-            <div className="relative h-[550px] w-full max-w-sm mx-auto flex items-center justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7C3AED]"></div>
-            </div>
-          ) : (
+          <div className="relative h-[550px] w-full max-w-sm mx-auto">
+            {/* Show a small spinner in the corner if still loading, but always show MatchStack */}
+            {isLoading && (
+              <div className="absolute top-2 right-2 z-10">
+                <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#7C3AED]"></div>
+              </div>
+            )}
             <MatchStack profiles={filteredProfilesBasedOnDistance || []} currentUserId={userData.id} />
-          )
+          </div>
         ) : (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             <div className="relative h-[550px] w-full max-w-sm mx-auto mb-4">

@@ -42,9 +42,9 @@ export default function MatchStack({ profiles, currentUserId }: MatchStackProps)
               animate={{ opacity: 1, scale: 1 }}
               className="absolute inset-0 flex flex-col items-center justify-center bg-[#18181B] bg-opacity-100 rounded-xl backdrop-blur-sm p-6 text-center">
               <Users className="w-16 h-16 text-[#7C3AED] mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-2">No More Matches</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">No More Links</h3>
               <p className="text-gray-400">
-                Looks like you've seen everyone! Check back later for new potential matches.
+                Looks like you've seen everyone! Check back later for new potential links.
               </p>
             </motion.div>
           )}

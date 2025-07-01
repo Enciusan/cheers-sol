@@ -26,10 +26,14 @@ export const ReferralCard = () => {
   const handleReferralSubmit = async (e: React.FormEvent) => {
     if (!publicKey) return toast("Please connect your wallet.");
     e.preventDefault();
-    await linkReferralCode(publicKey.toBase58(), referralCode);
-    await userIncreaseXp(publicKey.toBase58(), 20);
-    await fetchUserProfile(publicKey.toBase58());
-    toast.success("Refferal code added, you received extra 20XP!🥂");
+    const { success, error } = await linkReferralCode(publicKey.toBase58(), referralCode);
+    if (success) {
+      await userIncreaseXp(publicKey.toBase58(), 20);
+      await fetchUserProfile(publicKey.toBase58());
+      toast.success("Refferal code added, you received extra 20XP!🥂");
+    } else {
+      toast.error(error);
+    }
   };
 
   const copyToClipboard = async () => {

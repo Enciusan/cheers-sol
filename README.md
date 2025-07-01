@@ -8,7 +8,7 @@
 
 ## 🚀 About CheersUp
 
-CheersUp is the first social matching platform that leverages on-chain identity to create authentic connections. We combine blockchain technology with social discovery to help Web3 users connect over shared communities and favorite drinks.
+CheersUp is the first social linking platform that leverages on-chain identity to create authentic connections. We combine blockchain technology with social discovery to help Web3 users connect over shared communities and favorite drinks.
 
 Traditional matching apps struggle to build real trust or meaningful connections due to:
 
@@ -22,8 +22,8 @@ CheersUp solves these problems by creating a platform where your on-chain identi
 
 - **On-Chain Identity Tags**: Automatically earn exclusive tags from your Solana wallet based on your NFTs, tokens, and DAO memberships. Let your blockchain profile speak for you.
 - **Drink-Based Preferences**: Select your favorite beverages (coffee, tea, whiskey, matcha, etc.) to find people who share your taste — literally.
-- **Community-Centric Matching**: We go beyond surface-level filters. CheersUp matches people through shared interests, on-chain affiliations, and beverage vibes.
-- **Built-In Chat**: Once matched, users can chat and connect instantly — it’s always Cheers Time.
+- **Community-Centric Matching**: We go beyond surface-level filters. CheersUp links people through shared interests, on-chain affiliations, and beverage vibes.
+- **Built-In Chat**: Once linked, users can chat and connect instantly — it’s always Cheers Time.
 
 ## 🛠️ How It Works
 
@@ -42,12 +42,12 @@ CheersUp solves these problems by creating a platform where your on-chain identi
 ## 🎯 Why CheersUp?
 
 - **Authenticity First**: Real, verifiable on-chain identities. No fake profiles.
-- \*\*Niche Matching••: Curated matches based on drinks and DAOs — not just looks.
+- **Niche Matching**: Curated links based on drinks and DAOs — not just looks.
 - **Web3 Culture**: Perfect for degen traders, PFP collectors, DAO contributors, and curious crypto folks alike.
 
 ## 📞 Contact
 
-- Website: TBA
+- Website: [CheersUp](https://www.cheersup.fun)
 - Twitter: [@CheersUp](https://x.com/cheersupSOL)
 
 ---

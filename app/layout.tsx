@@ -8,7 +8,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "CheersUp",
-  description: "Match. Drink. Belong.",
+  description: "Redefine human interaction based on on-chain activity.",
 };
 
 export default function RootLayout({

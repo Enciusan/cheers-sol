@@ -5,6 +5,7 @@ import { ContextProvider } from "@/contexts/ContextProvider";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import "./globals.css";
+// import { ReactScan } from "@/components/ReactScan";
 
 export const metadata: Metadata = {
   title: "CheersUp",
@@ -18,6 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      {/* <ReactScan /> */}
       <body className={`antialiased`}>
         <ContextProvider>
           <ProtectedRoutesWrapper>

@@ -4,6 +4,8 @@ import { MatchProfile, Profile } from "@/utils/types";
 import { supabase } from "@/lib/initSupabaseClient";
 import { fetchMessages, sendMessage } from "@/api/messageFunctions";
 import { MatchInfo } from "../MatchCard/match-info";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { Laugh } from "lucide-react";
 
 interface ChatAreaProps {
   match: MatchProfile;
@@ -13,6 +15,7 @@ interface ChatAreaProps {
 export function ChatArea({ match, currentUser }: ChatAreaProps) {
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [isEmojiKeyboardOpen, setIsEmojiKeyboardOpen] = useState(false);
 
   useEffect(() => {
     // Subscribe to new messages
@@ -86,7 +89,7 @@ export function ChatArea({ match, currentUser }: ChatAreaProps) {
             sendMessage(newMessage, match, currentUser).then(() => setNewMessage(""));
         }}
         className="p-4 border-t border-gray-800">
-        <div className="flex space-x-2">
+        <div className="flex items-center space-x-2">
           <input
             type="text"
             value={newMessage}
@@ -94,6 +97,27 @@ export function ChatArea({ match, currentUser }: ChatAreaProps) {
             placeholder="Type a message..."
             className="flex-1 bg-[#7C3AED]/10 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+          <div className="flex items-center relative">
+            <Laugh
+              onClick={() => setIsEmojiKeyboardOpen(!isEmojiKeyboardOpen)}
+              className="cursor-pointer hover:opacity-80 transition-opacity"
+            />
+            {isEmojiKeyboardOpen && (
+              <div className="absolute bottom-full md:right-0 -right-20 mb-2 z-50">
+                <EmojiPicker
+                  onEmojiClick={(emoji) => {
+                    setNewMessage(newMessage + emoji.emoji);
+                    setIsEmojiKeyboardOpen(false);
+                  }}
+                  lazyLoadEmojis={true}
+                  theme={Theme.DARK}
+                  width={innerWidth > 768 ? 350 : 300}
+                  height={innerWidth > 768 ? 450 : 400}
+                />
+              </div>
+            )}
+          </div>
+
           <button
             type="submit"
             className="bg-violet-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-semibold">

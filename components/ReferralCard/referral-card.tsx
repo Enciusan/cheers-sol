@@ -13,6 +13,7 @@ import { userIncreaseXp } from "@/api/missionFunctions";
 export const ReferralCard = () => {
   const [referralCode, setReferralCode] = useState("");
   const { userData, fetchUserProfile } = useUserStore();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { publicKey } = useWallet();
 
   const generateRefCode = async () => {
@@ -24,6 +25,7 @@ export const ReferralCard = () => {
   };
 
   const handleReferralSubmit = async (e: React.FormEvent) => {
+    setIsLoading(true);
     if (!publicKey) return toast("Please connect your wallet.");
     e.preventDefault();
     const { success, error } = await linkReferralCode(publicKey.toBase58(), referralCode);
@@ -31,8 +33,10 @@ export const ReferralCard = () => {
       await userIncreaseXp(publicKey.toBase58(), 20);
       await fetchUserProfile(publicKey.toBase58());
       toast.success("Refferal code added, you received extra 20XP!🥂");
+      setIsLoading(false);
     } else {
       toast.error(error);
+      setIsLoading(false);
     }
   };
 
@@ -97,7 +101,7 @@ export const ReferralCard = () => {
               <Button
                 type="submit"
                 className="w-full bg-violet-500 hover:bg-violet-600 text-white font-semibold"
-                disabled={userData?.referralUsed !== null}>
+                disabled={userData?.referralUsed !== null || isLoading}>
                 Redeem Code
               </Button>
             </form>

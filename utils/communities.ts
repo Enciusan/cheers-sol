@@ -84,5 +84,17 @@ export const COMMUNITIES = [
     badgeColor: "#f75b63",
     textColor: "white",
   },
+  {
+    name: "OKB",
+    mint: "3saAedkM9o5g1u5DCqsuMZuC4GRqPB4TuMkvSsSVvGQ3",
+    badgeColor: "#19aa6d",
+    textColor: "white",
+  },
+  {
+    name: "TYR",
+    mint: "HJx4HRAT3RiFq7cy9fSrvP92usAmJ7bJgPccQTyroT2r",
+    badgeColor: "#ebc3dc",
+    textColor: "black",
+  },
   // Add more communities as needed
 ];

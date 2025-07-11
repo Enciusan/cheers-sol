@@ -21,7 +21,7 @@ const validationSchema = z.object({
   walletAddress: z.string().min(1, "Wallet is required"),
   bio: z.string().min(10, "Bio must be at least 10 characters"),
   age: z.number().min(18, "Must be at least 18 years old").max(100, "Must be under 100 years old"),
-  drinks: z.array(z.string()).min(1, "Select at least one drink preference"),
+  drinks: z.array(z.string()).min(1, "Select at least one drink preference").max(6, "Select at most 6 drinks"),
   communities: z.array(z.string()).optional(),
 });
 

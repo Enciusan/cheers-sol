@@ -21,6 +21,7 @@ export interface ProfileFormProps {
   data: Profile | null;
   onSubmit?: (profile: Profile) => void;
   onCancel?: () => void;
+  setIsInEditMode: (isInEditMode: boolean) => void;
 }
 
 export interface MatchProfile extends Profile {

@@ -115,7 +115,7 @@ export const MultiSelect = React.forwardRef<HTMLButtonElement, MultiSelectProps>
       defaultValue = [],
       placeholder = "Select options",
       animation = 0,
-      maxCount = 4,
+      maxCount = 5,
       modalPopover = false,
       asChild = false,
       className,

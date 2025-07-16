@@ -656,3 +656,66 @@ export const setInactiveDomain = async (walletAddress: string, domain: string) =
     return { success: false, error: "Failed to inactivate domain" };
   }
 };
+
+export const getReferralsAmount = async (walletAddress: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+    const { data: referral, error: fetchError } = await supabase
+      .from("profiles")
+      .select("myReferral")
+      .eq("wallet_address", bufferKey);
+    if (fetchError) {
+      console.error("Error personal referral code:", fetchError);
+      return { success: false, error: "Failed to fetch personal referral code" };
+    }
+    const userReferral = referral[0]?.myReferral;
+    console.log(userReferral);
+    const { data: referrals, error: fetchTotalRefError } = await supabase
+      .from("profiles")
+      .select("referralUsed", {
+        count: "exact",
+      })
+      .eq("referralUsed", userReferral);
+    console.log(referrals);
+
+    if (fetchTotalRefError) {
+      console.error("Error fetching referrals:", fetchTotalRefError);
+      return { success: false, error: "Failed to fetch referrals" };
+    }
+    return { success: true, referrals: referrals };
+  } catch (error) {
+    console.error("Error fetching referrals:", error);
+    return { success: false, error: "Failed to fetch referrals" };
+  }
+};
+
+export const getLinksAmount = async (walletAddress: string, userId: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+    const { data: links, error: fetchError } = await supabase
+      .from("matches")
+      .select("id", {
+        count: "exact",
+      })
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+    if (fetchError) {
+      console.error("Error fetching referrals:", fetchError);
+      return { success: false, error: "Failed to fetch referrals" };
+    }
+    return { success: true, links: links };
+  } catch (error) {
+    console.error("Error fetching links amount:", error);
+    return { success: false, error: "Failed to fetch links" };
+  }
+};

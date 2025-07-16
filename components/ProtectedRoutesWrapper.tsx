@@ -15,7 +15,7 @@ const PUBLIC_ROUTES = ["/"];
 export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
   const { publicKey, disconnecting, disconnect, connected } = useWallet();
   const { logout, authenticateWithWallet } = useAuth();
-  const { clearUserData, fetchUserProfile, userData } = useUserStore();
+  const { clearUserData, fetchUserProfile, userData, isDataLoaded } = useUserStore();
   const { fetchProfiles, fetchUsersLocation } = useUsersStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -112,7 +112,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     if (authAttempted && isAuthenticated) {
       loadUserProfile();
     }
-  }, [isAuthenticated, publicKey, authAttempted, userData, fetchUserProfile]);
+  }, [isAuthenticated, publicKey, authAttempted, isDataLoaded, fetchUserProfile]);
 
   useEffect(() => {
     const fetchCommunities = async () => {
@@ -160,7 +160,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     if (isAuthenticated && userData) {
       loadAdditionalData();
     }
-  }, [isAuthenticated, userData, publicKey, fetchProfiles, fetchUsersLocation]);
+  }, [isAuthenticated, isDataLoaded, publicKey, fetchProfiles, fetchUsersLocation]);
 
   useEffect(() => {
     const addOrUpdateUserLocation = () => {
@@ -185,7 +185,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     if (isAuthenticated && userData) {
       addOrUpdateUserLocation();
     }
-  }, [isAuthenticated, userData, publicKey]);
+  }, [isAuthenticated, isDataLoaded, publicKey]);
 
   useEffect(() => {
     if (isInitializing || !authAttempted) {
@@ -209,7 +209,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       router.replace("/links");
       return;
     }
-  }, [isAuthenticated, authAttempted, userData, pathname, router, isInitializing]);
+  }, [isAuthenticated, authAttempted, isDataLoaded, pathname, router, isInitializing]);
 
   // WIP loading page
   // if (isInitializing) {

@@ -68,7 +68,6 @@ export const MissionsCard = () => {
   const countMatches = async () => {
     if (!userData) return;
     const { totalMatches } = await getMatchCount(userData.walletAddress, userData.id);
-    console.log(totalMatches);
 
     if (!totalMatches) return;
     setMatchCount(totalMatches.length);

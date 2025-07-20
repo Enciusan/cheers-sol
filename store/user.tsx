@@ -7,6 +7,7 @@ import { PublicKey } from "@solana/web3.js";
 
 type UserStore = {
   userData: Profile | null;
+  isDataLoaded: boolean;
   updateUserData: (userData: Profile) => void;
   fetchUserProfile: (walletAddress: string) => Promise<void>;
   clearUserData: () => void;
@@ -22,8 +23,10 @@ type UsersStore = {
 
 export const useUserStore = create<UserStore>((set) => ({
   userData: null,
+  isDataLoaded: false,
   updateUserData: (userData) => set({ userData }),
   fetchUserProfile: async (walletAddress: string) => {
+    set({ isDataLoaded: false });
     try {
       const data = await getUser(walletAddress);
       // console.log(data);
@@ -47,14 +50,16 @@ export const useUserStore = create<UserStore>((set) => ({
             allDomainName: data.allDomainName,
             snsName: data.snsName,
             connectedAt: data.connected_at,
+            createdAt: data.created_at,
           },
         });
+        set({ isDataLoaded: true });
       }
     } catch (error) {
       console.error("Error in fetchUserProfile:", error);
     }
   },
-  clearUserData: () => set({ userData: null }),
+  clearUserData: () => set({ userData: null, isDataLoaded: false }),
 }));
 
 export const useUsersStore = create<UsersStore>((set) => ({
@@ -85,6 +90,7 @@ export const useUsersStore = create<UsersStore>((set) => ({
           allDomainName: profile.allDomainName,
           snsName: profile.snsName,
           connectedAt: profile.connected_at,
+          createdAt: profile.created_at,
         }));
         // console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });

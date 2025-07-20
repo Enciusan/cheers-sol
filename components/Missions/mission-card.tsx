@@ -68,6 +68,7 @@ export const MissionsCard = () => {
   const countMatches = async () => {
     if (!userData) return;
     const { totalMatches } = await getMatchCount(userData.walletAddress, userData.id);
+
     if (!totalMatches) return;
     setMatchCount(totalMatches.length);
   };
@@ -100,7 +101,7 @@ export const MissionsCard = () => {
         return userData?.walletAddress && userData?.profileImage ? 1 : 0;
       case "Daily Login":
         return passedOneDay() ? 1 : 0;
-      case "Match Master":
+      case "Links Master":
         return matchCount < 25 ? matchCount : matchCount >= 25 ? 1 : 0;
       case "Conversation Starter":
         return hasInitiatedConversation ? 1 : 0;

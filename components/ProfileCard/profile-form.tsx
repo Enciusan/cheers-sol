@@ -14,18 +14,20 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import { ChevronLeft } from "lucide-react";
 
 const validationSchema = z.object({
   id: z.string().optional(),
-  username: z.string().min(1, "Name is required"),
+  username: z.string().min(1, "Name is required").max(15, "Name must be at most 15 characters"),
   walletAddress: z.string().min(1, "Wallet is required"),
   bio: z.string().min(10, "Bio must be at least 10 characters"),
   age: z.number().min(18, "Must be at least 18 years old").max(100, "Must be under 100 years old"),
-  drinks: z.array(z.string()).min(1, "Select at least one drink preference"),
+  drinks: z.array(z.string()).min(1, "Select at least one drink preference").max(6, "Select at most 6 drinks"),
   communities: z.array(z.string()).optional(),
 });
 
-export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
+export const ProfileForm = ({ data, onSubmit, onCancel, setIsInEditMode }: ProfileFormProps) => {
   const { publicKey, signMessage } = useWallet();
   const [isLoading, setIsLoading] = useState(false);
   const { verifyAuthentication } = useAuth();
@@ -108,62 +110,81 @@ export const ProfileForm = ({ data, onSubmit, onCancel }: ProfileFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(submitProfile)} className="flex flex-col gap-3 w-full">
-      <div className="w-full">
-        <Label htmlFor="wallet" className="pl-1.5">
-          Address
-        </Label>
-        <Input
-          type="text"
-          className="mt-1"
-          disabled={true}
-          value={publicKey?.toBase58() || ""}
-          {...register("walletAddress")}
-        />
-        {errors.walletAddress && <p className="text-sm text-red-500 mt-1">{errors.walletAddress.message}</p>}
-      </div>
+    <Card className="mb-4 sm:mb-8 border-gray-800 bg-[#18181b] w-full">
+      <CardHeader className="flex flex-row justify-between items-center w-full">
+        <h2>Edit profile</h2>
+        <Button
+          variant="outline"
+          size="sm"
+          className="mb-2 border-gray-700 text-gray-300 hover:text-white"
+          style={{ backgroundColor: "transparent" }}
+          onClick={() => {
+            setIsInEditMode(false);
+            onCancel?.();
+          }}>
+          <ChevronLeft className="h-4 w-4 mr-2" />
+          Back
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit(submitProfile)} className="flex flex-col gap-3 w-full">
+          <div className="w-full">
+            <Label htmlFor="wallet" className="pl-1.5">
+              Address
+            </Label>
+            <Input
+              type="text"
+              className="mt-1"
+              disabled={true}
+              value={publicKey?.toBase58() || ""}
+              {...register("walletAddress")}
+            />
+            {errors.walletAddress && <p className="text-sm text-red-500 mt-1">{errors.walletAddress.message}</p>}
+          </div>
 
-      <div className="w-full">
-        <Label htmlFor="name" className="pl-1.5">
-          Name
-        </Label>
-        <Input type="text" className="mt-1" {...register("username")} placeholder="ex: Jonathan" />
-        {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username.message}</p>}
-      </div>
+          <div className="w-full">
+            <Label htmlFor="name" className="pl-1.5">
+              Name
+            </Label>
+            <Input type="text" className="mt-1" {...register("username")} placeholder="ex: Jonathan" />
+            {errors.username && <p className="text-sm text-red-500 mt-1">{errors.username.message}</p>}
+          </div>
 
-      <div className="w-full">
-        <Label htmlFor="age" className="pl-1.5">
-          Age
-        </Label>
-        <Input type="number" className="mt-1" min={18} max={100} {...register("age", { valueAsNumber: true })} />
-        {errors.age && <p className="text-sm text-red-500 mt-1">{errors.age.message}</p>}
-      </div>
+          <div className="w-full">
+            <Label htmlFor="age" className="pl-1.5">
+              Age
+            </Label>
+            <Input type="number" className="mt-1" {...register("age", { valueAsNumber: true })} />
+            {errors.age && <p className="text-sm text-red-500 mt-1">{errors.age.message}</p>}
+          </div>
 
-      <div className="w-full">
-        <Label htmlFor="bio" className="pl-1.5">
-          Bio
-        </Label>
-        <Textarea className="mt-1" placeholder="Tell us about yourself..." {...register("bio")} />
-        {errors.bio && <p className="text-sm text-red-500 mt-1">{errors.bio.message}</p>}
-      </div>
+          <div className="w-full">
+            <Label htmlFor="bio" className="pl-1.5">
+              Bio
+            </Label>
+            <Textarea className="mt-1" placeholder="Tell us about yourself..." {...register("bio")} />
+            {errors.bio && <p className="text-sm text-red-500 mt-1">{errors.bio.message}</p>}
+          </div>
 
-      <div className="w-full">
-        <Label htmlFor="drinks" className="pl-1.5">
-          Preferred Drinks
-        </Label>
-        <MultiSelect
-          options={drinkOptions}
-          placeholder={"Select your preferred drinks"}
-          onValueChange={(values) => setValue("drinks", values)}
-          defaultValue={data?.drinks ?? []}
-          className="mt-1"
-        />
-        {errors.drinks && <p className="text-sm text-red-500 mt-1">{errors.drinks.message}</p>}
-      </div>
+          <div className="w-full">
+            <Label htmlFor="drinks" className="pl-1.5">
+              Preferred Drinks
+            </Label>
+            <MultiSelect
+              options={drinkOptions}
+              placeholder={"Select your preferred drinks"}
+              onValueChange={(values) => setValue("drinks", values)}
+              defaultValue={data?.drinks ?? []}
+              className="mt-1"
+            />
+            {errors.drinks && <p className="text-sm text-red-500 mt-1">{errors.drinks.message}</p>}
+          </div>
 
-      <Button className="w-full mt-2" type="submit">
-        {isLoading ? "Creating Profile..." : "Complete Profile"}
-      </Button>
-    </form>
+          <Button className="w-full mt-2" type="submit">
+            {isLoading ? "Creating Profile..." : "Complete Profile"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 };

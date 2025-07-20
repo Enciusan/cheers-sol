@@ -4,12 +4,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { COMMUNITIES } from "@/utils/communities";
 import { Profile } from "@/utils/types";
 import { Target } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
 
 interface CommunitiesSectionProps {
   userData: Profile | null;
+  loading: boolean;
 }
 
-export default function CommunitiesSection({ userData }: CommunitiesSectionProps) {
+export default function CommunitiesSection({ userData, loading }: CommunitiesSectionProps) {
+  if (loading) {
+    return (
+      <Card className="border-gray-800 w-full" style={{ backgroundColor: "#18181a" }}>
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Target className="h-5 w-5 text-green-400" />
+            Communities
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center gap-2 pt-2">
+            <Skeleton className="w-20 h-8 rounded-full" />
+            <Skeleton className="w-20 h-8 rounded-full" />
+            <Skeleton className="w-20 h-8 rounded-full" />
+            <Skeleton className="w-20 h-8 rounded-full" />
+            <Skeleton className="w-20 h-8 rounded-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   return (
     <Card
       className="border-gray-800 col-span-2 hover:border-gray-700 transition-all duration-200"

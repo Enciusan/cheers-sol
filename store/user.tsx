@@ -50,6 +50,7 @@ export const useUserStore = create<UserStore>((set) => ({
             allDomainName: data.allDomainName,
             snsName: data.snsName,
             connectedAt: data.connected_at,
+            createdAt: data.created_at,
           },
         });
         set({ isDataLoaded: true });
@@ -89,6 +90,7 @@ export const useUsersStore = create<UsersStore>((set) => ({
           allDomainName: profile.allDomainName,
           snsName: profile.snsName,
           connectedAt: profile.connected_at,
+          createdAt: profile.created_at,
         }));
         // console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });

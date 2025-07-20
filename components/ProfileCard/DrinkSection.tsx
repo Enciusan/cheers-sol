@@ -4,12 +4,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DrinkIcon } from "@/utils/drinks";
 import { Profile } from "@/utils/types";
 import { Wine } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
 
 interface DrinksSectionProps {
   userData: Profile | null;
+  loading: boolean;
 }
 
-export default function DrinksSection({ userData }: DrinksSectionProps) {
+export default function DrinksSection({ userData, loading }: DrinksSectionProps) {
+  if (loading) {
+    return (
+      <Card className="border-gray-800" style={{ backgroundColor: "#18181a" }}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Wine className="h-5 w-5 text-purple-400" />
+            Drink Preferences
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="h-[11rem]">
+          <div className="flex flex-col space-y-3">
+            <Skeleton className="w-full h-10" />
+            <Skeleton className="w-full h-10" />
+            <Skeleton className="w-full h-10" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   return (
     <Card className="border-gray-800 max-h-[16rem] overflow-y-scroll" style={{ backgroundColor: "#18181a" }}>
       <CardHeader>

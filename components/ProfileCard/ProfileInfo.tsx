@@ -2,19 +2,64 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Calendar, ChevronLeft, Clock, Edit, Globe, Wallet2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Award, Calendar, ChevronLeft, Clock, Edit, Globe, Wallet2 } from "lucide-react";
 import UUIDAvatar from "../AvatarGenerator";
 import { Profile } from "@/utils/types";
+import { useState } from "react";
+import { Skeleton } from "../ui/skeleton";
 
 interface ProfileInfoProps {
   userData: Profile | null;
   currentLevel: any;
+  loading: boolean;
   isInEditMode: boolean;
   setIsInEditMode: (isInEditMode: boolean) => void;
 }
 
-export default function ProfileInfo({ userData, currentLevel, isInEditMode, setIsInEditMode }: ProfileInfoProps) {
+export default function ProfileInfo({ userData, currentLevel, loading, setIsInEditMode }: ProfileInfoProps) {
+  const createdAt = new Date(userData?.createdAt ?? "");
+  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const transformedDate = months[createdAt.getMonth()] + " " + createdAt.getFullYear();
+
+  if (loading) {
+    return (
+      <Card className="mb-4 sm:mb-8 border-gray-800 w-full" style={{ backgroundColor: "#18181a" }}>
+        <CardContent className="p-4 sm:p-6 md:p-8 md:h-[15.25rem]">
+          <div className="flex flex-col h-full md:flex-row md:items-center gap-4 sm:gap-6 md:gap-8">
+            <div className="flex flex-col items-center md:items-center gap-3 sm:gap-4 md:gap-6 w-full md:w-auto">
+              <Skeleton className="w-24 h-24 rounded-full" />
+              <Skeleton className="h-9 rounded-md px-3 w-32" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <Skeleton className="w-24 h-8 rounded-md" />
+                <Skeleton className="w-52 h-5 rounded-full" />
+              </div>
+              <div className="flex md:flex-row flex-col gap-5">
+                <div className="flex md:flex-row flex-col md:items-center items-start mb-3 gap-3">
+                  <Skeleton className="w-24 h-5 rounded-md" />
+                  <Skeleton className="w-80 h-5 rounded-md" />
+                </div>
+              </div>
+              <div className="mb-3 flex items-center gap-2">
+                <Skeleton className="w-3/4 h-12 rounded-md" />
+              </div>
+              <div className="flex md:flex-row flex-col md:items-center items-start gap-4">
+                <div className="flex items-center gap-1">
+                  <Skeleton className="w-60 h-5 rounded-md" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <Skeleton className="w-40 h-5 rounded-md" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="mb-4 sm:mb-8 border-gray-800 w-full" style={{ backgroundColor: "#18181a" }}>
       <CardContent className="p-4 sm:p-6 md:p-8">
@@ -81,12 +126,12 @@ export default function ProfileInfo({ userData, currentLevel, isInEditMode, setI
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                CheersMate since January 20025
+                CheersMate since {transformedDate}
               </div>
-              <div className="flex items-center gap-1">
+              {/* <div className="flex items-center gap-1">
                 <Clock className="h-4 w-4" />
                 Last active 2 hours ago
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

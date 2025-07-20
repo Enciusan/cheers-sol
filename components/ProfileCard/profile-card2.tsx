@@ -88,15 +88,13 @@ export default function ProfileCard2() {
     {
       label: "Active Links",
       icon: "LinkIcon",
-      description: "Shared this month",
-      trend: "+3 from last month",
+      description: "Links this month",
       color: "text-blue-400",
     },
     {
       label: "Referrals",
       icon: "Users",
       description: "Friends joined",
-      trend: "+5 this week",
       color: "text-green-400",
     },
   ];
@@ -113,16 +111,17 @@ export default function ProfileCard2() {
               currentLevel={missionProps.currentLevel}
               isInEditMode={isInEditMode}
               setIsInEditMode={setIsInEditMode}
+              loading={loading}
             />
-            <StatsSection stats={stats} userData={userData} />
-            <CommunitiesSection userData={userData} />
+            <StatsSection stats={stats} userData={userData} loading={loading} />
+            <CommunitiesSection userData={userData} loading={loading} />
 
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8 pt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-8 pt-4 md:pt-8">
               <div className="col-span-2 space-y-4 sm:space-y-6 md:space-y-8">
                 <MissionsSection {...missionProps} />
               </div>
               <div className="col-span-2 space-y-6">
-                <DrinksSection userData={userData} />
+                <DrinksSection userData={userData} loading={loading} />
               </div>
             </div>
           </>

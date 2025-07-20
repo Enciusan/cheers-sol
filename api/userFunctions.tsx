@@ -6,6 +6,29 @@ import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";
 
+const getWeekStart = (): string => {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1);
+  const monday = new Date(now.setDate(diff));
+  monday.setHours(0, 0, 0, 0);
+  return monday.toISOString();
+};
+const getWeekEnd = (): string => {
+  const now = new Date();
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? 0 : 7);
+  const sunday = new Date(now.setDate(diff));
+  sunday.setHours(23, 59, 59, 999);
+  return sunday.toISOString();
+};
+
+const get30DaysAgo = (): string => {
+  const now = new Date();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  return thirtyDaysAgo.toISOString();
+};
+
 export const getUser = async (walletAddress: PublicKey | string) => {
   const supabase = await createClient();
   try {
@@ -26,7 +49,7 @@ export const getUser = async (walletAddress: PublicKey | string) => {
     const { data, error } = await supabase
       .from("profiles")
       .select(
-        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasADDomainChecked, hasSNSDomainChecked, allDomainName, snsName, connected_at"
+        "id, username, wallet_address, bio, age, drinks, communities, profileImage, myReferral, referralUsed, gainedXP, hasADDomainChecked, hasSNSDomainChecked, allDomainName, snsName, connected_at, created_at"
       )
       .eq("wallet_address", bufferKey)
       .single();
@@ -533,6 +556,7 @@ export const linkReferralCode = async (walletAddress: string, referralCode: stri
         .from("profiles")
         .update({
           referralUsed: referralCode,
+          referral_claimed_at: new Date().toISOString(),
         })
         .eq("wallet_address", bufferKey);
       if (fetchErrorReferral && fetchErrorReferral.code !== "PGRST116") {
@@ -710,12 +734,91 @@ export const getLinksAmount = async (walletAddress: string, userId: string) => {
       })
       .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
     if (fetchError) {
-      console.error("Error fetching referrals:", fetchError);
-      return { success: false, error: "Failed to fetch referrals" };
+      console.error("Error fetching links:", fetchError);
+      return { success: false, error: "Failed to fetch links" };
     }
     return { success: true, links: links };
   } catch (error) {
     console.error("Error fetching links amount:", error);
     return { success: false, error: "Failed to fetch links" };
+  }
+};
+export const getWeeklyReferralsAmount = async (walletAddress: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const publicKey = new PublicKey(walletAddress);
+    const bufferKey = Buffer.from(publicKey.toBytes()).toString("hex");
+
+    const { data: referral, error: fetchError } = await supabase
+      .from("profiles")
+      .select("myReferral")
+      .eq("wallet_address", bufferKey);
+
+    if (fetchError) {
+      console.error("Error personal referral code:", fetchError);
+      return { success: false, error: "Failed to fetch personal referral code" };
+    }
+
+    const userReferral = referral[0]?.myReferral;
+    if (!userReferral) {
+      return { success: true, referrals: [] };
+    }
+
+    const weekStart = getWeekStart();
+    const weekEnd = getWeekEnd();
+
+    const { data: referrals, error: fetchWeeklyRefError } = await supabase
+      .from("profiles")
+      .select("referralUsed, created_at", {
+        count: "exact",
+      })
+      .eq("referralUsed", userReferral)
+      .gte("referral_claimed_at", weekStart)
+      .lte("referral_claimed_at", weekEnd);
+
+    if (fetchWeeklyRefError) {
+      console.error("Error fetching weekly referrals:", fetchWeeklyRefError);
+      return { success: false, error: "Failed to fetch weekly referrals" };
+    }
+
+    return { success: true, referrals: referrals };
+  } catch (error) {
+    console.error("Error fetching weekly referrals:", error);
+    return { success: false, error: "Failed to fetch weekly referrals" };
+  }
+};
+
+export const getMonthlyLinksAmount = async (walletAddress: string, userId: string) => {
+  const supabase = await createClient();
+  try {
+    const authorizedWallet = await verifyAuth();
+    if (!authorizedWallet || authorizedWallet.wallet_address !== walletAddress) {
+      return { success: false, error: "Authentication required" };
+    }
+
+    const thirtyDaysAgo = get30DaysAgo();
+
+    const { data: links, error: fetchError } = await supabase
+      .from("matches")
+      .select("id, created_at", {
+        count: "exact",
+      })
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+      .gte("created_at", thirtyDaysAgo);
+
+    if (fetchError) {
+      console.error("Error fetching monthly links:", fetchError);
+      return { success: false, error: "Failed to fetch monthly links" };
+    }
+
+    return { success: true, links: links };
+  } catch (error) {
+    console.error("Error fetching monthly links amount:", error);
+    return { success: false, error: "Failed to fetch monthly links" };
   }
 };

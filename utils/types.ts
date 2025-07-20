@@ -15,6 +15,7 @@ export type Profile = {
   hasSNSDomainChecked: boolean;
   snsName: string;
   connectedAt: Date;
+  createdAt: Date;
 };
 
 export interface ProfileFormProps {

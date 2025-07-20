@@ -1,4 +1,3 @@
-import { ProfileCard } from "@/components/ProfileCard/profile-card";
 import ProfileCard2 from "@/components/ProfileCard/profile-card2";
 
 export default function Profile() {

@@ -29,7 +29,7 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ isDataLoaded: false });
     try {
       const data = await getUser(walletAddress);
-      // console.log(data);
+      console.log(data);
 
       if (data) {
         set({

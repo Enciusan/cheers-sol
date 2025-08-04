@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Beer, GlassWater, Martini, MessageSquare, Users, Wine } from "lucide-react";
 import dynamic from "next/dynamic";
 import xLogo from "@/assets/twitter.svg";
+import { useRouter } from "next/navigation";
 
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -11,6 +12,7 @@ const WalletMultiButtonDynamic = dynamic(
 );
 
 export default function LandingPage() {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-[#09090B] text-white">
       {/* Hero Section */}
@@ -32,6 +34,14 @@ export default function LandingPage() {
             <WalletMultiButtonDynamic className="!text-black bg-violet-600 hover:bg-violet-700">
               Connect wallet
             </WalletMultiButtonDynamic>
+            <Button
+              size={"sm"}
+              onClick={() => {
+                router.replace("/civicAuth");
+                console.log("clicked");
+              }}>
+              Connect with email
+            </Button>
             <Button
               className="font-semibold w-[11rem]"
               size={"sm"}

@@ -4,25 +4,23 @@ import MatchStack from "@/components/MatchCard/match-stack";
 import { Button } from "@/components/ui/button";
 import { useUsersStore, useUserStore } from "@/store/user";
 import { calculateDistance } from "@/utils/clientFunctions";
-import { useWallet } from "@solana/wallet-adapter-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function MatchesPage() {
-  const { userData } = useUserStore();
-  const { publicKey } = useWallet();
+  const { userData, isDataLoaded } = useUserStore();
   const { profiles, usersLocations } = useUsersStore();
 
   const router = useRouter();
 
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isDataLoadedState, setIsDataLoadedState] = useState(false);
 
-  const isLoading = !userData || !profiles || !usersLocations || !isDataLoaded;
+  const isLoading = !userData || !profiles || !usersLocations;
 
   const filteredProfilesBasedOnDistance = useMemo(() => {
-    if (!userData || !profiles || !usersLocations) {
+    if (usersLocations === null || userData === null || profiles === null) {
       return [];
     }
 
@@ -55,30 +53,30 @@ export default function MatchesPage() {
     return filteredProfiles;
   }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
 
-  useEffect(() => {
-    const hasUserData = userData !== null;
-    const hasProfiles = profiles && profiles.length > 0;
+  // useEffect(() => {
+  //   const hasUserData = userData !== null;
+  //   const hasProfiles = profiles && profiles.length > 0;
 
-    // console.log("Data loading check:", {
-    //   hasUserData,
-    //   hasProfiles,
-    //   profilesCount: profiles?.length || 0,
-    //   locationsCount: usersLocations?.length || 0,
-    // });
+  //   // console.log("Data loading check:", {
+  //   //   hasUserData,
+  //   //   hasProfiles,
+  //   //   profilesCount: profiles?.length || 0,
+  //   //   locationsCount: usersLocations?.length || 0,
+  //   // });
 
-    if (hasUserData && hasProfiles) {
-      // Add a small delay to ensure all data is properly loaded
-      const timer = setTimeout(() => {
-        console.log("Setting isDataLoaded to true");
-        setIsDataLoaded(true);
-      }, 1000);
+  //   if (hasUserData && hasProfiles) {
+  //     // Add a small delay to ensure all data is properly loaded
+  //     const timer = setTimeout(() => {
+  //       console.log("Setting isDataLoaded to true");
+  //       setIsDataLoadedState(true);
+  //     }, 1000);
 
-      return () => clearTimeout(timer);
-    } else {
-      console.log("Setting isDataLoaded to false");
-      setIsDataLoaded(false);
-    }
-  }, [userData, profiles, usersLocations]);
+  //     return () => clearTimeout(timer);
+  //   } else {
+  //     console.log("Setting isDataLoaded to false");
+  //     setIsDataLoadedState(false);
+  //   }
+  // }, [userData, profiles, usersLocations]);
 
   // useEffect(() => {
   //   console.log("MatchesPage state:", {
@@ -90,6 +88,13 @@ export default function MatchesPage() {
   //   });
   // }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
   // console.log(isLoading, userData, profiles);
+  console.group("MatchesPage");
+  console.log("filteredProfilesBasedOnDistance", filteredProfilesBasedOnDistance);
+  console.log("userData", userData);
+  console.log("profiles", profiles);
+  console.log("usersLocations", usersLocations);
+  console.log("isDataLoadedState", isDataLoadedState);
+  console.groupEnd();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">

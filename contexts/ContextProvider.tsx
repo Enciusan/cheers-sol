@@ -1,7 +1,8 @@
 "use client";
+import { CivicAuthProvider } from "@civic/auth-web3/react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
 import { SolflareWalletAdapter } from "@solana/wallet-adapter-solflare";
 import { clusterApiUrl } from "@solana/web3.js";
 import dynamic from "next/dynamic";
@@ -36,7 +37,9 @@ const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <ConnectionProvider endpoint={endpoint}>
       <WalletProvider wallets={wallets} autoConnect>
-        <ReactUIWalletModalProviderDynamic>{children}</ReactUIWalletModalProviderDynamic>
+        <ReactUIWalletModalProviderDynamic>
+          <CivicAuthProvider clientId="463405db-c4f3-4367-b816-548f3a7c839d">{children}</CivicAuthProvider>
+        </ReactUIWalletModalProviderDynamic>
       </WalletProvider>
     </ConnectionProvider>
   );

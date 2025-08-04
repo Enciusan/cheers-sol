@@ -4,21 +4,24 @@ import { isAuthorized } from "@/api/serverAuth";
 import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "@/api/userFunctions";
 import { useAuth } from "@/hooks/useAuth";
 import { useUsersStore, useUserStore } from "@/store/user";
-import { connection } from "@/utils/clientFunctions";
 import { getAssetsByOwner } from "@/utils/serverFunctions";
+import { userHasWallet } from "@civic/auth-web3";
+import { useUser } from "@civic/auth-web3/react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState, useCallback } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 const PUBLIC_ROUTES = ["/"];
 
 export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
-  const { publicKey, disconnecting, disconnect, connected } = useWallet();
+  const { publicKey, disconnecting, disconnect, connected, wallet } = useWallet();
+  const { user } = useUser();
   const { logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData, isDataLoaded } = useUserStore();
   const { fetchProfiles, fetchUsersLocation } = useUsersStore();
   const pathname = usePathname();
   const router = useRouter();
+  const userContext = useUser();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
@@ -63,6 +66,20 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
       return false;
     }
   }, [publicKey, authenticateWithWallet, clearUserData]);
+
+  const afterLogin = async () => {
+    console.log("sunt in createWallet");
+
+    if (userContext.user && !userHasWallet(userContext)) {
+      await userContext.createWallet();
+    }
+  };
+
+  useEffect(() => {
+    if (userContext.user) {
+      afterLogin();
+    }
+  }, [userContext.user, performAuthentication, connected, disconnect]);
 
   useEffect(() => {
     console.log("UserInitializer useEffect disconnecting value:", disconnecting);
@@ -120,7 +137,10 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   useEffect(() => {
     let cancelled = false;
     const loadAdditionalData = async () => {
-      if (isAuthenticated && userData && publicKey) {
+      if (publicKey === null) return;
+      console.log("Sunt in loadProfile", isAuthenticated, userData, publicKey);
+      if (isAuthenticated && userData && connected) {
+        console.log("Sunt in if loadProfile");
         try {
           console.log("Fetching additional user data...");
           await fetchProfiles(publicKey.toBase58());
@@ -143,13 +163,14 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     };
 
     if (isAuthenticated && userData) {
+      console.log("Triggering loadAdditionalData");
       loadAdditionalData();
     }
 
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, isDataLoaded, publicKey, fetchProfiles, userData, fetchUsersLocation]);
+  }, [isAuthenticated, isDataLoaded, publicKey, userData]);
 
   useEffect(() => {
     const addOrUpdateUserLocation = () => {
@@ -196,7 +217,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         return;
       }
     }
-  }, [isAuthenticated, userData, pathname, router, authAttempted]);
+  }, [isAuthenticated, userData, pathname, router, authAttempted, wallet]);
 
   // WIP loading page
   // if (isInitializing) {

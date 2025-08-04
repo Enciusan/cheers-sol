@@ -1,3 +1,5 @@
+import { createCivicAuthPlugin } from '@civic/auth-web3/nextjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
@@ -28,4 +30,10 @@ const nextConfig = {
   reactStrictMode: false,
 };
 
-export default nextConfig;
+const withCivicAuth = createCivicAuthPlugin({
+  clientId: "463405db-c4f3-4367-b816-548f3a7c839d",
+  enableSolanaWalletAdapter: true,
+  oauthServerUrl: "https://auth.civic.com/oauth",
+});
+
+export default withCivicAuth(nextConfig);

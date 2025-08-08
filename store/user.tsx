@@ -16,7 +16,9 @@ type UserStore = {
 
 type UsersStore = {
   profiles: Profile[] | null;
+  isProfilesLoaded: boolean;
   usersLocations: UserLocation[] | null;
+  isUsersLocationsLoaded: boolean;
   updateProfiles: (profiles: Profile[]) => void;
   fetchProfiles: (walletAddress: string) => Promise<void>;
   fetchUsersLocation: (walletAddress: string) => Promise<void>;
@@ -61,7 +63,7 @@ export const useUserStore = create<UserStore>((set) => ({
       }
     } catch (error) {
       console.error("Error in fetchUserProfile:", error);
-      set({ isDataLoaded: true });
+      set({ isDataLoaded: false });
     }
   },
   clearUserData: () => {
@@ -71,10 +73,13 @@ export const useUserStore = create<UserStore>((set) => ({
 }));
 
 export const useUsersStore = create<UsersStore>((set) => ({
-  profiles: [],
-  usersLocations: [],
+  profiles: null,
+  isProfilesLoaded: false,
+  usersLocations: null,
+  isUsersLocationsLoaded: false,
   updateProfiles: (profiles) => set({ profiles }),
   fetchProfiles: async (walletAddress: string) => {
+    set({ isProfilesLoaded: false });
     try {
       // console.log("Fetching profiles for", walletAddress);
       const data = await getAppUserForMatch(walletAddress);
@@ -102,17 +107,20 @@ export const useUsersStore = create<UsersStore>((set) => ({
         }));
         // console.log("Mapped profiles:", mappedProfiles);
         set({ profiles: mappedProfiles });
+        set({ isProfilesLoaded: true });
       }
     } catch (error) {
       console.error("Error fetching profiles:", error);
+      set({ isProfilesLoaded: false });
     }
   },
   fetchUsersLocation: async (walletAddress: string) => {
+    set({ isUsersLocationsLoaded: false });
     try {
       const data = await getUsersLocation(walletAddress);
-      // console.log(data);
+      console.log(data);
 
-      if (data.usersLocation) {
+      if (data?.usersLocation) {
         set({
           usersLocations: data?.usersLocation.map((loc: any) => ({
             latitude: loc.latitude,
@@ -126,19 +134,11 @@ export const useUsersStore = create<UsersStore>((set) => ({
                 : loc.wallet_address,
           })),
         });
+        set({ isUsersLocationsLoaded: true });
       }
     } catch (error) {
       console.error("Error fetching users location:", error);
+      set({ isUsersLocationsLoaded: false });
     }
   },
 }));
-
-export const useInitializeUser = (walletAddress: PublicKey | null) => {
-  const fetchUserProfile = useUserStore((state) => state.fetchUserProfile);
-
-  useEffect(() => {
-    if (walletAddress) {
-      fetchUserProfile(walletAddress.toBase58());
-    }
-  }, [walletAddress, fetchUserProfile]);
-};

@@ -18,7 +18,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   const { user } = useUser();
   const { logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData, isDataLoaded } = useUserStore();
-  const { fetchProfiles, fetchUsersLocation } = useUsersStore();
+  const { fetchProfiles, fetchUsersLocation, isProfilesLoaded, isUsersLocationsLoaded } = useUsersStore();
   const pathname = usePathname();
   const router = useRouter();
   const userContext = useUser();
@@ -38,7 +38,6 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
 
     try {
       const authResult = await isAuthorized(publicKey.toString());
-      console.log("Auth result:", authResult);
 
       if (authResult) {
         console.log("User is authenticated");
@@ -120,16 +119,11 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   useEffect(() => {
     const fetchCommunities = async () => {
       if (isAuthenticated && publicKey && !userData) {
-        console.log("Aici");
         (async () => {
-          console.log("Acolo");
-          await Promise.all([
-            fetchUserProfile(publicKey.toBase58()),
-            getAssetsByOwner(publicKey.toBase58()).then((coms) =>
+          await fetchUserProfile(publicKey.toBase58()),
+            await getAssetsByOwner(publicKey.toBase58()).then((coms) =>
               addOrUpdateUserCommunities(coms, publicKey.toBase58())
-            ),
-          ]);
-          console.log("Dincolo");
+            );
         })();
       }
     };
@@ -138,42 +132,13 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   }, [isAuthenticated, publicKey, isDataLoaded, authAttempted]);
 
   useEffect(() => {
-    let cancelled = false;
-    const loadAdditionalData = async () => {
-      if (publicKey === null) return;
-      console.log("Sunt in loadProfile", isAuthenticated, userData, publicKey);
-      if (isAuthenticated && userData && connected) {
-        console.log("Sunt in if loadProfile");
-        try {
-          console.log("Fetching additional user data...");
-          await fetchProfiles(publicKey.toBase58());
-          if (cancelled) return;
-          console.log("Fetched profiles");
-
-          await fetchUsersLocation(publicKey.toBase58());
-          if (cancelled) return;
-          console.log("Fetched user locations");
-
-          await checkDailyLogin(publicKey.toBase58());
-          if (cancelled) return;
-          console.log("Checked daily login");
-
-          console.log("All additional data fetched successfully");
-        } catch (error) {
-          console.error("Error fetching additional data:", error);
-        }
-      }
-    };
-
-    if (isAuthenticated && userData) {
-      console.log("Triggering loadAdditionalData");
-      loadAdditionalData();
-    }
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isAuthenticated, isDataLoaded, publicKey, userData]);
+    if (!isAuthenticated || !connected || publicKey === null || userData?.id === undefined) return;
+    (async () => {
+      await fetchProfiles(publicKey.toBase58());
+      await fetchUsersLocation(publicKey.toBase58());
+      await checkDailyLogin(publicKey.toBase58());
+    })();
+  }, [isAuthenticated, connected, publicKey, userData, fetchProfiles, fetchUsersLocation]);
 
   useEffect(() => {
     const addOrUpdateUserLocation = () => {
@@ -201,11 +166,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   }, [isAuthenticated, isDataLoaded, publicKey]);
 
   useEffect(() => {
-    console.log("isInitializing", isInitializing);
-    console.log("authAttempted", authAttempted);
-    console.log("isDataLoaded", isDataLoaded);
-
-    if (isInitializing || !authAttempted) {
+    if (isInitializing || !authAttempted || !isDataLoaded) {
       return;
     }
     if (isDataLoaded) {
@@ -214,17 +175,16 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         return;
       }
 
-      if (isAuthenticated && (userData !== null || userData === null) && pathname === "/") {
-        router.replace("/links");
-        return;
-      }
-
       if (isAuthenticated && userData === null && pathname !== "/profile") {
         router.replace("/profile");
         return;
       }
+
+      if (isAuthenticated && userData !== null && pathname === "/") {
+        router.replace("/links");
+      }
     }
-  }, [isAuthenticated, userData, pathname, router, authAttempted, isDataLoaded]);
+  }, [isAuthenticated, userData, pathname, router, authAttempted, isDataLoaded, isInitializing]);
 
   // WIP loading page
   // if (isInitializing) {

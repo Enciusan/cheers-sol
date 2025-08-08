@@ -1,12 +1,11 @@
 "use client";
 
+import { Calendar, Edit, Globe, Wallet2 } from "lucide-react";
+import { Profile } from "../../utils/types";
+import UUIDAvatar from "../AvatarGenerator";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Award, Calendar, ChevronLeft, Clock, Edit, Globe, Wallet2 } from "lucide-react";
-import UUIDAvatar from "../AvatarGenerator";
-import { Profile } from "../../utils/types";
-import { useState } from "react";
+import { Card, CardContent } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 
 interface ProfileInfoProps {
@@ -99,7 +98,7 @@ export default function ProfileInfo({ userData, currentLevel, loading, setIsInEd
             <div className="flex md:flex-row flex-col gap-5">
               <div className="flex items-center mb-3 gap-2">
                 <Globe className="h-5 w-5" />
-                <h3 className="text-violet-200 font-medium">
+                <h3 className="text-violet-200 font-medium text-sm">
                   {userData?.hasADDomainChecked
                     ? userData.allDomainName
                     : userData?.hasSNSDomainChecked

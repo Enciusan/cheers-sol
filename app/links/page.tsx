@@ -1,5 +1,6 @@
 "use client";
 
+import { useWallet } from "@solana/wallet-adapter-react";
 import MatchStack from "../../components/MatchCard/match-stack";
 import { Button } from "../../components/ui/button";
 import { useUsersStore, useUserStore } from "../../store/user";
@@ -8,16 +9,28 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { revalidateUserMatches } from "@/api/matchFunctions";
+import { getAppUserForMatch } from "@/api/userFunctions";
 
 export default function MatchesPage() {
+  const { publicKey } = useWallet();
   const { userData, isDataLoaded } = useUserStore();
-  const { profiles, usersLocations } = useUsersStore();
+  const { profiles, usersLocations, fetchProfiles } = useUsersStore();
 
   const router = useRouter();
 
   const [isDataLoadedState, setIsDataLoadedState] = useState(false);
 
-  const isLoading = !userData || !profiles || !usersLocations;
+  const isLoading = !userData || profiles === null || usersLocations === null;
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (publicKey && userData) {
+        await getAppUserForMatch(publicKey.toBase58());
+      }
+    };
+    loadData();
+  }, [publicKey, isDataLoaded, isDataLoadedState]);
 
   const filteredProfilesBasedOnDistance = useMemo(() => {
     if (usersLocations === null || userData === null || profiles === null) {
@@ -51,32 +64,32 @@ export default function MatchesPage() {
     });
 
     return filteredProfiles;
-  }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
+  }, [userData, profiles, usersLocations, isDataLoaded, isLoading, isDataLoadedState]);
 
-  // useEffect(() => {
-  //   const hasUserData = userData !== null;
-  //   const hasProfiles = profiles && profiles.length > 0;
+  useEffect(() => {
+    const hasUserData = userData !== null;
+    const hasProfiles = profiles && profiles.length > 0;
 
-  //   // console.log("Data loading check:", {
-  //   //   hasUserData,
-  //   //   hasProfiles,
-  //   //   profilesCount: profiles?.length || 0,
-  //   //   locationsCount: usersLocations?.length || 0,
-  //   // });
+    // console.log("Data loading check:", {
+    //   hasUserData,
+    //   hasProfiles,
+    //   profilesCount: profiles?.length || 0,
+    //   locationsCount: usersLocations?.length || 0,
+    // });
 
-  //   if (hasUserData && hasProfiles) {
-  //     // Add a small delay to ensure all data is properly loaded
-  //     const timer = setTimeout(() => {
-  //       console.log("Setting isDataLoaded to true");
-  //       setIsDataLoadedState(true);
-  //     }, 1000);
+    if (hasUserData && hasProfiles) {
+      // Add a small delay to ensure all data is properly loaded
+      const timer = setTimeout(() => {
+        console.log("Setting isDataLoaded to true");
+        setIsDataLoadedState(true);
+      }, 1000);
 
-  //     return () => clearTimeout(timer);
-  //   } else {
-  //     console.log("Setting isDataLoaded to false");
-  //     setIsDataLoadedState(false);
-  //   }
-  // }, [userData, profiles, usersLocations]);
+      return () => clearTimeout(timer);
+    } else {
+      console.log("Setting isDataLoaded to false");
+      setIsDataLoadedState(false);
+    }
+  }, [userData, profiles, usersLocations, isDataLoaded]);
 
   // useEffect(() => {
   //   console.log("MatchesPage state:", {
@@ -88,13 +101,14 @@ export default function MatchesPage() {
   //   });
   // }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
   // console.log(isLoading, userData, profiles);
-  console.group("MatchesPage");
-  console.log("filteredProfilesBasedOnDistance", filteredProfilesBasedOnDistance);
-  console.log("userData", userData);
-  console.log("profiles", profiles);
-  console.log("usersLocations", usersLocations);
-  console.log("isDataLoadedState", isDataLoadedState);
+
   console.groupEnd();
+  if (isLoading)
+    return (
+      <div className="flex h-screen w-full justify-center items-center z-10">
+        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#7C3AED]"></div>
+      </div>
+    );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
@@ -103,11 +117,11 @@ export default function MatchesPage() {
         {userData?.id !== undefined ? (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             {/* Show a small spinner in the corner if still loading, but always show MatchStack */}
-            {isLoading && (
+            {/* {isLoading && (
               <div className="absolute top-2 right-2 z-10">
                 <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#7C3AED]"></div>
               </div>
-            )}
+            )} */}
             <MatchStack profiles={filteredProfilesBasedOnDistance || []} currentUserId={userData.id} />
           </div>
         ) : (

@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
-import { MatchProfile, Profile } from "@/utils/types";
-import { supabase } from "@/lib/initSupabaseClient";
-import { fetchMessages, sendMessage } from "@/api/messageFunctions";
+import { MatchProfile, Profile } from "../../utils/types";
+import { supabase } from "../../lib/initSupabaseClient";
+import { fetchMessages, sendMessage } from "../../api/messageFunctions";
 import { MatchInfo } from "../MatchCard/match-info";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { Laugh } from "lucide-react";

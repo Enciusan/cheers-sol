@@ -1,7 +1,7 @@
 "use server";
 
 import "server-only";
-import { createClient } from "@/lib/initSupabaseServerClient";
+import { createClient } from "../lib/initSupabaseServerClient";
 
 const supabase = await createClient();
 

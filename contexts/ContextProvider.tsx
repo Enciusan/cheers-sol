@@ -1,58 +1,52 @@
 "use client";
-import { CivicAuthProvider } from "@civic/auth-web3/react";
-import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
-import { PhantomWalletAdapter } from "@solana/wallet-adapter-phantom";
+import { CivicAuthProvider } from "@civic/auth-web3/nextjs";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
-import { SolflareWalletAdapter } from "@solana/wallet-adapter-solflare";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
 import { clusterApiUrl } from "@solana/web3.js";
-import dynamic from "next/dynamic";
-import { FC, ReactNode, useMemo } from "react";
-import { AutoConnectProvider } from "./AutoConnectProvider";
-import { NetworkConfigurationProvider, useNetworkConfiguration } from "./NetworkConfigurationProvider";
+import { FC, ReactNode } from "react";
 
-const ReactUIWalletModalProviderDynamic = dynamic(
-  async () => (await import("@solana/wallet-adapter-react-ui")).WalletModalProvider,
-  { ssr: false }
-);
+// const ReactUIWalletModalProviderDynamic = dynamic(
+//   async () => (await import("@solana/wallet-adapter-react-ui")).WalletModalProvider,
+//   { ssr: false }
+// );
 
-const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const { networkConfiguration } = useNetworkConfiguration();
-  const network = networkConfiguration as WalletAdapterNetwork;
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+// const WalletContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+//   const { networkConfiguration } = useNetworkConfiguration();
+//   const network = networkConfiguration as WalletAdapterNetwork;
 
-  const wallets = useMemo(
-    () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [network]
-  );
+//   const wallets = useMemo(
+//     () => [new PhantomWalletAdapter(), new SolflareWalletAdapter()],
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//     [network]
+//   );
 
-  // const onError = useCallback((error: WalletError) => {
-  //   notify({
-  //     type: "error",
-  //     message: error.message ? `${error.name}: ${error.message}` : error.name,
-  //   });
-  //   console.error(error);
-  // }, []);
+// const onError = useCallback((error: WalletError) => {
+//   notify({
+//     type: "error",
+//     message: error.message ? `${error.name}: ${error.message}` : error.name,
+//   });
+//   console.error(error);
+// }, []);
 
-  return (
-    <ConnectionProvider endpoint={endpoint}>
-      <WalletProvider wallets={wallets} autoConnect>
-        <ReactUIWalletModalProviderDynamic>
-          <CivicAuthProvider clientId="463405db-c4f3-4367-b816-548f3a7c839d">{children}</CivicAuthProvider>
-        </ReactUIWalletModalProviderDynamic>
-      </WalletProvider>
-    </ConnectionProvider>
-  );
-};
+//   return (
+//     <ConnectionProvider endpoint={clusterApiUrl("mainnet-beta")}>
+//       <WalletProvider wallets={wallets} autoConnect={false}>
+//         <ReactUIWalletModalProviderDynamic>
+//           <CivicAuthProvider>{children}</CivicAuthProvider>
+//         </ReactUIWalletModalProviderDynamic>
+//       </WalletProvider>
+//     </ConnectionProvider>
+//   );
+// };
 
 export const ContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
-    <>
-      <NetworkConfigurationProvider>
-        <AutoConnectProvider>
-          <WalletContextProvider>{children}</WalletContextProvider>
-        </AutoConnectProvider>
-      </NetworkConfigurationProvider>
-    </>
+    <ConnectionProvider endpoint={clusterApiUrl("devnet")}>
+      <WalletProvider wallets={[]} autoConnect>
+        <WalletModalProvider>
+          <CivicAuthProvider>{children}</CivicAuthProvider>
+        </WalletModalProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 };

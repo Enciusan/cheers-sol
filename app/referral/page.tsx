@@ -1,5 +1,5 @@
 "use client";
-import { ReferralCard } from "@/components/ReferralCard/referral-card";
+import { ReferralCard } from "../../components/ReferralCard/referral-card";
 
 export default function Referral() {
   return (

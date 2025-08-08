@@ -24,8 +24,7 @@ export const getAssetsByOwner = async (walletAddress: string) => {
     }),
   });
   const { result } = await response.json();
-  const metadataList = result.items.map((item: any) => item.grouping[0]?.group_value);
-  //   console.log("Metadata by Owner: ", metadataList);
+  const metadataList = result?.items?.map((item: any) => item.grouping[0]?.group_value);
   for (const community of COMMUNITIES) {
     if (metadataList.includes(community.mint)) {
       ownedCommunities.push(community.mint);

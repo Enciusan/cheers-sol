@@ -1,12 +1,12 @@
+import { auth, authMiddleware } from "@civic/auth-web3/nextjs/middleware";
+import { PublicKey } from "@solana/web3.js";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "./lib/jwt";
 import { createClient } from "./lib/initSupabaseServerClient";
-import { PublicKey } from "@solana/web3.js";
-import { authMiddleware } from "@civic/auth-web3/nextjs/middleware";
 
-const PUBLIC_ROUTES = ["/", "/civicAuth"];
+const PUBLIC_ROUTES = ["/"];
 
-export async function middleware(request: NextRequest) {
+async function middleware2(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   if (PUBLIC_ROUTES.includes(pathname)) {
@@ -56,17 +56,11 @@ async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
   }
 }
 
-export default authMiddleware();
+export function middleware(request: NextRequest) {
+  middleware2(request);
+  authMiddleware();
+}
 
 export const config = {
-  matcher: [
-    "/links",
-    "/profile",
-    "/missions",
-    "/chat",
-    "/settings",
-    "/referral",
-    "/civicAuth",
-    "/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\.jpg|.*\.png|.*\.svg|.*\.gif).*)",
-  ],
+  matcher: ["/", "/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\.jpg|.*\.png|.*\.svg|.*\.gif).*)"],
 };

@@ -1,14 +1,14 @@
 "use client";
-import { fetchMatches, revalidateUserMatches } from "@/api/matchFunctions";
-import { fetchMessages } from "@/api/messageFunctions";
-import { useUserStore } from "@/store/user";
-import { MatchProfile, Profile } from "@/utils/types";
+import { fetchMatches, revalidateUserMatches } from "../../api/matchFunctions";
+import { fetchMessages } from "../../api/messageFunctions";
+import { useUserStore } from "../../store/user";
+import { MatchProfile, Profile } from "../../utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ChatArea } from "./ChatArea";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import Image from "next/image";
 
 export default function MessageComponent() {

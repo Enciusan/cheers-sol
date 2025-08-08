@@ -1,7 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/initSupabaseServerClient";
-import { MatchProfile, Profile } from "@/utils/types";
+import { createClient } from "../lib/initSupabaseServerClient";
+import { MatchProfile, Profile } from "../utils/types";
 import { revalidateTag, unstable_cache } from "next/cache";
 import "server-only";
 

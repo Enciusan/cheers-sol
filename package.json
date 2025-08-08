@@ -10,8 +10,7 @@
   },
   "dependencies": {
     "@bonfida/spl-name-service": "^3.0.11",
-    "@civic/auth": "^0.9.5",
-    "@civic/auth-web3": "^0.7.1",
+    "@civic/auth-web3": "^0.7.2-alpha.1",
     "@hookform/resolvers": "^3.10.0",
     "@noble/ed25519": "^2.2.3",
     "@onsol/tldparser": "^1.0.6",
@@ -47,7 +46,7 @@
     "jose": "^5.10.0",
     "lucide-react": "^0.471.1",
     "motion": "^12.15.0",
-    "next": "14.2.25",
+    "next": "14.2.28",
     "next-themes": "^0.4.6",
     "node-cache": "^5.1.2",
     "prettier": "^3.4.2",

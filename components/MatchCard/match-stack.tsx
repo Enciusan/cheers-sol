@@ -1,5 +1,5 @@
-import { handleSwipe } from "@/api/matchFunctions";
-import { Profile } from "@/utils/types";
+import { handleSwipe } from "../../api/matchFunctions";
+import { Profile } from "../../utils/types";
 import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Users, X } from "lucide-react";
 import { useState } from "react";

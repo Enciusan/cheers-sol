@@ -1,9 +1,10 @@
 "use client";
 import { useEffect } from "react";
-import { Profile, UserLocation } from "@/utils/types";
+import { Profile, UserLocation } from "../utils/types";
 import { create } from "zustand";
-import { getAppUserForMatch, getUser, getUsersLocation } from "@/api/userFunctions";
 import { PublicKey } from "@solana/web3.js";
+import { cleanupExpiredNonces } from "../api/serverAuth";
+import { getAppUserForMatch, getUser, getUsersLocation } from "@/api/userFunctions";
 
 type UserStore = {
   userData: Profile | null;
@@ -34,32 +35,39 @@ export const useUserStore = create<UserStore>((set) => ({
       if (data) {
         set({
           userData: {
-            id: data.id,
-            username: data.username,
+            id: data.user?.id,
+            username: data.user?.username,
             walletAddress: walletAddress,
-            bio: data.bio,
-            age: data.age,
-            drinks: data.drinks || [],
-            communities: data.communities || [],
-            profileImage: data.profileImage,
-            myReferral: data.myReferral,
-            referralUsed: data.referralUsed,
-            gainedXP: data.gainedXP,
-            hasADDomainChecked: data.hasADDomainChecked,
-            hasSNSDomainChecked: data.hasSNSDomainChecked,
-            allDomainName: data.allDomainName,
-            snsName: data.snsName,
-            connectedAt: data.connected_at,
-            createdAt: data.created_at,
+            bio: data.user?.bio,
+            age: data.user?.age,
+            drinks: data.user?.drinks || [],
+            communities: data.user?.communities || [],
+            profileImage: data.user?.profileImage,
+            myReferral: data.user?.myReferral,
+            referralUsed: data.user?.referralUsed,
+            gainedXP: data.user?.gainedXP,
+            hasADDomainChecked: data.user?.hasADDomainChecked,
+            hasSNSDomainChecked: data.user?.hasSNSDomainChecked,
+            allDomainName: data.user?.allDomainName,
+            snsName: data.user?.snsName,
+            connectedAt: data.user?.connected_at,
+            createdAt: data.user?.created_at,
           },
         });
+        set({ isDataLoaded: true });
+      } else {
+        set({ userData: null });
         set({ isDataLoaded: true });
       }
     } catch (error) {
       console.error("Error in fetchUserProfile:", error);
+      set({ isDataLoaded: true });
     }
   },
-  clearUserData: () => set({ userData: null, isDataLoaded: false }),
+  clearUserData: () => {
+    cleanupExpiredNonces();
+    set({ userData: null, isDataLoaded: false });
+  },
 }));
 
 export const useUsersStore = create<UsersStore>((set) => ({

@@ -1,11 +1,11 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Award, Calendar, ChevronLeft, Clock, Edit, Globe, Wallet2 } from "lucide-react";
 import UUIDAvatar from "../AvatarGenerator";
-import { Profile } from "@/utils/types";
+import { Profile } from "../../utils/types";
 import { useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 

@@ -1,12 +1,11 @@
-import { Navbar } from "@/components/Layout/Navbar";
-import { ProtectedRoutesWrapper } from "@/components/ProtectedRoutesWrapper";
-import { Toaster } from "@/components/ui/sonner";
-import { ContextProvider } from "@/contexts/ContextProvider";
+import { Navbar } from "../components/Layout/Navbar";
+import { ProtectedRoutesWrapper } from "../components/ProtectedRoutesWrapper";
+import { Toaster } from "../components/ui/sonner";
+import { ContextProvider } from "../contexts/ContextProvider";
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import ogImage from "@/assets/cheersUpOG.png";
 import "./globals.css";
-import { CivicAuthModal } from "@/components/CivicAuthModal/CivicAuthModal";
 // import { ReactScan } from "@/components/ReactScan";
 
 export const metadata: Metadata = {

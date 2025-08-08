@@ -1,10 +1,10 @@
 "use client";
-import { checkDailyLogin } from "@/api/missionFunctions";
-import { isAuthorized } from "@/api/serverAuth";
-import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "@/api/userFunctions";
-import { useAuth } from "@/hooks/useAuth";
-import { useUsersStore, useUserStore } from "@/store/user";
-import { getAssetsByOwner } from "@/utils/serverFunctions";
+import { checkDailyLogin } from "../api/missionFunctions";
+import { isAuthorized } from "../api/serverAuth";
+import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "../api/userFunctions";
+import { useAuth } from "../hooks/useAuth";
+import { useUsersStore, useUserStore } from "../store/user";
+import { getAssetsByOwner } from "../utils/serverFunctions";
 import { userHasWallet } from "@civic/auth-web3";
 import { useUser } from "@civic/auth-web3/react";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -22,6 +22,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   const pathname = usePathname();
   const router = useRouter();
   const userContext = useUser();
+  const civicWallet = userHasWallet(userContext) ? userContext.solana.wallet : undefined;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
@@ -67,19 +68,19 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     }
   }, [publicKey, authenticateWithWallet, clearUserData]);
 
-  const afterLogin = async () => {
-    console.log("sunt in createWallet");
+  // const afterLogin = async () => {
+  //   console.log("sunt in createWallet");
 
-    if (userContext.user && !userHasWallet(userContext)) {
-      await userContext.createWallet();
-    }
-  };
+  //   if (userContext.user && !userHasWallet(userContext)) {
+  //     await userContext.createWallet();
+  //   }
+  // };
 
-  useEffect(() => {
-    if (userContext.user) {
-      afterLogin();
-    }
-  }, [userContext.user, performAuthentication, connected, disconnect]);
+  // useEffect(() => {
+  //   if (userContext.user) {
+  //     afterLogin();
+  //   }
+  // }, [userContext.user, performAuthentication, connected, disconnect]);
 
   useEffect(() => {
     console.log("UserInitializer useEffect disconnecting value:", disconnecting);
@@ -108,6 +109,8 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         setAuthAttempted(true);
         setIsInitializing(false);
         clearUserData();
+        router.push("/");
+        return;
       }
     };
 
@@ -132,7 +135,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     };
 
     fetchCommunities();
-  }, [isAuthenticated, publicKey, isDataLoaded, authAttempted, fetchUserProfile]);
+  }, [isAuthenticated, publicKey, isDataLoaded, authAttempted]);
 
   useEffect(() => {
     let cancelled = false;
@@ -198,6 +201,10 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   }, [isAuthenticated, isDataLoaded, publicKey]);
 
   useEffect(() => {
+    console.log("isInitializing", isInitializing);
+    console.log("authAttempted", authAttempted);
+    console.log("isDataLoaded", isDataLoaded);
+
     if (isInitializing || !authAttempted) {
       return;
     }
@@ -207,7 +214,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         return;
       }
 
-      if (isAuthenticated && userData !== null && pathname === "/") {
+      if (isAuthenticated && (userData !== null || userData === null) && pathname === "/") {
         router.replace("/links");
         return;
       }
@@ -217,7 +224,7 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         return;
       }
     }
-  }, [isAuthenticated, userData, pathname, router, authAttempted, wallet]);
+  }, [isAuthenticated, userData, pathname, router, authAttempted, isDataLoaded]);
 
   // WIP loading page
   // if (isInitializing) {

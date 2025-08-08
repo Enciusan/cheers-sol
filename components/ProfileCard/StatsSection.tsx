@@ -5,10 +5,10 @@ import {
   getMonthlyLinksAmount,
   getReferralsAmount,
   getWeeklyReferralsAmount,
-} from "@/api/userFunctions";
-import { Card, CardContent } from "@/components/ui/card";
-import { useUserStore } from "@/store/user";
-import { Profile } from "@/utils/types";
+} from "../../api/userFunctions";
+import { Card, CardContent } from "../ui/card";
+import { useUserStore } from "../../store/user";
+import { Profile } from "../../utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Link as LinkIcon, Users } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";

@@ -1,8 +1,8 @@
 "use client";
 
-import { getLevels } from "@/api/userFunctions";
-import { useUserStore } from "@/store/user";
-import { Profile } from "@/utils/types";
+import { getLevels } from "../../api/userFunctions";
+import { useUserStore } from "../../store/user";
+import { Profile } from "../../utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useEffect, useMemo, useState } from "react";
 import CommunitiesSection from "./CommunitiesSection";
@@ -11,6 +11,9 @@ import MissionsSection from "./MissionSection";
 import { ProfileForm } from "./profile-form";
 import ProfileInfo from "./ProfileInfo";
 import StatsSection from "./StatsSection";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import { UserPlus } from "lucide-react";
 
 export default function ProfileCard2() {
   const { publicKey } = useWallet();
@@ -98,13 +101,14 @@ export default function ProfileCard2() {
       color: "text-green-400",
     },
   ];
+  console.log(userData);
 
   return (
     <div
       className="flex justify-center w-full items-center text-white min-h-screen"
       style={{ backgroundColor: "#0a0b0b" }}>
       <div className="w-full md:max-w-full lg:max-w-4xl px-2 sm:px-4 md:px-8 py-4 sm:py-8">
-        {!isInEditMode ? (
+        {!isInEditMode && userData?.id ? (
           <>
             <ProfileInfo
               userData={userData}
@@ -125,6 +129,19 @@ export default function ProfileCard2() {
               </div>
             </div>
           </>
+        ) : !isInEditMode && (!userData || userData.id === undefined) ? (
+          <Card className="w-full h-[40dvh]">
+            <CardHeader>
+              <CardTitle className="font-[chicle] text-2xl font-bold text-white tracking-wide">
+                Create an account
+              </CardTitle>
+            </CardHeader>
+            <CardDescription className="flex flex-col justify-center items-center w-full h-[30svh]">
+              <Button onClick={() => setIsInEditMode(true)}>
+                <UserPlus />
+              </Button>
+            </CardDescription>
+          </Card>
         ) : (
           <ProfileForm
             data={userData}

@@ -29,11 +29,13 @@ const nextConfig = {
   },
   reactStrictMode: false,
 };
+// const civicKey = process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY || "";
+// console.log(civicKey);
 
 const withCivicAuth = createCivicAuthPlugin({
-  clientId: "463405db-c4f3-4367-b816-548f3a7c839d",
+  clientId: `${process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY}`,
   enableSolanaWalletAdapter: true,
-  oauthServerUrl: "https://auth.civic.com/oauth",
+  oauthServerUrl: 'https://auth.civic.com/oauth',
 });
 
 export default withCivicAuth(nextConfig);

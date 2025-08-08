@@ -1,7 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/initSupabaseServerClient";
-import { LocationType } from "@/utils/types";
+import { createClient } from "../lib/initSupabaseServerClient";
+import { LocationType } from "../utils/types";
 import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";
@@ -54,11 +54,16 @@ export const getUser = async (walletAddress: PublicKey | string) => {
       .eq("wallet_address", bufferKey)
       .single();
 
-    if (error) {
-      console.error("Error fetching profile in userFunc:", error);
-      return null;
+    if (error && error.code !== "PGRST116") {
+      // PGRST116 is "no rows returned" error
+      console.error("Error checking profile existence:", error);
+      return { success: false, error: "Failed to check if profile exists" };
     }
-    return data;
+    if (data) {
+      return { success: true, user: data };
+    } else {
+      return { success: true, user: null };
+    }
     //   },
     //   [`user-profile-${bufferKey}`],
     //   {

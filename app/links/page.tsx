@@ -1,9 +1,9 @@
 "use client";
 
-import MatchStack from "@/components/MatchCard/match-stack";
-import { Button } from "@/components/ui/button";
-import { useUsersStore, useUserStore } from "@/store/user";
-import { calculateDistance } from "@/utils/clientFunctions";
+import MatchStack from "../../components/MatchCard/match-stack";
+import { Button } from "../../components/ui/button";
+import { useUsersStore, useUserStore } from "../../store/user";
+import { calculateDistance } from "../../utils/clientFunctions";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -100,7 +100,7 @@ export default function MatchesPage() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
       <h1 className="mb-5 text-center">Find Your Link</h1>
       <div className="w-full max-w-sm">
-        {userData !== null ? (
+        {userData?.id !== undefined ? (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             {/* Show a small spinner in the corner if still loading, but always show MatchStack */}
             {isLoading && (

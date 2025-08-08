@@ -1,8 +1,8 @@
 "use client";
 
-import { COMMUNITIES } from "@/utils/communities";
-import { DrinkIcon } from "@/utils/drinks";
-import { Profile } from "@/utils/types";
+import { COMMUNITIES } from "../../utils/communities";
+import { DrinkIcon } from "../../utils/drinks";
+import { Profile } from "../../utils/types";
 import { AnimatePresence, motion, useMotionValue, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useState } from "react";

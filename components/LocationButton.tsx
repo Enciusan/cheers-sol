@@ -1,5 +1,5 @@
-import { addOrUpdateUserLocationServer } from "@/api/userFunctions";
-import { LocationType } from "@/utils/types";
+import { addOrUpdateUserLocationServer } from "../api/userFunctions";
+import { LocationType } from "../utils/types";
 import { Loader2, MapPin } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

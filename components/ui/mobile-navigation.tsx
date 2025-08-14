@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { EllipsisVertical } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 

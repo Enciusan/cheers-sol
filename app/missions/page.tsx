@@ -1,4 +1,4 @@
-import { MissionsCard } from "@/components/Missions/mission-card";
+import { MissionsCard } from "../../components/Missions/mission-card";
 
 export default function Missions() {
   return (

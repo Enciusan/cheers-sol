@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { COMMUNITIES } from "@/utils/communities";
-import { Profile } from "@/utils/types";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { COMMUNITIES } from "../../utils/communities";
+import { Profile } from "../../utils/types";
 import { Target } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 

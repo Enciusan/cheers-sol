@@ -1,9 +1,15 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "../components/ui/button";
+import { Card } from "../components/ui/card";
 import { Beer, GlassWater, Martini, MessageSquare, Users, Wine } from "lucide-react";
 import dynamic from "next/dynamic";
 import xLogo from "@/assets/twitter.svg";
+import { useRouter } from "next/navigation";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { useEffect } from "react";
+
+import "@solana/wallet-adapter-react-ui/styles.css";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -29,9 +35,9 @@ export default function LandingPage() {
             others looking for their perfect drinking companion.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <WalletMultiButtonDynamic className="!text-black bg-violet-600 hover:bg-violet-700">
+            <WalletMultiButton className="!text-black bg-violet-600 hover:bg-violet-700">
               Connect wallet
-            </WalletMultiButtonDynamic>
+            </WalletMultiButton>
             <Button
               className="font-semibold w-[11rem]"
               size={"sm"}

@@ -3,9 +3,9 @@
 import React, { useCallback, useContext, useEffect, useId, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence, MotionConfig, Transition, Variant } from "motion/react";
 import { createPortal } from "react-dom";
-import { cn } from "@/lib/utils";
+import { cn } from "../../lib/utils";
 import { XIcon } from "lucide-react";
-import useClickOutside from "@/hooks/useClickOutside";
+import useClickOutside from "../../hooks/useClickOutside";
 
 export type MorphingDialogContextType = {
   isOpen: boolean;

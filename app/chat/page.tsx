@@ -1,4 +1,4 @@
-import MessageComponent from "@/components/MessagesComponents/MessageComponent";
+import MessageComponent from "../../components/MessagesComponents/MessageComponent";
 
 export default function Chat() {
   return (

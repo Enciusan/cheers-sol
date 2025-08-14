@@ -1,7 +1,7 @@
 "use client";
-import { addOrChangeProfileImage } from "@/api/userFunctions";
-import { useUserStore } from "@/store/user";
-import { UploadButton } from "@/utils/uploadthing";
+import { addOrChangeProfileImage } from "../api/userFunctions";
+import { useUserStore } from "../store/user";
+import { UploadButton } from "../utils/uploadthing";
 import { Edit } from "lucide-react";
 import Image from "next/image";
 import React, { useMemo, useState } from "react";

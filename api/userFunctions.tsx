@@ -1,7 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/initSupabaseServerClient";
-import { LocationType } from "@/utils/types";
+import { createClient } from "../lib/initSupabaseServerClient";
+import { LocationType } from "../utils/types";
 import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";
@@ -54,11 +54,16 @@ export const getUser = async (walletAddress: PublicKey | string) => {
       .eq("wallet_address", bufferKey)
       .single();
 
-    if (error) {
-      console.error("Error fetching profile in userFunc:", error);
-      return null;
+    if (error && error.code !== "PGRST116") {
+      // PGRST116 is "no rows returned" error
+      console.error("Error checking profile existence:", error);
+      return { success: false, error: "Failed to check if profile exists" };
     }
-    return data;
+    if (data) {
+      return { success: true, user: data };
+    } else {
+      return { success: true, user: null };
+    }
     //   },
     //   [`user-profile-${bufferKey}`],
     //   {
@@ -79,6 +84,7 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
   let bufferKey;
   try {
     // Use the wallet address string directly instead of converting to PublicKey
+
     if (typeof walletAddress === "string") {
       bufferKey = walletAddress;
     } else {
@@ -87,7 +93,6 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
     bufferKey = new PublicKey(bufferKey);
     bufferKey = Buffer.from(bufferKey.toBytes()).toString("hex");
     const { data: userData } = await supabase.from("profiles").select("id").eq("wallet_address", bufferKey).single();
-    console.log(userData);
 
     if (!userData) return;
 
@@ -104,6 +109,7 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
 
     const { data, error } = await query;
 
+    console.timeEnd("getAppUserForMatch queries");
     if (error) {
       console.error("Error fetching profile:", error);
       return;

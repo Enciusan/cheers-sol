@@ -5,10 +5,10 @@ import { Input } from "../ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { useState } from "react";
 import { toast } from "sonner";
-import { useUserStore } from "@/store/user";
+import { useUserStore } from "../../store/user";
 import { useWallet } from "@solana/wallet-adapter-react";
-import { generateReferralCode, linkReferralCode } from "@/api/userFunctions";
-import { userIncreaseXp } from "@/api/missionFunctions";
+import { generateReferralCode, linkReferralCode } from "../../api/userFunctions";
+import { userIncreaseXp } from "../../api/missionFunctions";
 
 export const ReferralCard = () => {
   const [referralCode, setReferralCode] = useState("");

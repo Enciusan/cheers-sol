@@ -1,5 +1,5 @@
-import { COMMUNITIES } from "@/utils/communities";
-import { DrinkIcon } from "@/utils/drinks";
+import { COMMUNITIES } from "../../utils/communities";
+import { DrinkIcon } from "../../utils/drinks";
 import { Info } from "lucide-react";
 import {
   MorphingDialog,

@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/initSupabaseServerClient";
+import { createClient } from "../lib/initSupabaseServerClient";
 import { PublicKey } from "@solana/web3.js";
 import "server-only";
 import { verifyAuth } from "./serverAuth";

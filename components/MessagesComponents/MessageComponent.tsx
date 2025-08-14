@@ -1,27 +1,26 @@
 "use client";
-import { fetchMatches, revalidateUserMatches } from "@/api/matchFunctions";
-import { fetchMessages } from "@/api/messageFunctions";
-import { useUserStore } from "@/store/user";
-import { MatchProfile } from "@/utils/types";
+import { fetchMatches, revalidateUserMatches } from "../../api/matchFunctions";
+import { fetchMessages } from "../../api/messageFunctions";
+import { useUserStore } from "../../store/user";
+import { MatchProfile, Profile } from "../../utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { ChevronLeft } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { ChatArea } from "./ChatArea";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import Image from "next/image";
 
 export default function MessageComponent() {
   const { publicKey, disconnecting } = useWallet();
   const [matches, setMatches] = useState<MatchProfile[]>([]);
-  const { userData, clearUserData } = useUserStore();
+  const { userData, isDataLoaded, clearUserData } = useUserStore();
   const [selectedMatch, setSelectedMatch] = useState<MatchProfile | null>(null);
   const { verifyAuthentication, logout, authenticateWithWallet } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
   const [matchMessages, setMatchMessages] = useState<Record<string, any[]>>({});
 
-  // Authentication effect remains the same
   useEffect(() => {
     const checkAuth = async () => {
       if (!publicKey) {
@@ -66,7 +65,7 @@ export default function MessageComponent() {
     } else if (publicKey) {
       checkAuth();
     }
-  }, [publicKey, disconnecting]);
+  }, [publicKey, isDataLoaded, disconnecting]);
 
   // Fetch matches
   useEffect(() => {
@@ -89,9 +88,9 @@ export default function MessageComponent() {
         }
       }
     })();
-  }, [publicKey, userData, isAuthenticated]);
+  }, [publicKey, userData, isDataLoaded, isAuthenticated]);
 
-  if (!userData) {
+  if (!isDataLoaded) {
     return <>Loading...</>;
   }
 
@@ -176,7 +175,7 @@ export default function MessageComponent() {
               className="md:hidden absolute left-2 top-2.5 text-gray-400 hover:text-white">
               <ChevronLeft className="w-5 h-5" />
             </Button>
-            <ChatArea match={selectedMatch} currentUser={userData} />
+            <ChatArea match={selectedMatch} currentUser={userData || ({} as Profile)} />
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center">

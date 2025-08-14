@@ -1,24 +1,28 @@
 "use client";
-import { checkDailyLogin } from "@/api/missionFunctions";
-import { isAuthorized } from "@/api/serverAuth";
-import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "@/api/userFunctions";
-import { useAuth } from "@/hooks/useAuth";
-import { useUsersStore, useUserStore } from "@/store/user";
-import { connection } from "@/utils/clientFunctions";
-import { getAssetsByOwner } from "@/utils/serverFunctions";
+import { checkDailyLogin } from "../api/missionFunctions";
+import { isAuthorized } from "../api/serverAuth";
+import { addOrUpdateUserCommunities, addOrUpdateUserLocationServer } from "../api/userFunctions";
+import { useAuth } from "../hooks/useAuth";
+import { useUsersStore, useUserStore } from "../store/user";
+import { getAssetsByOwner } from "../utils/serverFunctions";
+import { userHasWallet } from "@civic/auth-web3";
+import { useUser } from "@civic/auth-web3/react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { usePathname, useRouter } from "next/navigation";
-import { ReactNode, useEffect, useState, useCallback } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 
 const PUBLIC_ROUTES = ["/"];
 
 export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) => {
-  const { publicKey, disconnecting, disconnect, connected } = useWallet();
+  const { publicKey, disconnecting, disconnect, connected, wallet } = useWallet();
+  const { user } = useUser();
   const { logout, authenticateWithWallet } = useAuth();
   const { clearUserData, fetchUserProfile, userData, isDataLoaded } = useUserStore();
-  const { fetchProfiles, fetchUsersLocation } = useUsersStore();
+  const { fetchProfiles, fetchUsersLocation, isProfilesLoaded, isUsersLocationsLoaded } = useUsersStore();
   const pathname = usePathname();
   const router = useRouter();
+  const userContext = useUser();
+  const civicWallet = userHasWallet(userContext) ? userContext.solana.wallet : undefined;
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authAttempted, setAuthAttempted] = useState(false);
@@ -34,7 +38,6 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
 
     try {
       const authResult = await isAuthorized(publicKey.toString());
-      console.log("Auth result:", authResult);
 
       if (authResult) {
         console.log("User is authenticated");
@@ -64,6 +67,20 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
     }
   }, [publicKey, authenticateWithWallet, clearUserData]);
 
+  // const afterLogin = async () => {
+  //   console.log("sunt in createWallet");
+
+  //   if (userContext.user && !userHasWallet(userContext)) {
+  //     await userContext.createWallet();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (userContext.user) {
+  //     afterLogin();
+  //   }
+  // }, [userContext.user, performAuthentication, connected, disconnect]);
+
   useEffect(() => {
     console.log("UserInitializer useEffect disconnecting value:", disconnecting);
 
@@ -91,6 +108,8 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
         setAuthAttempted(true);
         setIsInitializing(false);
         clearUserData();
+        router.push("/");
+        return;
       }
     };
 
@@ -98,69 +117,28 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   }, [publicKey, disconnecting, connected, performAuthentication, disconnect, logout, clearUserData]);
 
   useEffect(() => {
-    const loadUserProfile = async () => {
-      if (isAuthenticated && publicKey && !userData) {
-        try {
-          console.log("Fetching user profile...");
-          await fetchUserProfile(publicKey.toBase58());
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-        }
-      }
-    };
-
-    if (authAttempted && isAuthenticated) {
-      loadUserProfile();
-    }
-  }, [isAuthenticated, publicKey, authAttempted, isDataLoaded, fetchUserProfile]);
-
-  useEffect(() => {
     const fetchCommunities = async () => {
-      if (isAuthenticated && publicKey && connection) {
-        try {
-          console.log("Fetching communities...");
-          const com2 = await getAssetsByOwner(publicKey.toBase58());
-          await addOrUpdateUserCommunities(com2, publicKey.toBase58());
-        } catch (error) {
-          console.error("Error fetching communities:", error);
-        }
+      if (isAuthenticated && publicKey && !userData) {
+        (async () => {
+          await fetchUserProfile(publicKey.toBase58()),
+            await getAssetsByOwner(publicKey.toBase58()).then((coms) =>
+              addOrUpdateUserCommunities(coms, publicKey.toBase58())
+            );
+        })();
       }
     };
 
-    if (isAuthenticated && publicKey) {
-      fetchCommunities();
-    }
-  }, [isAuthenticated, publicKey, connection]);
+    fetchCommunities();
+  }, [isAuthenticated, publicKey, isDataLoaded, authAttempted]);
 
   useEffect(() => {
-    const loadAdditionalData = async () => {
-      if (isAuthenticated && userData && publicKey) {
-        try {
-          console.log("Fetching additional user data...");
-
-          // Fetch profiles first
-          console.log("Fetching profiles...");
-          await fetchProfiles(publicKey.toBase58());
-
-          // Then fetch user locations
-          console.log("Fetching user locations...");
-          await fetchUsersLocation(publicKey.toBase58());
-
-          // Finally check daily login
-          console.log("Checking daily login...");
-          await checkDailyLogin(publicKey.toBase58());
-
-          console.log("All additional data fetched successfully");
-        } catch (error) {
-          console.error("Error fetching additional data:", error);
-        }
-      }
-    };
-
-    if (isAuthenticated && userData) {
-      loadAdditionalData();
-    }
-  }, [isAuthenticated, isDataLoaded, publicKey, fetchProfiles, fetchUsersLocation]);
+    if (!isAuthenticated || !connected || publicKey === null || userData?.id === undefined) return;
+    (async () => {
+      await fetchProfiles(publicKey.toBase58());
+      await fetchUsersLocation(publicKey.toBase58());
+      await checkDailyLogin(publicKey.toBase58());
+    })();
+  }, [isAuthenticated, connected, publicKey, userData, fetchProfiles, fetchUsersLocation]);
 
   useEffect(() => {
     const addOrUpdateUserLocation = () => {
@@ -188,28 +166,25 @@ export const ProtectedRoutesWrapper = ({ children }: { children: ReactNode }) =>
   }, [isAuthenticated, isDataLoaded, publicKey]);
 
   useEffect(() => {
-    if (isInitializing || !authAttempted) {
+    if (isInitializing || !authAttempted || !isDataLoaded) {
       return;
     }
+    if (isDataLoaded) {
+      if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
+        router.replace("/");
+        return;
+      }
 
-    if (!isAuthenticated && !PUBLIC_ROUTES.includes(pathname)) {
-      console.log("Redirecting to landing page - not authenticated");
-      router.replace("/");
-      return;
-    }
+      if (isAuthenticated && userData === null && pathname !== "/profile") {
+        router.replace("/profile");
+        return;
+      }
 
-    if (isAuthenticated && userData === null && pathname !== "/profile") {
-      console.log("Redirecting to profile - no user data");
-      router.replace("/profile");
-      return;
+      if (isAuthenticated && userData !== null && pathname === "/") {
+        router.replace("/links");
+      }
     }
-
-    if (isAuthenticated && userData !== null && pathname === "/") {
-      console.log("Redirecting to links - authenticated with user data");
-      router.replace("/links");
-      return;
-    }
-  }, [isAuthenticated, authAttempted, isDataLoaded, pathname, router, isInitializing]);
+  }, [isAuthenticated, userData, pathname, router, authAttempted, isDataLoaded, isInitializing]);
 
   // WIP loading page
   // if (isInitializing) {

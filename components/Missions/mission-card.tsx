@@ -8,10 +8,10 @@ import {
   getReferralCount,
   profileMissionDone,
   userIncreaseXp,
-} from "@/api/missionFunctions";
-import { Progress } from "@/components/ui/progress";
-import { useUserStore } from "@/store/user";
-import { Missions } from "@/utils/types";
+} from "../../api/missionFunctions";
+import { Progress } from "../ui/progress";
+import { useUserStore } from "../../store/user";
+import { Missions } from "../../utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { Calendar, CheckCheck, MessageCircle, MessagesSquare, UserCircle, Users as UsersIcon } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";

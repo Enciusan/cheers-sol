@@ -3,7 +3,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useCallback } from "react";
 import bs58 from "bs58";
-import { authenticate, createAuthMessage, isAuthorized, signOut, verifyAuth } from "@/api/serverAuth";
+import { authenticate, createAuthMessage, isAuthorized, signOut, verifyAuth } from "../api/serverAuth";
 
 export const useAuth = () => {
   const { publicKey, signMessage } = useWallet();

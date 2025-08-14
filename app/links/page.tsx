@@ -1,28 +1,38 @@
 "use client";
 
-import MatchStack from "@/components/MatchCard/match-stack";
-import { Button } from "@/components/ui/button";
-import { useUsersStore, useUserStore } from "@/store/user";
-import { calculateDistance } from "@/utils/clientFunctions";
 import { useWallet } from "@solana/wallet-adapter-react";
+import MatchStack from "../../components/MatchCard/match-stack";
+import { Button } from "../../components/ui/button";
+import { useUsersStore, useUserStore } from "../../store/user";
+import { calculateDistance } from "../../utils/clientFunctions";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { getAppUserForMatch } from "@/api/userFunctions";
 
 export default function MatchesPage() {
-  const { userData } = useUserStore();
   const { publicKey } = useWallet();
-  const { profiles, usersLocations } = useUsersStore();
+  const { userData, isDataLoaded } = useUserStore();
+  const { profiles, usersLocations, fetchProfiles } = useUsersStore();
 
   const router = useRouter();
 
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isDataLoadedState, setIsDataLoadedState] = useState(false);
 
-  const isLoading = !userData || !profiles || !usersLocations || !isDataLoaded;
+  const isLoading = !userData || profiles === null || usersLocations === null;
+
+  useEffect(() => {
+    const loadData = async () => {
+      if (publicKey && userData) {
+        await getAppUserForMatch(publicKey.toBase58());
+      }
+    };
+    loadData();
+  }, [publicKey, isDataLoaded, isDataLoadedState]);
 
   const filteredProfilesBasedOnDistance = useMemo(() => {
-    if (!userData || !profiles || !usersLocations) {
+    if (usersLocations === null || userData === null || profiles === null) {
       return [];
     }
 
@@ -53,7 +63,7 @@ export default function MatchesPage() {
     });
 
     return filteredProfiles;
-  }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
+  }, [userData, profiles, usersLocations, isDataLoaded, isLoading, isDataLoadedState, fetchProfiles]);
 
   useEffect(() => {
     const hasUserData = userData !== null;
@@ -70,15 +80,15 @@ export default function MatchesPage() {
       // Add a small delay to ensure all data is properly loaded
       const timer = setTimeout(() => {
         console.log("Setting isDataLoaded to true");
-        setIsDataLoaded(true);
+        setIsDataLoadedState(true);
       }, 1000);
 
       return () => clearTimeout(timer);
     } else {
       console.log("Setting isDataLoaded to false");
-      setIsDataLoaded(false);
+      setIsDataLoadedState(false);
     }
-  }, [userData, profiles, usersLocations]);
+  }, [userData, profiles, usersLocations, isDataLoaded]);
 
   // useEffect(() => {
   //   console.log("MatchesPage state:", {
@@ -91,18 +101,25 @@ export default function MatchesPage() {
   // }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
   // console.log(isLoading, userData, profiles);
 
+  if (!isDataLoaded)
+    return (
+      <div className="flex h-screen w-full justify-center items-center z-10">
+        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#7C3AED]"></div>
+      </div>
+    );
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gradient-to-b from-[#09090B] to-[#1c1c24]">
       <h1 className="mb-5 text-center">Find Your Link</h1>
       <div className="w-full max-w-sm">
-        {userData !== null ? (
+        {userData?.id !== undefined ? (
           <div className="relative h-[550px] w-full max-w-sm mx-auto">
             {/* Show a small spinner in the corner if still loading, but always show MatchStack */}
-            {isLoading && (
+            {/* {isLoading && (
               <div className="absolute top-2 right-2 z-10">
                 <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#7C3AED]"></div>
               </div>
-            )}
+            )} */}
             <MatchStack profiles={filteredProfilesBasedOnDistance || []} currentUserId={userData.id} />
           </div>
         ) : (

@@ -1,6 +1,6 @@
 "use server";
 
-import { sessionCreate, verifyToken } from "@/lib/jwt";
+import { sessionCreate, verifyToken } from "../lib/jwt";
 import { PublicKey } from "@solana/web3.js";
 import bs58 from "bs58";
 import { randomUUID } from "crypto";

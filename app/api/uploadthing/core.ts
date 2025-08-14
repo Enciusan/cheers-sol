@@ -1,5 +1,4 @@
 import { verifyAuth } from "@/api/serverAuth";
-import { addOrChangeProfileImage } from "@/api/userFunctions"; // Ensure this import is correct
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 

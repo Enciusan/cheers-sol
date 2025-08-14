@@ -1,12 +1,12 @@
-import { useUserStore } from "@/store/user";
-import { COMMUNITIES } from "@/utils/communities";
-import { DrinkIcon } from "@/utils/drinks";
-import { Profile } from "@/utils/types";
+import { useUserStore } from "../../store/user";
+import { COMMUNITIES } from "../../utils/communities";
+import { DrinkIcon } from "../../utils/drinks";
+import { Profile } from "../../utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { LocationButton } from "../LocationButton";
 import { Progress } from "../ui/progress";
 import { useMemo, useState, useEffect } from "react";
-import { getLevels } from "@/api/userFunctions";
+import { getLevels } from "../../api/userFunctions";
 
 interface ProfileInfoProps {
   data: Profile | null;

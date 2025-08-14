@@ -1,13 +1,12 @@
 "use server";
 
-import { createClient } from "@/lib/initSupabaseServerClient";
-import { MatchProfile, Profile } from "@/utils/types";
+import { createClient } from "../lib/initSupabaseServerClient";
+import { MatchProfile, Profile } from "../utils/types";
 import { revalidateTag, unstable_cache } from "next/cache";
 import "server-only";
 
-const supabase = await createClient();
-
 export const createSwipe = async (swiperId: string, swipedId: string, action: "like" | "nope") => {
+  const supabase = await createClient();
   try {
     // First, create the swipe record
     const { data: swipeData, error: swipeError } = await supabase
@@ -47,6 +46,8 @@ export const createSwipe = async (swiperId: string, swipedId: string, action: "l
 };
 
 export const fetchMatches = async (userData: Profile) => {
+  const supabase = await createClient();
+
   // Fetch matches from your Supabase database
   const cachedQuery = unstable_cache(
     async (key: string) => {
@@ -93,6 +94,8 @@ export const revalidateUserMatches = async (userId: string) => {
 };
 
 export const handleSwipe = async (profileId: string, direction: "left" | "right", currentUserId: string) => {
+  const supabase = await createClient();
+
   const action = direction === "right" ? "like" : "dislike";
   // Insert the swipe action into the swipes table
   const { error: swipeError } = await supabase.from("swipes").insert({

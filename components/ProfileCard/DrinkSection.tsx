@@ -1,8 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { DrinkIcon } from "@/utils/drinks";
-import { Profile } from "@/utils/types";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { DrinkIcon } from "../../utils/drinks";
+import { Profile } from "../../utils/types";
 import { Wine } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
 

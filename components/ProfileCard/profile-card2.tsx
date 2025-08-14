@@ -1,19 +1,19 @@
 "use client";
 
-import { getLevels } from "../../api/userFunctions";
-import { useUserStore } from "../../store/user";
-import { Profile } from "../../utils/types";
+import { getLevels } from "@/api/userFunctions";
+import { useUserStore } from "@/store/user";
+import { Profile } from "@/utils/types";
 import { useWallet } from "@solana/wallet-adapter-react";
+import { UserPlus } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { Button } from "../ui/button";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import CommunitiesSection from "./CommunitiesSection";
 import DrinksSection from "./DrinkSection";
 import MissionsSection from "./MissionSection";
 import { ProfileForm } from "./profile-form";
 import ProfileInfo from "./ProfileInfo";
 import StatsSection from "./StatsSection";
-import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
-import { Button } from "../ui/button";
-import { UserPlus } from "lucide-react";
 
 export default function ProfileCard2() {
   const { publicKey } = useWallet();

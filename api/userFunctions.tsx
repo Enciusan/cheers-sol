@@ -85,7 +85,6 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
   try {
     // Use the wallet address string directly instead of converting to PublicKey
 
-    console.time("getAppUserForMatch queries");
     if (typeof walletAddress === "string") {
       bufferKey = walletAddress;
     } else {
@@ -93,9 +92,7 @@ export const getAppUserForMatch = async (walletAddress: PublicKey | string) => {
     }
     bufferKey = new PublicKey(bufferKey);
     bufferKey = Buffer.from(bufferKey.toBytes()).toString("hex");
-    console.time("toate functiile");
     const { data: userData } = await supabase.from("profiles").select("id").eq("wallet_address", bufferKey).single();
-    console.log(userData);
 
     if (!userData) return;
 

@@ -9,7 +9,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, UserCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { revalidateUserMatches } from "@/api/matchFunctions";
 import { getAppUserForMatch } from "@/api/userFunctions";
 
 export default function MatchesPage() {
@@ -64,7 +63,7 @@ export default function MatchesPage() {
     });
 
     return filteredProfiles;
-  }, [userData, profiles, usersLocations, isDataLoaded, isLoading, isDataLoadedState]);
+  }, [userData, profiles, usersLocations, isDataLoaded, isLoading, isDataLoadedState, fetchProfiles]);
 
   useEffect(() => {
     const hasUserData = userData !== null;
@@ -102,8 +101,7 @@ export default function MatchesPage() {
   // }, [userData, profiles, usersLocations, isDataLoaded, isLoading]);
   // console.log(isLoading, userData, profiles);
 
-  console.groupEnd();
-  if (isLoading)
+  if (!isDataLoaded)
     return (
       <div className="flex h-screen w-full justify-center items-center z-10">
         <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-[#7C3AED]"></div>

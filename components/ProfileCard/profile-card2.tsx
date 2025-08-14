@@ -101,7 +101,6 @@ export default function ProfileCard2() {
       color: "text-green-400",
     },
   ];
-  console.log(userData);
 
   return (
     <div

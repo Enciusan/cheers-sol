@@ -32,7 +32,6 @@ export const useUserStore = create<UserStore>((set) => ({
     set({ isDataLoaded: false });
     try {
       const data = await getUser(walletAddress);
-      console.log(data);
 
       if (data) {
         set({
@@ -118,7 +117,6 @@ export const useUsersStore = create<UsersStore>((set) => ({
     set({ isUsersLocationsLoaded: false });
     try {
       const data = await getUsersLocation(walletAddress);
-      console.log(data);
 
       if (data?.usersLocation) {
         set({

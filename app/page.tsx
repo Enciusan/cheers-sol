@@ -17,8 +17,6 @@ const WalletMultiButtonDynamic = dynamic(
 );
 
 export default function LandingPage() {
-  const router = useRouter();
-  const { disconnect } = useWallet();
   return (
     <div className="min-h-screen bg-[#09090B] text-white">
       {/* Hero Section */}
@@ -40,7 +38,6 @@ export default function LandingPage() {
             <WalletMultiButton className="!text-black bg-violet-600 hover:bg-violet-700">
               Connect wallet
             </WalletMultiButton>
-            <Button onClick={() => disconnect()}>Disconnect</Button>
             <Button
               className="font-semibold w-[11rem]"
               size={"sm"}

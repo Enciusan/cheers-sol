@@ -1,5 +1,5 @@
-[phases.setup]
-nixPkgs = ["python"]
-
 [phases.install]
-cmds = ["pnpm install --no-save"]
+cmds = ["bun install"]
+
+[phases.start]
+cmds = ["bun dev"]

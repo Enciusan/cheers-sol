@@ -6,7 +6,7 @@ nixPkgs = [
 ]
 
 [phases.install]
-cmds = ["bun run install"]
+cmds = ["bun install"]
 
 [phases.build]
 cmds = ["bun run build"]

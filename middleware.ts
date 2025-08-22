@@ -58,7 +58,7 @@ async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
 
 export function middleware(request: NextRequest) {
   middleware2(request);
-  authMiddleware();
+  authMiddleware()(request);
 }
 
 export const config = {

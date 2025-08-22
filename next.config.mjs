@@ -35,7 +35,6 @@ const nextConfig = {
 const withCivicAuth = createCivicAuthPlugin({
   clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,
   enableSolanaWalletAdapter: true,
-  baseUrl: "https://www.cheersup.fun",
   oauthServer: "https://auth.civic.com/oauth",
 });
 

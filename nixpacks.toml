@@ -1,5 +1,11 @@
 [phases.setup]
-nixPkgs = ["python3", "gnumake", "gcc", "pkg-config"]
+nixPkgs = ["bun", "python3", "gnumake", "gcc", "pkg-config"]
+cmds = [
+  "curl -fsSL https://bun.sh/install | bash",
+  "mv /root/.bun ~/.bun || true",
+  "echo 'export PATH=$HOME/.bun/bin:$PATH' >> /root/.profile"
+]
+
 
 [phases.install]
 cmds = ["bun install --no-save"]

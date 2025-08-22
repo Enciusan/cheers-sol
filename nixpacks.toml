@@ -1,10 +1,13 @@
 [phases.setup]
-nixPkgs = ["bun", "python3", "gnumake", "gcc", "pkg-config"]
-cmds = [
-  "curl -fsSL https://bun.sh/install | bash",
-  "mv /root/.bun ~/.bun || true",
-  "echo 'export PATH=$HOME/.bun/bin:$PATH' >> /root/.profile"
-]
+nixPkgs = [
+    "bun",
+  "nodejs_20",
+  "python3",
+  "gnumake",
+  "gcc",
+  "pkg-config",
+  "libusb1"
+  ]
 
 
 [phases.install]

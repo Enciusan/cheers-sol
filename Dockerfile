@@ -8,6 +8,10 @@ RUN bun install --frozen-lockfile --ignore-scripts
 
 COPY . .
 
+ARG NEXT_PUBLIC_CIVIC_AUTH_KEY
+
+ENV NEXT_PUBLIC_CIVIC_AUTH_KEY=$NEXT_PUBLIC_CIVIC_AUTH_KEY
+
 RUN bun run build
 
 FROM oven/bun:1.2.6-slim as runtime

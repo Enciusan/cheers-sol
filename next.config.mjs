@@ -31,8 +31,6 @@ const nextConfig = {
   },
   reactStrictMode: false,
 };
-// const civicKey = process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY || "";
-// console.log(civicKey);
 
 const withCivicAuth = createCivicAuthPlugin({
   clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,

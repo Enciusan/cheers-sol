@@ -1,9 +1,0 @@
-[phases.setup]
-nixPkgs = ["bun"]
-
-[phases.build]
-cmds = ["bun install", "bun run build"]
-
-[variables]
-NODE_VERSION = "20"
-NPM_VERSION = "10.2.3"

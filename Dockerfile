@@ -1,7 +1,7 @@
 FROM oven/bun:1.2.6 as dependencies
 
 WORKDIR /app
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 
 # Install dependencies but skip problematic postinstall scripts
 ENV npm_config_build_from_source=false

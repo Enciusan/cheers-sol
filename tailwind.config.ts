@@ -8,8 +8,7 @@ export default withUt({
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./utils/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@uploadthing/react/dist/**/*.{js,mjs}",
-    "./node_modules/@uploadthing/react/**/*.{js,mjs}",
+    "./node_modules/@uploadthing/react/dist**",
   ],
   theme: {
     extend: {

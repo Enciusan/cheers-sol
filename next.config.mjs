@@ -17,7 +17,7 @@ const nextConfig = {
     ],
   },
   env: {
-    NEXT_PUBLIC_CIVIC_AUTH_KEY: 'abd95fef-09c6-4d1f-bb77-78507c257642',
+    NEXT_PUBLIC_CIVIC_AUTH_KEY: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY || 'SomethingToTest',
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -36,7 +36,7 @@ const nextConfig = {
 };
 
 const withCivicAuth = createCivicAuthPlugin({
-  clientId: 'abd95fef-09c6-4d1f-bb77-78507c257642',
+  clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,
   enableSolanaWalletAdapter: true,
   oauthServer: "https://auth.civic.com/oauth",
 });

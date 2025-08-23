@@ -1,5 +1,9 @@
 [phases.setup]
-nixPkgs = ["nodejs", "python3", "gcc", "pkg-config", "libusb1"]
+nixPkgs = ["nodejs_20", "python3", "gcc", "pkg-config", "libusb1", "systemd.dev"]
 
 [phases.build]
 cmds = ["npm ci", "npm run build"]
+
+[variables]
+NODE_VERSION = "20"
+NPM_VERSION = "10.2.3"

@@ -23,6 +23,7 @@ const nextConfig = {
         net: false,
         tls: false,
         crypto: false,
+        usb: false
       };
     }
     return config;

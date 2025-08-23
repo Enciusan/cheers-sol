@@ -2,7 +2,7 @@
 nixPkgs = ["bun"]
 
 [phases.build]
-cmds = ["bun install --ignore-scripts", "bun run build"]
+cmds = ["bun install", "bun run build"]
 
 [variables]
 NODE_VERSION = "20"

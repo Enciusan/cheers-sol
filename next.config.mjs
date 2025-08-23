@@ -17,7 +17,7 @@ const nextConfig = {
     ],
   },
   env: {
-    NEXT_PUBLIC_CIVIC_AUTH_KEY: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY || 'SomethingToTest',
+    CIVIC_AUTH_KEY: process.env.CIVIC_AUTH_KEY || 'SomethingToTest',
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -36,7 +36,7 @@ const nextConfig = {
 };
 
 const withCivicAuth = createCivicAuthPlugin({
-  clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,
+  clientId: process.env.CIVIC_AUTH_KEY,
   enableSolanaWalletAdapter: true,
   oauthServer: "https://auth.civic.com/oauth",
 });

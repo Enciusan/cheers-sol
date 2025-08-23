@@ -1,5 +1,0 @@
-[variable]
-NODE_VERSION = "20.10.0"
-
-[phases.setup]
-nixPkgs = ["npm-10.2.3", "python3"]

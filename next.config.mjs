@@ -5,8 +5,8 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
+  output: 'standalone',
   images: {
-    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
@@ -15,6 +15,9 @@ const nextConfig = {
         pathname: "/f/**",
       },
     ],
+  },
+  env: {
+    NEXT_PUBLIC_CIVIC_AUTH_KEY: 'abd95fef-09c6-4d1f-bb77-78507c257642',
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -33,7 +36,7 @@ const nextConfig = {
 };
 
 const withCivicAuth = createCivicAuthPlugin({
-  clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,
+  clientId: 'abd95fef-09c6-4d1f-bb77-78507c257642',
   enableSolanaWalletAdapter: true,
   oauthServer: "https://auth.civic.com/oauth",
 });

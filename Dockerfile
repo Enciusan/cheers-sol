@@ -1,6 +1,9 @@
 FROM oven/bun:1.2.6 as base
 
 WORKDIR /app
+ARG NEXT_PUBLIC_CIVIC_AUTH_KEY
+
+ENV NEXT_PUBLIC_CIVIC_AUTH_KEY=${NEXT_PUBLIC_CIVIC_AUTH_KEY}
 
 COPY package.json bun.lock ./
 
@@ -17,7 +20,6 @@ WORKDIR /app
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/public ./public
 COPY --from=base /app/package.json ./package.json
-
 COPY --from=base /app/node_modules ./node_modules
 
 EXPOSE 3000

@@ -4,9 +4,6 @@ import { Card } from "../components/ui/card";
 import { Beer, GlassWater, Martini, MessageSquare, Users, Wine } from "lucide-react";
 import dynamic from "next/dynamic";
 import xLogo from "@/assets/twitter.svg";
-import { useRouter } from "next/navigation";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { useEffect } from "react";
 
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";

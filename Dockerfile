@@ -39,14 +39,14 @@ WORKDIR /app
 
 COPY --from=base /app/.next ./.next
 COPY --from=base /app/public ./public
-COPY --from=base /assets ./assets
-COPY --from=base /components ./components
-COPY --from=base /contexts ./contexts
-COPY --from=base /api ./api
-COPY --from=base /hooks ./hooks
-COPY --from=base /lib ./lib
-COPY --from=base /store ./store
-COPY --from=base /utils ./utils
+COPY --from=base /app/assets ./assets
+COPY --from=base /app/components ./components
+COPY --from=base /app/contexts ./contexts
+COPY --from=base /app/api ./api
+COPY --from=base /app/hooks ./hooks
+COPY --from=base /app/lib ./lib
+COPY --from=base /app/store ./store
+COPY --from=base /app/utils ./utils
 COPY --from=base /app/package.json ./package.json
 COPY --from=base /app/node_modules ./node_modules
 

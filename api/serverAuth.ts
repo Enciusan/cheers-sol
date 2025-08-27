@@ -9,9 +9,6 @@ import nacl from "tweetnacl";
 import "server-only";
 import { Redis } from "@upstash/redis";
 
-// Simple in-memory cache for nonces
-const nonceCache = new Map<string, { value: string; expiry: number }>();
-
 const redis = Redis.fromEnv();
 
 const NONCE_EXPIRY_MS = 120000; // 2 minutes

@@ -3,9 +3,8 @@
 import "server-only";
 import { createClient } from "../lib/initSupabaseServerClient";
 
-const supabase = await createClient();
-
 export const fetchMessages = async (match: any) => {
+  const supabase = await createClient();
   const { data } = await supabase
     .from("messages")
     .select("*")
@@ -15,6 +14,8 @@ export const fetchMessages = async (match: any) => {
 };
 
 export const sendMessage = async (newMessage: any, match: any, currentUser: any) => {
+  const supabase = await createClient();
+
   if (!newMessage.trim()) return;
 
   const message = {

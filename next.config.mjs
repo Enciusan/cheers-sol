@@ -5,6 +5,7 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
+  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -23,14 +24,13 @@ const nextConfig = {
         net: false,
         tls: false,
         crypto: false,
+        usb: false
       };
     }
     return config;
   },
   reactStrictMode: false,
 };
-// const civicKey = process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY || "";
-// console.log(civicKey);
 
 const withCivicAuth = createCivicAuthPlugin({
   clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,

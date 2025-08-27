@@ -4,11 +4,11 @@ import { withUt } from "uploadthing/tw";
 export default withUt({
   darkMode: ["class"],
   content: [
+    "./node_modules/@uploadthing/react/dist**",
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./utils/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/@uploadthing/react/dist**",
   ],
   theme: {
     extend: {

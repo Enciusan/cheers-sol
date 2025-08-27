@@ -16,9 +16,6 @@ const nextConfig = {
       },
     ],
   },
-  env: {
-    CIVIC_AUTH_KEY: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY || 'SomethingToTest',
-  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = {

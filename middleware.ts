@@ -49,6 +49,11 @@ async function middleware2(request: NextRequest) {
   }
 }
 
+async function testMiddleware(request: NextRequest) {
+  console.log("Test middleware executed for path:", request.nextUrl.pathname);
+  return NextResponse.next();
+}
+
 async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
   try {
     const supabase = await createClient();
@@ -68,7 +73,7 @@ async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
 }
 
 // Civic auth middleware runs first, for now all app paths are excluded from Civic authentication in next.config.mjs
-export default withCivicAuth(middleware2);
+export default withCivicAuth(testMiddleware);
 
 // Not sure if this has any effect
 export const config = {

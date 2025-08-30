@@ -38,7 +38,6 @@ const withCivicAuth = createCivicAuthPlugin({
   autoRedirect: false,
   // Exclude app paths from authentication since authentication is now handled by middleware2
   exclude: ["/", "/chat", "/links", "/missions", "/profile", "/referral", "/settings"],
-
 });
 
 export default withCivicAuth(nextConfig);

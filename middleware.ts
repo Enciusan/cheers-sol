@@ -77,11 +77,11 @@ async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
 export default testMiddleware;
 
 // Not sure if this has any effect
-export const config = {
-  matcher: [
-    "/", 
-    "/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\.jpg|.*\.png|.*\.svg|.*\.gif).*)",
-    // Exclude Civic auth endpoints
-    "/api/auth/(.*)"
-  ]
-};
+// export const config = {
+//   matcher: [
+//     "/", 
+//     "/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\.jpg|.*\.png|.*\.svg|.*\.gif).*)",
+//     // Exclude Civic auth endpoints
+//     "/api/auth/(.*)"
+//   ]
+// };

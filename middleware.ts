@@ -1,13 +1,24 @@
-import { auth, authMiddleware } from "@civic/auth-web3/nextjs/middleware";
+import { auth } from "@civic/auth-web3/nextjs/middleware";
 import { PublicKey } from "@solana/web3.js";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "./lib/jwt";
 import { createClient } from "./lib/initSupabaseServerClient";
 
-const PUBLIC_ROUTES = ["/"];
+const PUBLIC_ROUTES = [
+  "/",
+  // Exclude Civic auth endpoints
+  "/api/auth/challenge",
+  "/api/auth/callback",
+  "/api/auth/refresh",
+  "/api/auth/logout",
+  "/api/auth/logoutcallback",
+];
+
+const withCivicAuth = auth();
 
 async function middleware2(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  console.log("Middleware path:", pathname);
 
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
@@ -56,11 +67,15 @@ async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
   }
 }
 
-export function middleware(request: NextRequest) {
-  middleware2(request);
-  authMiddleware()(request);
-}
+// Civic auth middleware runs first, for now all app paths are excluded from Civic authentication in next.config.mjs
+export default withCivicAuth(middleware2);
 
+// Not sure if this has any effect
 export const config = {
-  matcher: ["/", "/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\.jpg|.*\.png|.*\.svg|.*\.gif).*)"],
+  matcher: [
+    "/", 
+    "/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\.jpg|.*\.png|.*\.svg|.*\.gif).*)",
+    // Exclude Civic auth endpoints
+    // "/api/auth/(.*)"
+  ]
 };

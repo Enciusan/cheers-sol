@@ -35,6 +35,10 @@ const withCivicAuth = createCivicAuthPlugin({
   clientId: process.env.NEXT_PUBLIC_CIVIC_AUTH_KEY,
   enableSolanaWalletAdapter: true,
   oauthServer: "https://auth.civic.com/oauth",
+  autoRedirect: false,
+  // Exclude app paths from authentication since authentication is now handled by middleware2
+  exclude: ["/", "/chat", "/links", "/missions", "/profile", "/referral", "/settings"],
+
 });
 
 export default withCivicAuth(nextConfig);

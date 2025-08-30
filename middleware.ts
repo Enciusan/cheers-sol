@@ -73,7 +73,8 @@ async function checkUserHasProfile(walletAddress: string): Promise<boolean> {
 }
 
 // Civic auth middleware runs first, for now all app paths are excluded from Civic authentication in next.config.mjs
-export default withCivicAuth(testMiddleware);
+// export default withCivicAuth(testMiddleware);
+export default testMiddleware;
 
 // Not sure if this has any effect
 export const config = {

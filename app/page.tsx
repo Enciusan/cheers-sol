@@ -8,18 +8,12 @@ import xLogo from "@/assets/twitter.svg";
 import "@solana/wallet-adapter-react-ui/styles.css";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
-import { useUser } from "@civic/auth-web3/react";
-import { AuthStatus } from "@civic/auth-web3";
-
 const WalletMultiButtonDynamic = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
   { ssr: false }
 );
 
 export default function LandingPage() {
-  // Handle civic auth
-  const { signIn, signOut, authStatus } = useUser();
-
   return (
     <div className="min-h-screen bg-[#09090B] text-white">
       {/* Hero Section */}
@@ -41,21 +35,6 @@ export default function LandingPage() {
             <WalletMultiButton className="!text-black bg-violet-600 hover:bg-violet-700">
               Connect wallet
             </WalletMultiButton>
-            {authStatus === AuthStatus.AUTHENTICATED ? (
-              <Button
-                className="font-semibold w-[11rem]"
-                size={"sm"}
-                onClick={() => signOut()}>
-                Logout
-              </Button>
-            ) : (
-              <Button
-                className="font-semibold w-[11rem]"
-                size={"sm"}
-                onClick={() => signIn()}>
-                Login with Civic
-              </Button>
-            )}
             <Button
               className="font-semibold w-[11rem]"
               size={"sm"}

@@ -49,7 +49,7 @@ async function middleware2(request: NextRequest) {
   }
 }
 
-async function testMiddleware(request: NextRequest) {
+function testMiddleware(request: NextRequest) {
   console.log("Test middleware executed for path:", request.nextUrl.pathname);
   return NextResponse.next();
 }

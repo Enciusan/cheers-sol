@@ -18,6 +18,7 @@ const withCivicAuth = auth();
 
 async function middleware2(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
+  console.log("Middleware path:", pathname);
 
   if (PUBLIC_ROUTES.includes(pathname)) {
     return NextResponse.next();
